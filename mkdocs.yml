@@ -1,0 +1,111 @@
+site_name: kxt
+site_description: Async Python SDK for Korea Exchange (KRX) — KIS-backed market data & trading
+site_url: https://pumpkinredbean.github.io/kxt/
+repo_url: https://github.com/pumpkinredbean/kxt
+repo_name: pumpkinredbean/kxt
+edit_uri: edit/main/docs/
+copyright: Copyright &copy; pumpkinredbean
+
+docs_dir: docs
+
+theme:
+  name: material
+  language: ko
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - content.code.copy
+    - content.action.edit
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: 다크 모드로 전환
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: 라이트 모드로 전환
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+  - pymdownx.snippets
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: false
+            show_root_heading: true
+            show_symbol_type_heading: true
+            docstring_style: google
+            members_order: source
+
+nav:
+  - 홈: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - Authentication: getting-started/authentication.md
+      - Quickstart: getting-started/quickstart.md
+      - Pagination: getting-started/pagination.md
+      - Rate limits: getting-started/rate-limits.md
+      - Errors: getting-started/errors.md
+  - Unified API:
+      - Overview: unified-api/overview.md
+      - Market data:
+          - get_bars: unified-api/market-data/get-bars.md
+          - get_quote: unified-api/market-data/get-quote.md
+          - get_orderbook: unified-api/market-data/get-orderbook.md
+          - get_recent_trades: unified-api/market-data/get-recent-trades.md
+          - get_market_status: unified-api/market-data/get-market-status.md
+          - get_investor_flow: unified-api/market-data/get-investor-flow.md
+      - Account:
+          - get_account_overview: unified-api/account/get-account-overview.md
+          - get_balance: unified-api/account/get-balance.md
+          - get_positions: unified-api/account/get-positions.md
+          - get_buying_power: unified-api/account/get-buying-power.md
+          - get_open_orders: unified-api/account/get-open-orders.md
+          - get_order_history: unified-api/account/get-order-history.md
+      - Trading:
+          - submit_order: unified-api/trading/submit-order.md
+          - cancel_order: unified-api/trading/cancel-order.md
+          - modify_order: unified-api/trading/modify-order.md
+      - Streaming:
+          - stream_trades: unified-api/streaming/stream-trades.md
+          - stream_orderbook: unified-api/streaming/stream-orderbook.md
+          - stream_order_events: unified-api/streaming/stream-order-events.md
+          - stream_order_updates: unified-api/streaming/stream-order-updates.md
+          - stream_fill_updates: unified-api/streaming/stream-fill-updates.md
+  - Providers:
+      - KIS: providers/kis.md
+  - CLI: cli.md
+  - Reference:
+      - Schemas: reference/schemas.md
+  - Development:
+      - Architecture: development/architecture.md
+      - Style guide: development/style-guide.md
+      - Contributing: development/contributing.md
