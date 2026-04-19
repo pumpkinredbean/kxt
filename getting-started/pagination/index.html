@@ -231,7 +231,7 @@
   
     
   
-  홈
+  Home
 
       </a>
     </li>
@@ -428,7 +428,7 @@
   <span class="md-ellipsis">
     
   
-    홈
+    Home
   
 
     
@@ -663,10 +663,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#role-of-cursors" class="md-nav__link">
     <span class="md-ellipsis">
       
-        커서의 역할
+        Role of cursors
       
     </span>
   </a>
@@ -674,10 +674,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#continuing-with-cursors-daily-bars-example" class="md-nav__link">
     <span class="md-ellipsis">
       
-        커서로 이어 받기 (일봉 예)
+        Continuing with cursors (daily bars example)
       
     </span>
   </a>
@@ -685,10 +685,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#automatic-pagination" class="md-nav__link">
     <span class="md-ellipsis">
       
-        자동 페이지네이션
+        Automatic pagination
       
     </span>
   </a>
@@ -696,10 +696,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#duplicates-and-ordering" class="md-nav__link">
     <span class="md-ellipsis">
       
-        중복·순서 주의
+        Duplicates and ordering
       
     </span>
   </a>
@@ -707,10 +707,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#see-also" class="md-nav__link">
     <span class="md-ellipsis">
       
-        연관 문서
+        See also
       
     </span>
   </a>
@@ -2123,10 +2123,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#role-of-cursors" class="md-nav__link">
     <span class="md-ellipsis">
       
-        커서의 역할
+        Role of cursors
       
     </span>
   </a>
@@ -2134,10 +2134,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#continuing-with-cursors-daily-bars-example" class="md-nav__link">
     <span class="md-ellipsis">
       
-        커서로 이어 받기 (일봉 예)
+        Continuing with cursors (daily bars example)
       
     </span>
   </a>
@@ -2145,10 +2145,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#automatic-pagination" class="md-nav__link">
     <span class="md-ellipsis">
       
-        자동 페이지네이션
+        Automatic pagination
       
     </span>
   </a>
@@ -2156,10 +2156,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#duplicates-and-ordering" class="md-nav__link">
     <span class="md-ellipsis">
       
-        중복·순서 주의
+        Duplicates and ordering
       
     </span>
   </a>
@@ -2167,10 +2167,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#see-also" class="md-nav__link">
     <span class="md-ellipsis">
       
-        연관 문서
+        See also
       
     </span>
   </a>
@@ -2204,13 +2204,13 @@
 
 <h1 id="pagination">Pagination<a class="headerlink" href="#pagination" title="Permanent link">&para;</a></h1>
 <p>KIS OpenAPI는 호출당 반환 개수에 상한이 있고, 일부 엔드포인트는 연속 조회용 커서를 돌려줍니다. <code>kxt</code>는 이를 응답 DTO의 <code>cursor</code> 필드로 노출합니다.</p>
-<h2 id="_1">커서의 역할<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h2 id="role-of-cursors">Role of cursors<a class="headerlink" href="#role-of-cursors" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>BarsResponse.cursor</code>는 마지막으로 받은 봉의 시작 시각(<code>next_opened_at</code>)을 담습니다.</li>
 <li><code>None</code>이면 더 이상 이어질 데이터가 없음을 의미합니다.</li>
 <li>현재 구현은 단일 호출 단위 응답을 그대로 반환하며, 기간이 넓어 한 번에 모이지 않을 경우 호출부에서 커서를 사용해 다음 요청의 <code>end</code>를 앞당기는 방식으로 이어 붙입니다.</li>
 </ul>
-<h2 id="_2">커서로 이어 받기 (일봉 예)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="continuing-with-cursors-daily-bars-example">Continuing with cursors (daily bars example)<a class="headerlink" href="#continuing-with-cursors-daily-bars-example" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
@@ -2251,14 +2251,14 @@
 <a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a>
 <a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a><span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
 </code></pre></div>
-<h2 id="_3">자동 페이지네이션<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="automatic-pagination">Automatic pagination<a class="headerlink" href="#automatic-pagination" title="Permanent link">&para;</a></h2>
 <p><code>limit</code> 기반 자동 페이지네이션은 아직 구현되어 있지 않습니다. 넓은 기간 조회는 위 패턴처럼 호출부에서 커서를 따라가며 누적해야 합니다. 향후 공용 헬퍼로 승격될 예정입니다.</p>
-<h2 id="_4">중복·순서 주의<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="duplicates-and-ordering">Duplicates and ordering<a class="headerlink" href="#duplicates-and-ordering" title="Permanent link">&para;</a></h2>
 <ul>
 <li>KIS 응답의 경계 일자는 인접 페이지에서 겹칠 수 있습니다. 누적 시 <code>opened_at</code> 기준 중복 제거를 권장합니다.</li>
 <li>일반적으로 최신 → 과거 순으로 돌아옵니다. 차트 렌더링 용도라면 마지막에 한 번 <code>sorted(..., key=lambda b: b.opened_at)</code>로 재정렬하세요.</li>
 </ul>
-<h2 id="_5">연관 문서<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../unified-api/market-data/get-bars/">get_bars</a></li>
 <li><a href="../rate-limits/">Rate limits</a> — 루프 돌릴 때 유의할 호출 속도.</li>

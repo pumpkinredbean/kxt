@@ -231,7 +231,7 @@
   
     
   
-  홈
+  Home
 
       </a>
     </li>
@@ -428,7 +428,7 @@
   <span class="md-ellipsis">
     
   
-    홈
+    Home
   
 
     
@@ -719,10 +719,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#exception-hierarchy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        예외 계층
+        Exception hierarchy
       
     </span>
   </a>
@@ -730,10 +730,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#when-each-exception-is-raised" class="md-nav__link">
     <span class="md-ellipsis">
       
-        언제 어떤 예외가 발생하는가
+        When each exception is raised
       
     </span>
   </a>
@@ -741,10 +741,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#tryexcept" class="md-nav__link">
+  <a href="#tryexcept-example" class="md-nav__link">
     <span class="md-ellipsis">
       
-        try/except 예제
+        try/except example
       
     </span>
   </a>
@@ -763,10 +763,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kxtvalidationerror" class="md-nav__link">
+  <a href="#kxtvalidationerror-example" class="md-nav__link">
     <span class="md-ellipsis">
       
-        KXTValidationError 예
+        KXTValidationError example
       
     </span>
   </a>
@@ -774,10 +774,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#see-also" class="md-nav__link">
     <span class="md-ellipsis">
       
-        연관 문서
+        See also
       
     </span>
   </a>
@@ -2134,10 +2134,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#exception-hierarchy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        예외 계층
+        Exception hierarchy
       
     </span>
   </a>
@@ -2145,10 +2145,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#when-each-exception-is-raised" class="md-nav__link">
     <span class="md-ellipsis">
       
-        언제 어떤 예외가 발생하는가
+        When each exception is raised
       
     </span>
   </a>
@@ -2156,10 +2156,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#tryexcept" class="md-nav__link">
+  <a href="#tryexcept-example" class="md-nav__link">
     <span class="md-ellipsis">
       
-        try/except 예제
+        try/except example
       
     </span>
   </a>
@@ -2178,10 +2178,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kxtvalidationerror" class="md-nav__link">
+  <a href="#kxtvalidationerror-example" class="md-nav__link">
     <span class="md-ellipsis">
       
-        KXTValidationError 예
+        KXTValidationError example
       
     </span>
   </a>
@@ -2189,10 +2189,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#see-also" class="md-nav__link">
     <span class="md-ellipsis">
       
-        연관 문서
+        See also
       
     </span>
   </a>
@@ -2226,7 +2226,7 @@
 
 <h1 id="errors">Errors<a class="headerlink" href="#errors" title="Permanent link">&para;</a></h1>
 <p><code>kxt</code>는 명시적 예외 계층을 제공합니다. 모든 라이브러리 예외는 <code>KXTError</code>에서 파생되므로, 포괄적인 오류 경계는 <code>KXTError</code> 하나로 잡을 수 있고, 세부 처리가 필요할 때 하위 타입으로 분기합니다.</p>
-<h2 id="_1">예외 계층<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h2 id="exception-hierarchy">Exception hierarchy<a class="headerlink" href="#exception-hierarchy" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>KXTError
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── KXTValidationError          # 호출부가 잘못된 입력을 줬을 때
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>└── KXTClientError
@@ -2249,7 +2249,7 @@
 <a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="n">KXTConnectionError</span><span class="p">,</span>
 <a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="p">)</span>
 </code></pre></div>
-<h2 id="_2">언제 어떤 예외가 발생하는가<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="when-each-exception-is-raised">When each exception is raised<a class="headerlink" href="#when-each-exception-is-raised" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -2296,7 +2296,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="tryexcept">try/except 예제<a class="headerlink" href="#tryexcept" title="Permanent link">&para;</a></h2>
+<h2 id="tryexcept-example">try/except example<a class="headerlink" href="#tryexcept-example" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">kxt</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -2337,7 +2337,7 @@
 <li><code>KXTTransportError</code> — <strong>응답 자체를 받지 못했습니다</strong>. 네트워크·타임아웃·연결 중단 같은 전송 계층 문제로, 보통 재시도 대상입니다.</li>
 </ul>
 <p>이 구분은 <code>ccxt</code>의 <code>ExchangeError</code> vs <code>NetworkError</code> 구분과 동일한 관점입니다.</p>
-<h2 id="kxtvalidationerror"><code>KXTValidationError</code> 예<a class="headerlink" href="#kxtvalidationerror" title="Permanent link">&para;</a></h2>
+<h2 id="kxtvalidationerror-example"><code>KXTValidationError</code> example<a class="headerlink" href="#kxtvalidationerror-example" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">kxt</span><span class="w"> </span><span class="kn">import</span> <span class="n">InstrumentRef</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">kxt.requests</span><span class="w"> </span><span class="kn">import</span> <span class="n">BarsRequest</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
@@ -2345,7 +2345,7 @@
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">BarsRequest</span><span class="p">(</span><span class="n">instrument</span><span class="o">=</span><span class="n">InstrumentRef</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s2">&quot;005930&quot;</span><span class="p">))</span>  <span class="c1"># TypeError</span>
 </code></pre></div>
 <p><code>BarsRequest.timeframe</code>은 필수 필드입니다. <code>InstrumentRef</code>만 넘기는 느슨한 오버로드를 쓸 때는 <code>timeframe</code> 키워드를 함께 제공해야 하며, 누락 시 <code>KXTValidationError</code>가 발생합니다.</p>
-<h2 id="_3">연관 문서<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../rate-limits/">Rate limits</a> — 한도 초과 시 <code>KXTAPIError</code>로 관측.</li>
 <li><a href="../../providers/kis/">KIS provider</a> — 프로바이더별 에러 코드 매핑 참고.</li>

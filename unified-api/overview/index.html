@@ -231,7 +231,7 @@
   
     
   
-  홈
+  Home
 
       </a>
     </li>
@@ -428,7 +428,7 @@
   <span class="md-ellipsis">
     
   
-    홈
+    Home
   
 
     
@@ -818,10 +818,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#categories" class="md-nav__link">
     <span class="md-ellipsis">
       
-        분류
+        Categories
       
     </span>
   </a>
@@ -829,10 +829,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#assumptions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        전제
+        Assumptions
       
     </span>
   </a>
@@ -895,10 +895,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#legacy" class="md-nav__link">
+  <a href="#legacy-compatibility" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Legacy 호환
+        Legacy compatibility
       
     </span>
   </a>
@@ -2168,10 +2168,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#categories" class="md-nav__link">
     <span class="md-ellipsis">
       
-        분류
+        Categories
       
     </span>
   </a>
@@ -2179,10 +2179,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#assumptions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        전제
+        Assumptions
       
     </span>
   </a>
@@ -2245,10 +2245,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#legacy" class="md-nav__link">
+  <a href="#legacy-compatibility" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Legacy 호환
+        Legacy compatibility
       
     </span>
   </a>
@@ -2282,7 +2282,7 @@
 
 <h1 id="unified-api-overview">Unified API Overview<a class="headerlink" href="#unified-api-overview" title="Permanent link">&para;</a></h1>
 <p>Unified API는 프로바이더 간 차이를 흡수한 브로커 중립 메서드 집합입니다. 현재 <code>kxt</code>는 단일 프로바이더(KIS)를 지원하지만, 메서드 이름·파라미터·반환 DTO는 추가 프로바이더를 고려해 설계되어 있습니다.</p>
-<h2 id="_1">분류<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h2 id="categories">Categories<a class="headerlink" href="#categories" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -2309,7 +2309,7 @@
 <p class="admonition-title">KIS는 공개 시세도 인증 필요</p>
 <p>KIS OpenAPI는 시세 조회에도 앱키/앱시크릿이 필요합니다. <code>Public</code>이라는 표지는 "프로바이더 자격으로는 계좌 컨텍스트가 필요하지 않다"는 의미로 사용하세요.</p>
 </div>
-<h2 id="_2">전제<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="assumptions">Assumptions<a class="headerlink" href="#assumptions" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>async-only</strong> — 모든 메서드는 코루틴입니다. 동기 래퍼는 제공하지 않습니다.</li>
 <li><strong>Primitive in, DTO out</strong> — 기본 호출은 종목 코드 문자열과 kwargs로 합니다. 응답·이벤트는 <code>*Response</code>/<code>*Event</code> 데이터클래스로 받습니다. 입력을 통째로 묶고 싶으면 <code>kxt.requests</code>의 <code>*Request</code> DTO를 power-user 경로로 사용할 수 있습니다.</li>
@@ -2481,7 +2481,7 @@
 <p class="admonition-title">문서 작성 기준</p>
 <p><code>get_bars</code>가 골드 스탠다드 템플릿입니다. 모든 메서드 페이지는 동일 구조(At a glance → Signature → Parameters → Returns → Example → Sample response → Notes → KIS specifics → Common pitfalls → See also)를 따릅니다.</p>
 </div>
-<h2 id="legacy">Legacy 호환<a class="headerlink" href="#legacy" title="Permanent link">&para;</a></h2>
+<h2 id="legacy-compatibility">Legacy compatibility<a class="headerlink" href="#legacy-compatibility" title="Permanent link">&para;</a></h2>
 <p><code>fetch_*</code> 형태의 이전 메서드와 그룹 네임스페이스(<code>client.market.*</code>, <code>client.streams.*</code>)가 하위 호환을 위해 남아 있습니다. 신규 코드에서는 평평한 <code>get_*</code>/<code>stream_*</code> 메서드를 사용하세요.</p>
 
 

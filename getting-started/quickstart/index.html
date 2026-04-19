@@ -231,7 +231,7 @@
   
     
   
-  홈
+  Home
 
       </a>
     </li>
@@ -428,7 +428,7 @@
   <span class="md-ellipsis">
     
   
-    홈
+    Home
   
 
     
@@ -635,10 +635,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#complete-example" class="md-nav__link">
     <span class="md-ellipsis">
       
-        완결 예제
+        Complete example
       
     </span>
   </a>
@@ -646,10 +646,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#expected-output" class="md-nav__link">
     <span class="md-ellipsis">
       
-        예상 출력
+        Expected output
       
     </span>
   </a>
@@ -657,10 +657,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#what-happened" class="md-nav__link">
     <span class="md-ellipsis">
       
-        일어난 일
+        What happened
       
     </span>
   </a>
@@ -668,10 +668,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#same-call-via-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI로 동일 호출
+        Same call via CLI
       
     </span>
   </a>
@@ -679,10 +679,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#next-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
-        다음 단계
+        Next steps
       
     </span>
   </a>
@@ -2123,10 +2123,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#complete-example" class="md-nav__link">
     <span class="md-ellipsis">
       
-        완결 예제
+        Complete example
       
     </span>
   </a>
@@ -2134,10 +2134,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#expected-output" class="md-nav__link">
     <span class="md-ellipsis">
       
-        예상 출력
+        Expected output
       
     </span>
   </a>
@@ -2145,10 +2145,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#what-happened" class="md-nav__link">
     <span class="md-ellipsis">
       
-        일어난 일
+        What happened
       
     </span>
   </a>
@@ -2156,10 +2156,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#same-call-via-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI로 동일 호출
+        Same call via CLI
       
     </span>
   </a>
@@ -2167,10 +2167,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#next-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
-        다음 단계
+        Next steps
       
     </span>
   </a>
@@ -2205,7 +2205,7 @@
 <h1 id="quickstart">Quickstart<a class="headerlink" href="#quickstart" title="Permanent link">&para;</a></h1>
 <p>이 문서는 <code>kxt</code>가 설치되어 있고 KIS 앱키·앱시크릿이 발급되어 있다는 전제에서 시작합니다. 설정을 먼저 끝내려면 <a href="../installation/">Installation</a>과 <a href="../authentication/">Authentication</a>을 먼저 읽어주세요.</p>
 <p>이번 예제에서는 삼성전자(<code>005930</code>)의 최근 영업일 5개 일봉을 가져와 출력합니다.</p>
-<h2 id="_1">완결 예제<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h2 id="complete-example">Complete example<a class="headerlink" href="#complete-example" title="Permanent link">&para;</a></h2>
 <p>아래 스크립트를 <code>quickstart.py</code>로 저장합니다. <code>&lt;APP_KEY&gt;</code>와 <code>&lt;APP_SECRET&gt;</code>은 본인의 KIS OpenAPI 자격증명으로 대체하세요. 자격증명을 어떤 경로로 보관·로딩할지는 호출자가 결정합니다.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># quickstart.py</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
@@ -2243,7 +2243,7 @@
 <p>실행:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python<span class="w"> </span>quickstart.py
 </code></pre></div>
-<h2 id="_2">예상 출력<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="expected-output">Expected output<a class="headerlink" href="#expected-output" title="Permanent link">&para;</a></h2>
 <p>실제 값은 영업일에 따라 다르지만, 형태는 아래와 같습니다.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>timeframe=day adjusted=True
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>date             open     high      low    close       volume
@@ -2253,19 +2253,19 @@
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>2025-04-11      71900    72000    70800    70900     15556677
 <a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>2025-04-14      70900    71400    70500    71000     10203040
 </code></pre></div>
-<h2 id="_3">일어난 일<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="what-happened">What happened<a class="headerlink" href="#what-happened" title="Permanent link">&para;</a></h2>
 <ol>
 <li><code>KISClient</code>가 컨텍스트 매니저로 들어가며 내부 트랜스포트(HTTP 세션, 토큰)가 준비됩니다.</li>
 <li><code>get_bars(...)</code>는 종목 코드 문자열(<code>symbol</code>)을 첫 인자로 받습니다. 더 명시적인 형태가 필요하면 <code>BarsRequest(instrument=InstrumentRef(...))</code>를 그대로 넘길 수도 있습니다.</li>
 <li><code>get_bars(...)</code>는 KIS 일봉 엔드포인트(<code>FHKST03010100</code>)를 호출하고 응답을 <code>Bar</code> 튜플로 정규화합니다.</li>
 <li>컨텍스트를 빠져나오면 HTTP 커넥션이 반환됩니다.</li>
 </ol>
-<h2 id="cli">CLI로 동일 호출<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
+<h2 id="same-call-via-cli">Same call via CLI<a class="headerlink" href="#same-call-via-cli" title="Permanent link">&para;</a></h2>
 <p>라이브러리와 동일한 결과를 CLI로도 얻을 수 있습니다. CLI는 <code>KIS_APP_KEY</code> / <code>KIS_APP_SECRET</code> 환경변수를 사용합니다 (<a href="../authentication/">Authentication</a> 참조).</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>kxt<span class="w"> </span>bars<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--timeframe<span class="w"> </span>day<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>--start<span class="w"> </span><span class="m">2025</span>-04-01<span class="w"> </span>--end<span class="w"> </span><span class="m">2025</span>-04-14
 </code></pre></div>
-<h2 id="_4">다음 단계<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../unified-api/market-data/get-bars/">get_bars 레퍼런스</a> — 파라미터와 KIS 특이사항.</li>
 <li><a href="../pagination/">Pagination</a> — 기간이 길 때 커서가 어떻게 움직이는지.</li>

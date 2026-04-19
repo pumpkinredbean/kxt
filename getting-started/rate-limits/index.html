@@ -231,7 +231,7 @@
   
     
   
-  홈
+  Home
 
       </a>
     </li>
@@ -428,7 +428,7 @@
   <span class="md-ellipsis">
     
   
-    홈
+    Home
   
 
     
@@ -691,10 +691,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kis" class="md-nav__link">
+  <a href="#kis-rate-limits-overview" class="md-nav__link">
     <span class="md-ellipsis">
       
-        KIS 레이트 리밋 개요
+        KIS rate limits overview
       
     </span>
   </a>
@@ -702,10 +702,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#library-internal-handling" class="md-nav__link">
     <span class="md-ellipsis">
       
-        라이브러리 내부 처리
+        Library internal handling
       
     </span>
   </a>
@@ -713,10 +713,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#when-limits-are-exceeded" class="md-nav__link">
     <span class="md-ellipsis">
       
-        한도 초과 시
+        When limits are exceeded
       
     </span>
   </a>
@@ -724,10 +724,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#recommended-patterns" class="md-nav__link">
     <span class="md-ellipsis">
       
-        권장 패턴
+        Recommended patterns
       
     </span>
   </a>
@@ -735,10 +735,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#see-also" class="md-nav__link">
     <span class="md-ellipsis">
       
-        연관 문서
+        See also
       
     </span>
   </a>
@@ -2123,10 +2123,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kis" class="md-nav__link">
+  <a href="#kis-rate-limits-overview" class="md-nav__link">
     <span class="md-ellipsis">
       
-        KIS 레이트 리밋 개요
+        KIS rate limits overview
       
     </span>
   </a>
@@ -2134,10 +2134,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#library-internal-handling" class="md-nav__link">
     <span class="md-ellipsis">
       
-        라이브러리 내부 처리
+        Library internal handling
       
     </span>
   </a>
@@ -2145,10 +2145,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#when-limits-are-exceeded" class="md-nav__link">
     <span class="md-ellipsis">
       
-        한도 초과 시
+        When limits are exceeded
       
     </span>
   </a>
@@ -2156,10 +2156,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#recommended-patterns" class="md-nav__link">
     <span class="md-ellipsis">
       
-        권장 패턴
+        Recommended patterns
       
     </span>
   </a>
@@ -2167,10 +2167,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#see-also" class="md-nav__link">
     <span class="md-ellipsis">
       
-        연관 문서
+        See also
       
     </span>
   </a>
@@ -2204,7 +2204,7 @@
 
 <h1 id="rate-limits">Rate limits<a class="headerlink" href="#rate-limits" title="Permanent link">&para;</a></h1>
 <p>KIS OpenAPI는 호출 유형별로 분당·초당 한도가 다릅니다. <code>kxt</code>는 기본적으로 사용자 호출을 그대로 전달하되, 인증 토큰 캐싱과 전송 레벨 재시도를 내부적으로 처리합니다.</p>
-<h2 id="kis">KIS 레이트 리밋 개요<a class="headerlink" href="#kis" title="Permanent link">&para;</a></h2>
+<h2 id="kis-rate-limits-overview">KIS rate limits overview<a class="headerlink" href="#kis-rate-limits-overview" title="Permanent link">&para;</a></h2>
 <p>KIS OpenAPI는 대략 아래 버킷으로 나뉩니다. 정확한 수치는 KIS 공식 안내를 참조하세요.</p>
 <table>
 <thead>
@@ -2233,13 +2233,13 @@
 </tbody>
 </table>
 <p>공식 한도 표: <a href="https://apiportal.koreainvestment.com/">https://apiportal.koreainvestment.com/</a></p>
-<h2 id="_1">라이브러리 내부 처리<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h2 id="library-internal-handling">Library internal handling<a class="headerlink" href="#library-internal-handling" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>토큰 관리</strong> — 액세스 토큰은 로컬 캐시에 저장되어 만료 직전까지 재사용됩니다. 호출마다 토큰을 재발급하지 않습니다.</li>
 <li><strong>전송 오류 재시도</strong> — 타임아웃·연결 실패는 <code>KXTTimeoutError</code>/<code>KXTConnectionError</code>로 올라옵니다. 자동 재시도는 적용하지 않으며, 호출부에서 명시적으로 재시도 정책을 세우는 것을 권장합니다.</li>
 <li><strong>WebSocket 재연결</strong> — 실시간 세션은 지수 백오프(최대 30초)로 자동 재연결하고, 구독 상태를 복원합니다.</li>
 </ul>
-<h2 id="_2">한도 초과 시<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="when-limits-are-exceeded">When limits are exceeded<a class="headerlink" href="#when-limits-are-exceeded" title="Permanent link">&para;</a></h2>
 <p>한도를 초과하면 KIS는 에러 코드를 담은 응답을 돌려보내며, <code>kxt</code>는 이를 <code>KXTAPIError</code>로 감쌉니다(<code>code</code> 속성에 원본 코드 포함).</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">kxt</span><span class="w"> </span><span class="kn">import</span> <span class="n">KXTAPIError</span><span class="p">,</span> <span class="n">KISClient</span><span class="p">,</span> <span class="n">InstrumentRef</span>
@@ -2255,13 +2255,13 @@
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>            <span class="k">return</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get_quote</span><span class="p">(</span><span class="n">QuoteRequest</span><span class="p">(</span><span class="n">instrument</span><span class="o">=</span><span class="n">InstrumentRef</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="n">symbol</span><span class="p">)))</span>
 <a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>        <span class="k">raise</span>
 </code></pre></div>
-<h2 id="_3">권장 패턴<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="recommended-patterns">Recommended patterns<a class="headerlink" href="#recommended-patterns" title="Permanent link">&para;</a></h2>
 <ul>
 <li>루프 호출 시 <code>await asyncio.sleep(...)</code>을 명시적으로 삽입하세요.</li>
 <li>동일 데이터를 반복 조회하지 않도록 호출 측 캐시를 고려하세요(토큰 외 응답 캐시는 라이브러리가 제공하지 않습니다).</li>
 <li>대량 히스토리컬 수집은 장외 시간대에 분할 실행하세요.</li>
 </ul>
-<h2 id="_4">연관 문서<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../pagination/">Pagination</a></li>
 <li><a href="../errors/">Errors</a></li>
