@@ -2,7 +2,7 @@
 
 `kxt`는 명시적 예외 계층을 제공합니다. 모든 라이브러리 예외는 `KXTError`에서 파생되므로, 포괄적인 오류 경계는 `KXTError` 하나로 잡을 수 있고, 세부 처리가 필요할 때 하위 타입으로 분기합니다.
 
-## 예외 계층
+## Exception hierarchy
 
 ```text
 KXTError
@@ -31,7 +31,7 @@ from kxt import (
 )
 ```
 
-## 언제 어떤 예외가 발생하는가
+## When each exception is raised
 
 | 예외 | 원인 | 재시도 가능? |
 |---|---|---|
@@ -43,7 +43,7 @@ from kxt import (
 | `KXTConnectionError` | 연결 실패·중단 | 일반적으로 가능 |
 | `KXTTransportError` | 기타 전송 계층 오류 | 상황에 따라 |
 
-## try/except 예제
+## try/except example
 
 ```python
 import asyncio
@@ -88,7 +88,7 @@ async def safe_bars(client: KISClient, symbol: str):
 
 이 구분은 `ccxt`의 `ExchangeError` vs `NetworkError` 구분과 동일한 관점입니다.
 
-## `KXTValidationError` 예
+## `KXTValidationError` example
 
 ```python
 from kxt import InstrumentRef
@@ -100,7 +100,7 @@ BarsRequest(instrument=InstrumentRef(symbol="005930"))  # TypeError
 
 `BarsRequest.timeframe`은 필수 필드입니다. `InstrumentRef`만 넘기는 느슨한 오버로드를 쓸 때는 `timeframe` 키워드를 함께 제공해야 하며, 누락 시 `KXTValidationError`가 발생합니다.
 
-## 연관 문서
+## See also
 
 - [Rate limits](rate-limits.md) — 한도 초과 시 `KXTAPIError`로 관측.
 - [KIS provider](../providers/kis.md) — 프로바이더별 에러 코드 매핑 참고.

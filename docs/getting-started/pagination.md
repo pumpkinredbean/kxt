@@ -2,13 +2,13 @@
 
 KIS OpenAPI는 호출당 반환 개수에 상한이 있고, 일부 엔드포인트는 연속 조회용 커서를 돌려줍니다. `kxt`는 이를 응답 DTO의 `cursor` 필드로 노출합니다.
 
-## 커서의 역할
+## Role of cursors
 
 - `BarsResponse.cursor`는 마지막으로 받은 봉의 시작 시각(`next_opened_at`)을 담습니다.
 - `None`이면 더 이상 이어질 데이터가 없음을 의미합니다.
 - 현재 구현은 단일 호출 단위 응답을 그대로 반환하며, 기간이 넓어 한 번에 모이지 않을 경우 호출부에서 커서를 사용해 다음 요청의 `end`를 앞당기는 방식으로 이어 붙입니다.
 
-## 커서로 이어 받기 (일봉 예)
+## Continuing with cursors (daily bars example)
 
 ```python
 import asyncio
@@ -52,16 +52,16 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
-## 자동 페이지네이션
+## Automatic pagination
 
 `limit` 기반 자동 페이지네이션은 아직 구현되어 있지 않습니다. 넓은 기간 조회는 위 패턴처럼 호출부에서 커서를 따라가며 누적해야 합니다. 향후 공용 헬퍼로 승격될 예정입니다.
 
-## 중복·순서 주의
+## Duplicates and ordering
 
 - KIS 응답의 경계 일자는 인접 페이지에서 겹칠 수 있습니다. 누적 시 `opened_at` 기준 중복 제거를 권장합니다.
 - 일반적으로 최신 → 과거 순으로 돌아옵니다. 차트 렌더링 용도라면 마지막에 한 번 `sorted(..., key=lambda b: b.opened_at)`로 재정렬하세요.
 
-## 연관 문서
+## See also
 
 - [get_bars](../unified-api/market-data/get-bars.md)
 - [Rate limits](rate-limits.md) — 루프 돌릴 때 유의할 호출 속도.

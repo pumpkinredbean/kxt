@@ -4,14 +4,14 @@
 
 `kxt`는 한국거래소(KRX) 주식·선물·옵션 데이터와 주문을 비동기 파이썬 코드로 다루기 위한 SDK입니다. 현재는 KIS(한국투자증권) OpenAPI 어댑터 하나를 제공하며, 브로커 중립 DTO 계층 위에 얇게 얹혀 있습니다.
 
-## 핵심 특징
+## Key features
 
 - **비동기 전용** — `async`/`await` 기반. 이벤트 루프 친화적이며 블로킹 I/O를 끌어들이지 않습니다.
 - **브로커 중립 DTO** — KIS 필드명을 `InstrumentRef`, `MarketBar`, `OrderBookSnapshot` 같은 통일된 데이터클래스로 정규화합니다.
 - **라이브러리 우선** — 네트워크 부작용 없는 import, 백그라운드 스레드 없음, 설정 파일 강요 없음.
 - **얇은 CLI** — `kxt quote`, `kxt bars` 같은 명령으로 동일한 코드 경로를 그대로 호출할 수 있습니다.
 
-## 30초 예제
+## 30-second example
 
 ```python
 import asyncio
@@ -38,7 +38,7 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
-## 아키텍처 한눈에 보기
+## Architecture at a glance
 
 ```
 ┌──────────────────────────┐
@@ -58,7 +58,7 @@ asyncio.run(main())
 └──────────────────────────┘
 ```
 
-## 문서 구조
+## Documentation structure
 
 - **[Getting Started](getting-started/installation.md)** — 설치, 인증, 5분 튜토리얼, 공통 개념(페이지네이션·레이트 리밋·에러).
 - **[Unified API](unified-api/overview.md)** — 브로커 중립 메서드 레퍼런스. 각 메서드마다 시그니처·파라미터·예제·KIS 특이사항을 한 페이지에 담았습니다.

@@ -4,7 +4,7 @@
 
 이번 예제에서는 삼성전자(`005930`)의 최근 영업일 5개 일봉을 가져와 출력합니다.
 
-## 완결 예제
+## Complete example
 
 아래 스크립트를 `quickstart.py`로 저장합니다. `<APP_KEY>`와 `<APP_SECRET>`은 본인의 KIS OpenAPI 자격증명으로 대체하세요. 자격증명을 어떤 경로로 보관·로딩할지는 호출자가 결정합니다.
 
@@ -49,7 +49,7 @@ if __name__ == "__main__":
 python quickstart.py
 ```
 
-## 예상 출력
+## Expected output
 
 실제 값은 영업일에 따라 다르지만, 형태는 아래와 같습니다.
 
@@ -63,14 +63,14 @@ date             open     high      low    close       volume
 2025-04-14      70900    71400    70500    71000     10203040
 ```
 
-## 일어난 일
+## What happened
 
 1. `KISClient`가 컨텍스트 매니저로 들어가며 내부 트랜스포트(HTTP 세션, 토큰)가 준비됩니다.
 2. `get_bars(...)`는 종목 코드 문자열(`symbol`)을 첫 인자로 받습니다. 더 명시적인 형태가 필요하면 `BarsRequest(instrument=InstrumentRef(...))`를 그대로 넘길 수도 있습니다.
 3. `get_bars(...)`는 KIS 일봉 엔드포인트(`FHKST03010100`)를 호출하고 응답을 `Bar` 튜플로 정규화합니다.
 4. 컨텍스트를 빠져나오면 HTTP 커넥션이 반환됩니다.
 
-## CLI로 동일 호출
+## Same call via CLI
 
 라이브러리와 동일한 결과를 CLI로도 얻을 수 있습니다. CLI는 `KIS_APP_KEY` / `KIS_APP_SECRET` 환경변수를 사용합니다 ([Authentication](authentication.md) 참조).
 
@@ -79,7 +79,7 @@ kxt bars 005930 --provider kis --timeframe day \
   --start 2025-04-01 --end 2025-04-14
 ```
 
-## 다음 단계
+## Next steps
 
 - [get_bars 레퍼런스](../unified-api/market-data/get-bars.md) — 파라미터와 KIS 특이사항.
 - [Pagination](pagination.md) — 기간이 길 때 커서가 어떻게 움직이는지.

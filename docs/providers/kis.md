@@ -2,12 +2,12 @@
 
 Korea Investment & Securities(한국투자증권) OpenAPI 어댑터입니다. 현재 `kxt`의 유일한 프로바이더이며, 국내주식 시세와 계좌·주문 기능을 담당합니다.
 
-## 공식 문서
+## Official documentation
 
 - 포털: <https://apiportal.koreainvestment.com/>
 - API 서비스: <https://apiportal.koreainvestment.com/apiservice>
 
-## 인증
+## Authentication
 
 - `app_key`, `app_secret`이 필수입니다.
 - 계좌 기반 메서드(주문·잔고)는 `account_no`, `account_product_code`가 필요합니다.
@@ -19,7 +19,7 @@ Korea Investment & Securities(한국투자증권) OpenAPI 어댑터입니다. �
 
 자세한 설정은 [Authentication](../getting-started/authentication.md)을 참조하세요.
 
-## 지원 메서드 매트릭스
+## Supported methods matrix
 
 | 카테고리 | 메서드 | 지원 | 비고 |
 |---|---|:---:|---|
@@ -48,7 +48,7 @@ Korea Investment & Securities(한국투자증권) OpenAPI 어댑터입니다. �
 | Unsupported | 시장 상태 스트림 | ❌ | 미연결 |
 | Unsupported | 해외주식·파생 | ❌ | 이번 슬라이스 범위 외 |
 
-## 주요 KIS TR_ID
+## Key KIS TR_IDs
 
 | 용도 | TR_ID |
 |---|---|
@@ -74,13 +74,13 @@ Korea Investment & Securities(한국투자증권) OpenAPI 어댑터입니다. �
 
 KIS OpenAPI의 공식 한도를 따릅니다. [Rate limits](../getting-started/rate-limits.md)를 참고하세요.
 
-## 제약
+## Constraints
 
 - 국내주식(장내·코스닥) 중심. 해외·파생은 후속 슬라이스.
 - `get_investor_flow`는 장 마감 이후 공개되는 정규장 집계입니다. 실시간이 아닙니다.
 - 시장 상태는 시세 payload의 상태 필드에서 파생합니다. 별도 상태 엔드포인트를 호출하지 않습니다.
 
-## 연관 문서
+## See also
 
 - [get_bars](../unified-api/market-data/get-bars.md) — KIS 봉 엔드포인트가 어떻게 매핑되는지.
 - [Schemas](../reference/schemas.md) — 응답 DTO 구조.

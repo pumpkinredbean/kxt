@@ -2,7 +2,7 @@
 
 Unified API는 프로바이더 간 차이를 흡수한 브로커 중립 메서드 집합입니다. 현재 `kxt`는 단일 프로바이더(KIS)를 지원하지만, 메서드 이름·파라미터·반환 DTO는 추가 프로바이더를 고려해 설계되어 있습니다.
 
-## 분류
+## Categories
 
 | 구분 | 의미 |
 |---|---|
@@ -13,7 +13,7 @@ Unified API는 프로바이더 간 차이를 흡수한 브로커 중립 메서�
 !!! note "KIS는 공개 시세도 인증 필요"
     KIS OpenAPI는 시세 조회에도 앱키/앱시크릿이 필요합니다. `Public`이라는 표지는 "프로바이더 자격으로는 계좌 컨텍스트가 필요하지 않다"는 의미로 사용하세요.
 
-## 전제
+## Assumptions
 
 - **async-only** — 모든 메서드는 코루틴입니다. 동기 래퍼는 제공하지 않습니다.
 - **Primitive in, DTO out** — 기본 호출은 종목 코드 문자열과 kwargs로 합니다. 응답·이벤트는 `*Response`/`*Event` 데이터클래스로 받습니다. 입력을 통째로 묶고 싶으면 `kxt.requests`의 `*Request` DTO를 power-user 경로로 사용할 수 있습니다.
@@ -85,6 +85,6 @@ WebSocket 기반 실시간 이터레이터입니다.
 !!! info "문서 작성 기준"
     `get_bars`가 골드 스탠다드 템플릿입니다. 모든 메서드 페이지는 동일 구조(At a glance → Signature → Parameters → Returns → Example → Sample response → Notes → KIS specifics → Common pitfalls → See also)를 따릅니다.
 
-## Legacy 호환
+## Legacy compatibility
 
 `fetch_*` 형태의 이전 메서드와 그룹 네임스페이스(`client.market.*`, `client.streams.*`)가 하위 호환을 위해 남아 있습니다. 신규 코드에서는 평평한 `get_*`/`stream_*` 메서드를 사용하세요.

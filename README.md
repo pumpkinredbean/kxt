@@ -10,20 +10,20 @@
 
 `kxt`는 한국거래소(KRX) 주식·선물·옵션을 비동기 파이썬으로 다루기 위한 SDK입니다. 현재는 KIS(한국투자증권) OpenAPI 어댑터 하나를 제공하며, 브로커 중립 DTO 계층 위에 얇게 얹혀 있습니다.
 
-## 누구를 위한 것인가요
+## Audience
 
 - 파이썬으로 KRX 데이터를 수집하거나 자동매매 코드를 작성하는 개발자
 - `ccxt` 계열의 브로커 중립 인터페이스를 한국 시장에서 찾는 사용자
 - 라이브러리 우선(runtime-free) SDK를 선호하는 사용자
 
-## 핵심 기능
+## Key features
 
 - **비동기 전용** — `async`/`await` 기반, 이벤트 루프 친화적
 - **브로커 중립 DTO** — `InstrumentRef`, `Bar`, `OrderBookSnapshot` 등 정규화된 응답 타입 (입력은 종목 코드 문자열)
 - **시세·주문·스트림** — `get_bars`, `get_quote`, `submit_order`, `stream_trades` 등 flat 메서드
 - **얇은 CLI** — 동일한 코드 경로를 `kxt bars`, `kxt quote` 같은 명령으로 호출
 
-## 임포트 정책
+## Import policy
 
 - `from kxt import ...` — `KISClient`, 응답·이벤트 DTO, enum, 에러 등 사용자가 *읽는* 타입.
 - `from kxt.requests import ...` — `BarsRequest`, `SubmitOrderRequest`, `*Cursor`, `*Subscription`, `OrderInstruction`, `OrderAmendment`, `ProviderRef` 같은 power-user 입력 DTO. 일반 호출은 primitive(`symbol` 문자열, kwargs)만으로 충분합니다.
@@ -67,7 +67,7 @@ asyncio.run(main())
 
 `<APP_KEY>` / `<APP_SECRET>`은 본인의 KIS OpenAPI 자격증명으로 대체하세요. SDK는 환경변수에 관여하지 않습니다. 환경변수 기반 흐름은 CLI에서만 사용합니다.
 
-## 문서
+## Documentation
 
 전체 한국어 문서: <https://pumpkinredbean.github.io/kxt/>
 

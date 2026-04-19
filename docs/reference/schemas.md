@@ -10,7 +10,7 @@
     from kxt.requests import BarsRequest
     ```
 
-## 기본 참조 타입
+## Core reference types
 
 ### InstrumentRef
 
@@ -37,7 +37,7 @@
 | `MONTH` | 월봉 |
 | `YEAR` | 년봉 |
 
-## Market data DTO
+## Market data DTOs
 
 ### Bar
 
@@ -121,7 +121,7 @@
 
 `TradePrint` — 응답 DTO용 경량 변형 (단일 인스트루먼트 루트 중복 제거).
 
-## 코드 기반 자동 렌더
+## Auto-rendered from code
 
 핵심 모듈을 직접 참조하려면 아래를 사용하세요.
 
@@ -137,7 +137,7 @@
       show_root_heading: false
       heading_level: 3
 
-## Market data 추가 DTO
+## Additional market data DTOs
 
 ### OrderBookRequest / OrderBookResponse
 
@@ -198,7 +198,7 @@
 - **buy_quantity / sell_quantity / net_buy_quantity** (`Decimal | None`)
 - **buy_notional / sell_notional / net_buy_notional** (`Decimal | None`)
 
-## Account / Trading DTO
+## Account and trading DTOs
 
 ### AccountSummary / ProviderRef
 
@@ -404,7 +404,7 @@
 - **stop_price** (`Decimal | None`) — 미사용
 - **order_type** (`OrderType | None`)
 
-## Streaming DTO
+## Streaming DTOs
 
 ### TradeEvent
 
@@ -473,7 +473,7 @@
 - **report** (`ExecutionReport`)
 - **instrument** (`InstrumentRef`)
 
-## Enums (요약)
+## Enums (summary)
 
 - **OrderSide**: `BUY`, `SELL`
 - **OrderType**: `MARKET`, `LIMIT`, `STOP`, `STOP_LIMIT`, `BEST`, `UNKNOWN`

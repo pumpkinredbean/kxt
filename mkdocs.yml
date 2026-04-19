@@ -66,7 +66,7 @@ plugins:
             members_order: source
 
 nav:
-  - 홈: index.md
+  - Home: index.md
   - Getting Started:
       - Installation: getting-started/installation.md
       - Authentication: getting-started/authentication.md
