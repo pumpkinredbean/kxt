@@ -2442,17 +2442,13 @@
 <td>상품코드 (예: <code>01</code>)</td>
 </tr>
 <tr>
-<td><code>KIS_HTS_ID</code></td>
-<td><code>kxt order-events</code>에서 필수 (또는 <code>--hts-id</code> 플래그)</td>
-<td>HTS ID</td>
-</tr>
-<tr>
 <td><code>KXT_KIS_WS_PROXY</code></td>
 <td>선택</td>
 <td>웹소켓 프록시 URL (<code>auto</code> 또는 URL)</td>
 </tr>
 </tbody>
 </table>
+<p>HTS ID는 SDK <code>stream_order_events</code> 호출에서만 필요한 키워드 인자이며 CLI 표면에서는 더 이상 소비되지 않습니다. SDK 호출부에서 <code>KISClient(..., hts_id=...)</code>에 직접 넘기세요.</p>
 <h3 id="env-example"><code>.env</code> example<a class="headerlink" href="#env-example" title="Permanent link">&para;</a></h3>
 <p>CLI 사용 시 프로젝트 루트에 <code>.env</code>를 두고 셸에서 export 하는 패턴이 일반적입니다.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># .env — 절대 커밋 금지</span>
@@ -2464,12 +2460,14 @@
 </code></pre></div>
 <h3 id="cli-check">CLI check<a class="headerlink" href="#cli-check" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kxt<span class="w"> </span>doctor
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># {</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1">#   &quot;KIS_APP_KEY&quot;: &quot;set&quot;,</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1">#   &quot;KIS_APP_SECRET&quot;: &quot;set&quot;,</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1">#   ...</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># }</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># Provider: kis   Ready: yes</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1">#</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Credentials:</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1">#   KIS_APP_KEY: set</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1">#   KIS_APP_SECRET: set</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># ...</span>
 </code></pre></div>
+<p>원시 JSON 형식이 필요하면 <code>kxt --json doctor</code>를 사용하세요.</p>
 <p>자세한 CLI 사용법은 <a href="../../cli/">CLI 레퍼런스</a>를 참조하세요.</p>
 <h2 id="token-cache">Token cache<a class="headerlink" href="#token-cache" title="Permanent link">&para;</a></h2>
 <p>KIS 액세스 토큰은 로컬 사용자 캐시 디렉터리에 저장되어 만료 직전까지 재사용됩니다. 토큰을 새로 받고 싶다면 캐시 파일을 삭제하면 됩니다. 캐시 위치는 OS별 표준 경로를 따릅니다(<code>XDG_CACHE_HOME</code>, <code>~/Library/Caches</code>, <code>%LOCALAPPDATA%</code>).</p>

@@ -1798,6 +1798,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#global-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global flags
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#authentication" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1846,17 +1857,6 @@
     <span class="md-ellipsis">
       
         Orders
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#fill-notification-stream" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fill notification stream
       
     </span>
   </a>
@@ -2173,6 +2173,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#global-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global flags
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#authentication" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2228,17 +2239,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#fill-notification-stream" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fill notification stream
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#output-format" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2286,12 +2286,19 @@
 
 
 <h1 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h1>
-<p><code>kxt</code> CLI는 라이브러리와 동일한 공개 메서드를 얇게 감싼 커맨드라인 래퍼입니다. 실제 네트워크 호출 경로는 라이브러리와 같고, 결과는 JSON으로 stdout에 출력됩니다.</p>
+<p><code>kxt</code> CLI는 라이브러리와 동일한 공개 메서드를 얇게 감싼 커맨드라인 래퍼입니다. 실제 네트워크 호출 경로는 라이브러리와 같습니다.</p>
+<p>기본 출력은 사람과 LLM 모두 읽기 쉬운 구조화된 <strong>plain-text</strong> 포맷입니다. 원시 JSON이 필요하면 전역 <code>--json</code> 플래그를 사용하세요.</p>
 <h2 id="verify-installation">Verify installation<a class="headerlink" href="#verify-installation" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>kxt<span class="w"> </span>--help
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>kxt<span class="w"> </span>doctor
 </code></pre></div>
 <p><code>kxt doctor</code>는 자격증명 환경변수 상태를 점검합니다.</p>
+<h2 id="global-flags">Global flags<a class="headerlink" href="#global-flags" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>--json</code>  : 구조화 plain-text 대신 원시 JSON을 출력합니다.</li>
+<li><code>--debug</code> : 예상치 못한 내부 오류에 대해 Python traceback을 보여줍니다.</li>
+</ul>
+<p>두 플래그 모두 <strong>서브커맨드 앞</strong>, 즉 <code>kxt</code> 바로 뒤에 씁니다 (예: <code>kxt --json quote 005930</code>).</p>
 <h2 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">&para;</a></h2>
 <p>CLI는 시크릿을 플래그로 받지 않습니다. 반드시 환경변수를 사용하세요 (<a href="../getting-started/authentication/">Authentication</a> 참조).</p>
 <h2 id="general-commands">General commands<a class="headerlink" href="#general-commands" title="Permanent link">&para;</a></h2>
@@ -2304,12 +2311,10 @@
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>kxt<span class="w"> </span>bars<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--timeframe<span class="w"> </span>5m
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>kxt<span class="w"> </span>recent-trades<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--limit<span class="w"> </span><span class="m">5</span>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>kxt<span class="w"> </span>orderbook<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>kxt<span class="w"> </span>orderbook<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--stream<span class="w"> </span>--count<span class="w"> </span><span class="m">5</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>kxt<span class="w"> </span>market-status<span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--symbol<span class="w"> </span><span class="m">005930</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>kxt<span class="w"> </span>investor-flow<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>kxt<span class="w"> </span>trades<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--count<span class="w"> </span><span class="m">5</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>kxt<span class="w"> </span>market-status<span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--symbol<span class="w"> </span><span class="m">005930</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>kxt<span class="w"> </span>investor-flow<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis
 </code></pre></div>
-<p><code>--stream</code> 없이 사용한 <code>--count</code> 옵션은 무시됩니다. <code>recent-trades</code>는 당일 국내주식 체결만 지원합니다. <code>investor-flow</code>는 장 마감 이후 공개되는 정규장 집계입니다.</p>
+<p><code>recent-trades</code>는 당일 국내주식 체결만 지원합니다. <code>investor-flow</code>는 장 마감 이후 공개되는 정규장 집계입니다.</p>
 <h2 id="account-orders">Account &amp; orders<a class="headerlink" href="#account-orders" title="Permanent link">&para;</a></h2>
 <p>계좌번호(CANO)와 상품코드가 필요합니다. <code>KIS_ACCOUNT_NO</code>, <code>KIS_ACCOUNT_PRODUCT_CODE</code> 환경변수로도 넣을 수 있고, 플래그가 우선합니다.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>kxt<span class="w"> </span>balance<span class="w">         </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
@@ -2320,6 +2325,7 @@
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>kxt<span class="w"> </span>order-history<span class="w">   </span>--start<span class="w"> </span><span class="m">2025</span>-01-01<span class="w"> </span>--end<span class="w"> </span><span class="m">2025</span>-01-31<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">                    </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
 </code></pre></div>
+<p>plain-text 출력에서 계좌번호는 마지막 4자리만 노출됩니다(예: <code>****6789</code>). 전체 계좌번호가 필요하다면 <code>--json</code>을 사용하세요.</p>
 <h2 id="orders">Orders<a class="headerlink" href="#orders" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>kxt<span class="w"> </span>place-order<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--side<span class="w"> </span>BUY<span class="w"> </span>--order-type<span class="w"> </span>LIMIT<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span>--quantity<span class="w"> </span><span class="m">1</span><span class="w"> </span>--limit-price<span class="w"> </span><span class="m">70000</span><span class="w"> </span><span class="se">\</span>
@@ -2332,13 +2338,19 @@
 <a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">  </span>--quantity<span class="w"> </span><span class="m">1</span><span class="w"> </span>--limit-price<span class="w"> </span><span class="m">70500</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">  </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
 </code></pre></div>
-<h2 id="fill-notification-stream">Fill notification stream<a class="headerlink" href="#fill-notification-stream" title="Permanent link">&para;</a></h2>
-<p>HTS ID가 필요합니다 (<code>KIS_HTS_ID</code>).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>kxt<span class="w"> </span>order-events<span class="w"> </span>--hts-id<span class="w"> </span>myhtsid<span class="w"> </span>--count<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
-</code></pre></div>
 <h2 id="output-format">Output format<a class="headerlink" href="#output-format" title="Permanent link">&para;</a></h2>
-<p><code>kxt quote</code>의 예:</p>
+<p>기본(plain-text) <code>kxt quote 005930</code> 예:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>occurred_at    : 2025-04-14T00:00:00+00:00
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>last           : 71000
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>open           : 70900
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>high           : 71400
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>low            : 70500
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>previous_close : 70900
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>change         : 100
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>change_rate    : 0.14
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>volume         : 10203040
+</code></pre></div>
+<p>JSON 모드 (<code>kxt --json quote 005930</code>):</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;occurred_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-04-14T00:00:00+00:00&quot;</span><span class="p">,</span>
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">&quot;last&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;71000&quot;</span><span class="p">,</span>
