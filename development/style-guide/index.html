@@ -2454,32 +2454,49 @@
 <li>각 섹션 내부 본문은 한국어로 서술하며, 필드명·타입·예외는 영어 코드 식별자를 유지합니다.</li>
 </ul>
 <h2 id="public-input-naming-policy">Public input naming policy<a class="headerlink" href="#public-input-naming-policy" title="Permanent link">&para;</a></h2>
-<p><code>kxt</code>의 public 메서드(시세, 호가, 체결, 스트리밍)는 ccxt 계열 라이브러리와 일관성을 맞춰 <strong>종목 코드 문자열(<code>symbol</code>)을 1차 입력 형태</strong>로 받습니다.</p>
+<p><code>kxt</code>의 모든 public 메서드는 <strong>primitive-first 입력</strong>을 1차 형태로 받습니다. 이 규칙은 시세·호가·체결·스트리밍 뿐만 아니라 <strong>계좌(account), 트레이딩(order submit/cancel/modify), 주문 이벤트 스트림(<code>stream_order_events</code>, <code>stream_order_updates</code>, <code>stream_fill_updates</code>) 전 surface에 공통 적용</strong>됩니다.</p>
 <ul>
+<li>종목 입력은 심볼 문자열(<code>"005930"</code>) — <code>InstrumentRef(symbol=...)</code>가 아님.</li>
+<li>계좌 입력은 <code>account_no</code> / <code>account_product_code</code> 문자열 kwargs — <code>AccountSummary(...)</code> 구성이 아님.</li>
+<li>HTS ID 입력은 <code>hts_id</code> 문자열 kwarg — request DTO 구성이 아님.</li>
+<li>
+<p>그 외 필드(price, quantity, limit_price, timeframe, start/end 등)도 전부 primitive kwargs.</p>
+</li>
 <li>
 <p><strong>권장</strong>: 첫 위치인자에 종목 코드 문자열을 그대로 넘깁니다.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get_quote</span><span class="p">(</span><span class="s2">&quot;005930&quot;</span><span class="p">)</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get_bars</span><span class="p">(</span><span class="s2">&quot;005930&quot;</span><span class="p">,</span> <span class="n">timeframe</span><span class="o">=</span><span class="s2">&quot;day&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=...</span><span class="p">,</span> <span class="n">end</span><span class="o">=...</span><span class="p">)</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">async</span> <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">stream_trades</span><span class="p">(</span><span class="s2">&quot;005930&quot;</span><span class="p">):</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="o">...</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">submit_order</span><span class="p">(</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">symbol</span><span class="o">=</span><span class="s2">&quot;005930&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">side</span><span class="o">=</span><span class="n">OrderSide</span><span class="o">.</span><span class="n">BUY</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">order_type</span><span class="o">=</span><span class="n">OrderType</span><span class="o">.</span><span class="n">LIMIT</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">quantity</span><span class="o">=</span><span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">),</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">limit_price</span><span class="o">=</span><span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;70000&quot;</span><span class="p">),</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">)</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get_buying_power</span><span class="p">(</span><span class="n">instrument</span><span class="o">=</span><span class="s2">&quot;005930&quot;</span><span class="p">,</span> <span class="n">price</span><span class="o">=</span><span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;70000&quot;</span><span class="p">))</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="k">async</span> <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">stream_order_events</span><span class="p">():</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="o">...</span>
 </code></pre></div>
 </li>
 <li>
-<p><strong>응답 모델은 그대로 <code>InstrumentRef</code>를 유지</strong>합니다. 입력은 primitive-friendly, 출력은 broker-neutral structured DTO라는 비대칭이 의도적인 설계입니다.</p>
+<p>응답 모델은 그대로 <code>InstrumentRef</code> / <code>AccountSummary</code> / <code>ProviderOrderRef</code> 등을 유지합니다. 입력은 primitive-friendly, 출력은 broker-neutral structured DTO라는 비대칭이 의도적인 설계입니다.</p>
 </li>
-<li>내부적으로 <code>*Request</code> / <code>InstrumentRef</code> DTO가 존재하지만, 사용자 문서의 입력 예제에서는 가르치지 않습니다. DTO는 <code>kxt.requests</code>의 power-user용 surface로만 유지합니다.</li>
+<li>내부적으로 <code>*Request</code> / <code>InstrumentRef</code> / <code>AccountSummary</code> DTO가 존재하지만, 사용자 문서의 입력 예제에서는 가르치지 않습니다. 이들은 <code>kxt.requests</code> / <code>kxt</code>의 power-user alias로만 유지합니다.</li>
+<li><strong><code>*Cursor</code> 예외</strong>: 서버가 발급하는 연속 토큰(<code>AccountOverviewCursor</code>, <code>OrderHistoryCursor</code>, <code>BarCursor</code> 등)은 다음 페이지 요청 시 호출자가 그대로 재전달해야 하므로 입력 예제에서 노출이 허용됩니다.</li>
 </ul>
 <h3 id="public-import-policy">Public import policy<a class="headerlink" href="#public-import-policy" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>from kxt import ...</code> — <code>KISClient</code>, 응답·이벤트 DTO, enum, 에러, value object(<code>InstrumentRef</code>, <code>OrderCorrelationKey</code> 등). 사용자가 <em>읽는</em> 타입만 노출합니다.</li>
-<li><code>from kxt.requests import ...</code> — <code>*Request</code>, <code>*Cursor</code>, <code>*Subscription</code>, <code>OrderInstruction</code>, <code>OrderAmendment</code>, <code>ProviderRef</code> 등 power-user 입력 DTO. 일반 호출은 symbol 문자열과 kwargs만으로 충분하므로 top-level에서 의도적으로 제외했습니다.</li>
+<li><code>from kxt import ...</code> — <code>KISClient</code>, 응답·이벤트 DTO, enum, 에러, value object(<code>InstrumentRef</code>, <code>AccountSummary</code>, <code>OrderCorrelationKey</code>, <code>ProviderOrderRef</code> 등). 사용자가 <em>읽는</em> 타입만 노출합니다.</li>
+<li><code>from kxt.requests import ...</code> — <code>*Request</code>, <code>*Cursor</code>, <code>*Subscription</code>, <code>OrderInstruction</code>, <code>OrderAmendment</code>, <code>ProviderRef</code> 등 power-user 입력 DTO. 일반 호출은 primitive kwargs로 충분하므로 top-level에서 의도적으로 제외했습니다.</li>
 <li><code>from kxt.models import ...</code> — 전체 DTO를 한 번에 가져오는 introspection용 별칭.</li>
 </ul>
 <p>문서 작성 시:</p>
 <ul>
-<li><strong>Primary 예제는 항상 <code>symbol</code> 문자열 형태</strong>로 작성합니다.</li>
-<li>Parameters 섹션의 첫 항목은 <code>**symbol** (str) *required*</code>로 시작합니다. 옵션 필드는 kwargs로 전달한다는 점을 명시합니다.</li>
-<li><strong>사용자용 예제에서는 <code>*Request(...)</code> 또는 <code>InstrumentRef(...)</code>를 입력 인자로 구성하는 형태를 보이지 않습니다.</strong> 내부 정규화 설명이나 응답 스키마 예제에서 타입명이 등장하는 것은 허용되지만, "호출자가 이렇게 감싸서 전달하라"는 형태의 코드 조각은 금지합니다.</li>
+<li><strong>Primary 예제는 항상 primitive 형태</strong>로 작성합니다. 종목은 <code>symbol</code> 문자열, 계좌는 <code>account_no</code>/<code>account_product_code</code>, HTS는 <code>hts_id</code> kwargs.</li>
+<li>Parameters 섹션의 첫 항목(종목 기반 메서드) 또는 계좌 필드(account 기반 메서드)는 primitive 타입을 우선 표기합니다 (<code>str</code>, <code>str | InstrumentRef</code>, <code>str | None</code>).</li>
+<li><strong>사용자용 예제에서는 <code>*Request(...)</code>, <code>InstrumentRef(...)</code>, <code>AccountSummary(...)</code>, <code>ProviderRef(...)</code>를 입력 인자로 구성하는 형태를 보이지 않습니다.</strong> 시장 데이터·계좌·트레이딩·스트리밍 어디에서도 금지합니다. 내부 정규화 설명이나 응답 스키마 예제에서 타입명이 등장하는 것은 허용됩니다. <code>*Cursor</code> 값은 서버 발급 연속 토큰이므로 예외입니다.</li>
 </ul>
 <h2 id="code-examples">Code examples<a class="headerlink" href="#code-examples" title="Permanent link">&para;</a></h2>
 <ul>
@@ -2534,7 +2551,7 @@
 <li>구현되지 않은 기능을 현재 시제로 단정.</li>
 <li>영어/한국어 어절을 공백 없이 붙여쓰기 (<code>API를</code>는 허용, <code>API와같이</code> 같은 경우 공백 사용).</li>
 <li>이모지 (사용자가 명시적으로 요청하지 않은 한).</li>
-<li><strong>Request DTO / <code>InstrumentRef</code> 구성형 입력 예제.</strong> User-facing examples never show request DTOs / <code>InstrumentRef</code> construction as normal input. Use primitive-first arguments (symbol strings, timeframe strings, datetime params, etc.). 즉, <code>client.get_bars(BarsRequest(instrument=InstrumentRef(symbol="005930"), ...))</code> 같은 코드 조각은 사용자용 문서에 올리지 않습니다. 타입 시그니처 표기, 내부 정규화 설명, 응답 스키마 예제에서 타입명이 등장하는 것은 허용됩니다.</li>
+<li><strong>Request DTO / <code>InstrumentRef</code> / <code>AccountSummary</code> / <code>ProviderRef</code> 구성형 입력 예제.</strong> User-facing examples never show request DTOs, <code>InstrumentRef(...)</code>, <code>AccountSummary(...)</code>, 또는 <code>ProviderRef(...)</code> construction as normal input — 이는 market-data, account, trading, streaming 전 surface에 공통 적용됩니다. Use primitive-first arguments (symbol strings, <code>account_no</code>/<code>account_product_code</code> kwargs, <code>hts_id</code> kwarg, timeframe strings, datetime params 등). 즉, <code>client.get_bars(BarsRequest(instrument=InstrumentRef(symbol="005930"), ...))</code> 또는 <code>client.submit_order(SubmitOrderRequest(account=AccountSummary(...), instruction=OrderInstruction(instrument=InstrumentRef(symbol="005930"), ...)))</code> 같은 코드 조각은 사용자용 문서에 올리지 않습니다. 타입 시그니처 표기, 내부 정규화 설명, 응답 스키마 예제에서 타입명이 등장하는 것은 허용됩니다. 서버 발급 연속 토큰(<code>*Cursor</code>)은 이어받기 용도로 입력 예제에서 노출해도 됩니다.</li>
 </ul>
 <h2 id="adoption">Adoption<a class="headerlink" href="#adoption" title="Permanent link">&para;</a></h2>
 <p>이 가이드는 새 문서 작성과 기존 문서 정비 모두에 적용됩니다.</p>

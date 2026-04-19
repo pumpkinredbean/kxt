@@ -2370,22 +2370,25 @@
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="o">*</span><span class="p">,</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">start</span><span class="p">:</span> <span class="n">date</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">end</span><span class="p">:</span> <span class="n">date</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">instrument</span><span class="p">:</span> <span class="n">InstrumentRef</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">instrument</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">InstrumentRef</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">side_filter</span><span class="p">:</span> <span class="n">OrderSide</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">fill_filter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">cursor</span><span class="p">:</span> <span class="n">AccountOverviewCursor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">account</span><span class="p">:</span> <span class="n">AccountSummary</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderHistoryResponse</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">cursor</span><span class="p">:</span> <span class="n">OrderHistoryCursor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">account_no</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">account_product_code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">account</span><span class="p">:</span> <span class="n">AccountSummary</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderHistoryResponse</span><span class="p">:</span> <span class="o">...</span>
 </code></pre></div>
 <h2 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>start</strong> (<code>date</code>) <em>required</em> — 조회 시작일 (KST).</li>
 <li><strong>end</strong> (<code>date</code>) <em>required</em> — 조회 종료일 (KST).</li>
-<li><strong>instrument</strong> (<code>InstrumentRef | None</code>) — 종목 필터 (KIS 측 <code>PDNO</code>로 전달).</li>
+<li><strong>instrument</strong> (<code>str | InstrumentRef | None</code>) — 종목 필터. 심볼 문자열 가능.</li>
 <li><strong>side_filter</strong> (<code>OrderSide | None</code>) — <code>BUY</code> / <code>SELL</code> / <code>None</code>(전체).</li>
 <li><strong>fill_filter</strong> (<code>str</code>, 기본 <code>"all"</code>) — <code>"all"</code> / <code>"filled"</code> / <code>"unfilled"</code>.</li>
-<li><strong>cursor</strong> (<code>AccountOverviewCursor | None</code>) — 페이지네이션 토큰.</li>
-<li><strong>account</strong> (<code>AccountSummary | None</code>) — 미지정 시 기본 계좌 사용.</li>
+<li><strong>cursor</strong> (<code>OrderHistoryCursor | None</code>) — 페이지네이션 토큰 (서버 발급값; 이어받기용).</li>
+<li><strong>account_no</strong> / <strong>account_product_code</strong> (<code>str | None</code>) — 생략 시 <code>KISClient</code> 기본 계좌.</li>
+<li><strong>account</strong> (<code>AccountSummary | None</code>) — power-user alias.</li>
 </ul>
 <h2 id="returns">Returns<a class="headerlink" href="#returns" title="Permanent link">&para;</a></h2>
 <p><code>OrderHistoryResponse</code>:</p>
