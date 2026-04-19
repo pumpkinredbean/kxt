@@ -20,21 +20,24 @@ async def get_buying_power(
     request: BuyingPowerRequest | None = None,
     /,
     *,
-    instrument: InstrumentRef | None = None,
+    instrument: str | InstrumentRef | None = None,
     price: Decimal | int | float | str | None = None,
     order_type: OrderType = OrderType.LIMIT,
     include_cma: bool = False,
+    account_no: str | None = None,
+    account_product_code: str | None = None,
     account: AccountSummary | None = None,
 ) -> BuyingPowerResponse: ...
 ```
 
 ## Parameters
 
-- **instrument** (`InstrumentRef`) *required* — 매수 대상 종목.
+- **instrument** (`str | InstrumentRef`) *required* — 매수 대상 종목. 보통 심볼 문자열(예: `"005930"`)로 충분합니다.
 - **price** (`Decimal \| int \| float \| str \| None`) — 매수 단가. 시장가는 `None`.
 - **order_type** (`OrderType`, 기본 `OrderType.LIMIT`)
 - **include_cma** (`bool`, 기본 `False`) — CMA 평가 금액 포함 여부.
-- **account** (`AccountSummary | None`) — 생략 시 기본 계좌 사용.
+- **account_no** / **account_product_code** (`str | None`) — 계좌 번호/상품 코드. 생략 시 `KISClient` 기본 계좌 사용.
+- **account** (`AccountSummary | None`) — power-user alias.
 
 ## Returns
 
@@ -63,7 +66,7 @@ async def get_buying_power(
 import asyncio
 from decimal import Decimal
 
-from kxt import InstrumentRef, KISClient, OrderType
+from kxt import KISClient, OrderType
 
 
 async def main() -> None:
@@ -74,7 +77,7 @@ async def main() -> None:
         account_product_code="<ACNT_PRDT_CD>",
     ) as client:
         response = await client.get_buying_power(
-            instrument=InstrumentRef(symbol="005930"),
+            instrument="005930",
             price=Decimal("70000"),
             order_type=OrderType.LIMIT,
         )

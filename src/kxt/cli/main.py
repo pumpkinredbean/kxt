@@ -15,35 +15,11 @@ from enum import Enum
 from typing import Any, Sequence
 
 from kxt import (
-    AccountSummary,
     InstrumentRef,
     KISClient,
     MarketSegment,
     OrderSide,
     OrderType,
-    ProviderOrderRef,
-)
-from kxt.requests import (
-    AccountOverviewRequest,
-    BarsRequest,
-    BuyingPowerRequest,
-    CancelOrderRequest,
-    InvestorFlowRequest,
-    MarketStatusRequest,
-    ModifyOrderRequest,
-    OpenOrdersRequest,
-    OrderAmendment,
-    OrderBookRequest,
-    OrderBookStreamRequest,
-    OrderEventsStreamRequest,
-    OrderHistoryRequest,
-    OrderInstruction,
-    PositionsRequest,
-    ProviderRef,
-    QuoteRequest,
-    RecentTradesRequest,
-    SubmitOrderRequest,
-    TradeStreamRequest,
 )
 from kxt.errors import KXTAuthenticationError, KXTError, KXTValidationError
 
@@ -555,7 +531,7 @@ async def _handle_quote(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
 
     async with _build_kis_client() as client:
-        quote = await client.get_quote(QuoteRequest(instrument=_instrument_from_args(args)))
+        quote = await client.get_quote(_instrument_from_args(args))
 
     print(_to_json(quote))
     return 0
@@ -569,13 +545,11 @@ async def _handle_bars(args: argparse.Namespace) -> int:
 
     async with _build_kis_client() as client:
         bars = await client.get_bars(
-            BarsRequest(
-                instrument=instrument,
-                timeframe=args.timeframe,
-                start=start,
-                end=end,
-                adjusted=args.adjusted,
-            )
+            instrument,
+            timeframe=args.timeframe,
+            start=start,
+            end=end,
+            adjusted=args.adjusted,
         )
 
     print(_to_json(bars))
@@ -588,13 +562,11 @@ async def _handle_recent_trades(args: argparse.Namespace) -> int:
         raise KXTValidationError("--limit must be >= 1")
 
     async with _build_kis_client() as client:
-        trades = await client.get_recent_trades(
-            RecentTradesRequest(
-                instrument=_instrument_from_args(args),
-                start=_parse_temporal_arg(args.start, field_name="start"),
-                end=_parse_temporal_arg(args.end, field_name="end"),
-                limit=args.limit,
-            )
+        trades = await client.fetch_recent_trades(
+            _instrument_from_args(args),
+            start=_parse_temporal_arg(args.start, field_name="start"),
+            end=_parse_temporal_arg(args.end, field_name="end"),
+            limit=args.limit,
         )
 
     print(_to_json(trades))
@@ -609,12 +581,12 @@ async def _handle_orderbook(args: argparse.Namespace) -> int:
     instrument = _instrument_from_args(args)
     async with _build_kis_client() as client:
         if not args.stream:
-            orderbook = await client.get_orderbook(OrderBookRequest(instrument=instrument))
+            orderbook = await client.get_orderbook(instrument)
             print(_to_json(orderbook))
             return 0
 
         emitted = 0
-        async for orderbook in client.stream_orderbook(OrderBookStreamRequest(instrument=instrument)):
+        async for orderbook in client.stream_orderbook(instrument):
             print(_to_json(orderbook))
             emitted += 1
             if args.count is not None and emitted >= args.count:
@@ -628,7 +600,7 @@ async def _handle_market_status(args: argparse.Namespace) -> int:
     instrument = None if not args.symbol else _instrument_from_args(args)
 
     async with _build_kis_client() as client:
-        status = await client.get_market_status(MarketStatusRequest(instrument=instrument))
+        status = await client.get_market_status(instrument)
 
     print(_to_json(status))
     return 0
@@ -638,7 +610,7 @@ async def _handle_investor_flow(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
 
     async with _build_kis_client() as client:
-        investor_flow = await client.get_investor_flow(InvestorFlowRequest(instrument=_instrument_from_args(args)))
+        investor_flow = await client.get_investor_flow(_instrument_from_args(args))
 
     print(_to_json(investor_flow))
     return 0
@@ -649,11 +621,11 @@ async def _handle_trades(args: argparse.Namespace) -> int:
     if args.count is not None and args.count < 1:
         raise KXTValidationError("--count must be >= 1 when provided")
 
-    subscription = TradeStreamRequest(instrument=_instrument_from_args(args))
+    instrument = _instrument_from_args(args)
     emitted = 0
 
     async with _build_kis_client() as client:
-        async for trade in client.stream_trades(subscription):
+        async for trade in client.stream_trades(instrument):
             print(_to_json(trade))
             emitted += 1
             if args.count is not None and emitted >= args.count:
@@ -755,7 +727,8 @@ def _add_account_args(parser: argparse.ArgumentParser) -> None:
     )
 
 
-def _account_from_args(args: argparse.Namespace) -> AccountSummary:
+def _account_primitives(args: argparse.Namespace) -> tuple[str, str | None]:
+    """Resolve (account_no, account_product_code) from CLI args + environment."""
     account_no = (getattr(args, "account_no", None) or os.getenv(KIS_ACCOUNT_NO_ENV, "")).strip()
     product_code = (
         getattr(args, "account_product_code", None)
@@ -765,12 +738,7 @@ def _account_from_args(args: argparse.Namespace) -> AccountSummary:
         raise KXTValidationError(
             f"account number is required (pass --account-no or set {KIS_ACCOUNT_NO_ENV})"
         )
-    return AccountSummary(
-        provider=ProviderRef(provider="kis"),
-        account_id=account_no,
-        name=None,
-        product_code=product_code or None,
-    )
+    return account_no, product_code or None
 
 
 def _decimal_arg(value: str | None, *, name: str) -> Decimal | None:
@@ -784,129 +752,126 @@ def _decimal_arg(value: str | None, *, name: str) -> Decimal | None:
 
 async def _handle_balance(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
-    account = _account_from_args(args)
+    account_no, product_code = _account_primitives(args)
     async with _build_kis_client() as client:
-        overview = await client.get_account_overview(AccountOverviewRequest(account=account))
+        overview = await client.get_account_overview(
+            account_no=account_no,
+            account_product_code=product_code,
+        )
     print(_to_json(overview))
     return 0
 
 
 async def _handle_positions(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
-    account = _account_from_args(args)
+    account_no, product_code = _account_primitives(args)
     async with _build_kis_client() as client:
-        response = await client.get_positions(PositionsRequest(account=account))
+        response = await client.get_positions(
+            account_no=account_no,
+            account_product_code=product_code,
+        )
     print(_to_json(response))
     return 0
 
 
 async def _handle_buying_power(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
-    account = _account_from_args(args)
-    request = BuyingPowerRequest(
-        account=account,
-        instrument=InstrumentRef(symbol=args.symbol),
-        price=_decimal_arg(args.price, name="--price"),
-        order_type=OrderType(args.order_type),
-        include_cma=bool(args.include_cma),
-    )
+    account_no, product_code = _account_primitives(args)
     async with _build_kis_client() as client:
-        response = await client.get_buying_power(request)
+        response = await client.get_buying_power(
+            instrument=args.symbol,
+            price=_decimal_arg(args.price, name="--price"),
+            order_type=OrderType(args.order_type),
+            include_cma=bool(args.include_cma),
+            account_no=account_no,
+            account_product_code=product_code,
+        )
     print(_to_json(response))
     return 0
 
 
 async def _handle_open_orders(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
-    account = _account_from_args(args)
-    request = OpenOrdersRequest(
-        account=account,
-        instrument=InstrumentRef(symbol=args.symbol) if args.symbol else None,
-    )
+    account_no, product_code = _account_primitives(args)
     async with _build_kis_client() as client:
-        response = await client.get_open_orders(request)
+        response = await client.get_open_orders(
+            instrument=args.symbol,
+            account_no=account_no,
+            account_product_code=product_code,
+        )
     print(_to_json(response))
     return 0
 
 
 async def _handle_order_history(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
-    account = _account_from_args(args)
+    account_no, product_code = _account_primitives(args)
     start = date.fromisoformat(args.start)
     end = date.fromisoformat(args.end)
     side = OrderSide(args.side) if args.side else None
-    request = OrderHistoryRequest(
-        account=account,
-        start=start,
-        end=end,
-        instrument=InstrumentRef(symbol=args.symbol) if args.symbol else None,
-        side_filter=side,
-        fill_filter=args.fill_filter,
-    )
     async with _build_kis_client() as client:
-        response = await client.get_order_history(request)
+        response = await client.get_order_history(
+            start=start,
+            end=end,
+            instrument=args.symbol,
+            side_filter=side,
+            fill_filter=args.fill_filter,
+            account_no=account_no,
+            account_product_code=product_code,
+        )
     print(_to_json(response))
     return 0
 
 
 async def _handle_place_order(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
-    account = _account_from_args(args)
+    account_no, product_code = _account_primitives(args)
     quantity = _decimal_arg(args.quantity, name="--quantity")
     if quantity is None:
         raise KXTValidationError("--quantity is required")
-    instruction = OrderInstruction(
-        instrument=InstrumentRef(symbol=args.symbol),
-        side=OrderSide(args.side),
-        order_type=OrderType(args.order_type),
-        quantity=quantity,
-        limit_price=_decimal_arg(args.limit_price, name="--limit-price"),
-    )
-    request = SubmitOrderRequest(account=account, instruction=instruction)
     async with _build_kis_client() as client:
-        response = await client.submit_order(request)
+        response = await client.submit_order(
+            symbol=args.symbol,
+            side=OrderSide(args.side),
+            order_type=OrderType(args.order_type),
+            quantity=quantity,
+            limit_price=_decimal_arg(args.limit_price, name="--limit-price"),
+            account_no=account_no,
+            account_product_code=product_code,
+        )
     print(_to_json(response))
     return 0
 
 
 async def _handle_cancel_order(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
-    account = _account_from_args(args)
-    order_ref = ProviderOrderRef(provider="kis", order_id=args.order_id, account_id=account.account_id)
-    from kxt import OrderCorrelationKey as _OCK
-    correlation = _OCK(order_ref=order_ref, origin_org_no=args.origin_org_no)
-    request = CancelOrderRequest(
-        account=account,
-        order_ref=order_ref,
-        quantity=_decimal_arg(args.quantity, name="--quantity"),
-        cancel_all=not args.partial,
-        correlation_key=correlation,
-    )
+    account_no, product_code = _account_primitives(args)
     async with _build_kis_client() as client:
-        response = await client.cancel_order(request)
+        response = await client.cancel_order(
+            args.order_id,
+            quantity=_decimal_arg(args.quantity, name="--quantity"),
+            cancel_all=not args.partial,
+            origin_org_no=args.origin_org_no,
+            account_no=account_no,
+            account_product_code=product_code,
+        )
     print(_to_json(response))
     return 0
 
 
 async def _handle_modify_order(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
-    account = _account_from_args(args)
-    order_ref = ProviderOrderRef(provider="kis", order_id=args.order_id, account_id=account.account_id)
-    from kxt import OrderCorrelationKey as _OCK
-    correlation = _OCK(order_ref=order_ref, origin_org_no=args.origin_org_no)
-    amendment = OrderAmendment(
-        quantity=_decimal_arg(args.quantity, name="--quantity"),
-        limit_price=_decimal_arg(args.limit_price, name="--limit-price"),
-        order_type=OrderType(args.order_type) if args.order_type else None,
-    )
-    request = ModifyOrderRequest(
-        account=account,
-        order_ref=order_ref,
-        amendment=amendment,
-        correlation_key=correlation,
-    )
+    account_no, product_code = _account_primitives(args)
     async with _build_kis_client() as client:
-        response = await client.modify_order(request)
+        response = await client.modify_order(
+            args.order_id,
+            quantity=_decimal_arg(args.quantity, name="--quantity"),
+            limit_price=_decimal_arg(args.limit_price, name="--limit-price"),
+            order_type=OrderType(args.order_type) if args.order_type else None,
+            origin_org_no=args.origin_org_no,
+            account_no=account_no,
+            account_product_code=product_code,
+        )
     print(_to_json(response))
     return 0
 
@@ -915,24 +880,19 @@ async def _handle_order_events(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
     if args.count is not None and args.count < 1:
         raise KXTValidationError("--count must be >= 1 when provided")
-    account_no = (getattr(args, "account_no", None) or os.getenv(KIS_ACCOUNT_NO_ENV, "")).strip()
-    account: AccountSummary | None = None
-    if account_no:
-        account = AccountSummary(
-            provider=ProviderRef(provider="kis"),
-            account_id=account_no,
-            name=None,
-            product_code=(
-                getattr(args, "account_product_code", None)
-                or os.getenv(KIS_ACCOUNT_PRODUCT_CODE_ENV, "")
-            ).strip()
-            or None,
-        )
+    account_no = (getattr(args, "account_no", None) or os.getenv(KIS_ACCOUNT_NO_ENV, "")).strip() or None
+    product_code = (
+        getattr(args, "account_product_code", None)
+        or os.getenv(KIS_ACCOUNT_PRODUCT_CODE_ENV, "")
+    ).strip() or None
     hts_id = (args.hts_id or os.getenv(KIS_HTS_ID_ENV, "")).strip() or None
-    request = OrderEventsStreamRequest(account=account, hts_id=hts_id)
     emitted = 0
     async with _build_kis_client() as client:
-        async for event in client.stream_order_events(request):
+        async for event in client.stream_order_events(
+            hts_id=hts_id,
+            account_no=account_no,
+            account_product_code=product_code,
+        ):
             print(_to_json(event))
             emitted += 1
             if args.count is not None and emitted >= args.count:

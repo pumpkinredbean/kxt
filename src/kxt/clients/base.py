@@ -47,7 +47,7 @@ class MarketNamespace(ABC):
     @abstractmethod
     async def fetch_bars(
         self,
-        instrument: InstrumentRef,
+        symbol: str | InstrumentRef,
         *,
         timeframe: BarTimeframe,
         start: date | datetime | None = None,
@@ -60,7 +60,7 @@ class MarketNamespace(ABC):
     @abstractmethod
     async def fetch_intraday_bars(
         self,
-        instrument: InstrumentRef,
+        symbol: str | InstrumentRef,
         *,
         interval_minutes: int = 1,
     ) -> tuple[IntradayBar, ...]:
@@ -69,7 +69,7 @@ class MarketNamespace(ABC):
     @abstractmethod
     async def fetch_recent_trades(
         self,
-        instrument: InstrumentRef,
+        symbol: str | InstrumentRef,
         *,
         start: date | datetime | None = None,
         end: date | datetime | None = None,
@@ -82,7 +82,9 @@ class StreamsNamespace(ABC):
     """Legacy grouped streaming compatibility namespace."""
 
     @abstractmethod
-    def stream_trades(self, subscription: TradeSubscription) -> AsyncIterator[TradeEvent]:
+    def stream_trades(
+        self, symbol: str | InstrumentRef | TradeSubscription | TradeStreamRequest
+    ) -> AsyncIterator[TradeEvent]:
         """Yield trade events for a single-instrument subscription."""
 
 
@@ -99,7 +101,7 @@ class MarketDataClient(ABC):
     @abstractmethod
     async def fetch_bars(
         self,
-        instrument: InstrumentRef,
+        symbol: str | InstrumentRef,
         *,
         timeframe: BarTimeframe,
         start: date | datetime | None = None,
@@ -112,26 +114,26 @@ class MarketDataClient(ABC):
     @abstractmethod
     async def fetch_intraday_bars(
         self,
-        instrument: InstrumentRef,
+        symbol: str | InstrumentRef,
         *,
         interval_minutes: int = 1,
     ) -> tuple[IntradayBar, ...]:
         """Fetch intraday bars for an instrument."""
 
     @abstractmethod
-    async def fetch_quote(self, instrument: InstrumentRef) -> QuoteSnapshot:
+    async def fetch_quote(self, symbol: str | InstrumentRef) -> QuoteSnapshot:
         """Fetch a normalized quote snapshot for an instrument."""
 
-    async def get_quote(self, request: QuoteRequest | InstrumentRef) -> QuoteResponse:
+    async def get_quote(self, symbol: str | InstrumentRef | QuoteRequest) -> QuoteResponse:
         """Fetch a v2 normalized quote response."""
 
         raise NotImplementedError
 
     @abstractmethod
-    async def fetch_orderbook(self, instrument: InstrumentRef) -> OrderBookSnapshot:
+    async def fetch_orderbook(self, symbol: str | InstrumentRef) -> OrderBookSnapshot:
         """Fetch a normalized order book snapshot for an instrument."""
 
-    async def get_orderbook(self, request: OrderBookRequest | InstrumentRef) -> OrderBookResponse:
+    async def get_orderbook(self, symbol: str | InstrumentRef | OrderBookRequest) -> OrderBookResponse:
         """Fetch a v2 normalized order book response."""
 
         raise NotImplementedError
@@ -139,7 +141,7 @@ class MarketDataClient(ABC):
     @abstractmethod
     async def fetch_recent_trades(
         self,
-        instrument: InstrumentRef,
+        symbol: str | InstrumentRef,
         *,
         start: date | datetime | None = None,
         end: date | datetime | None = None,
@@ -147,32 +149,42 @@ class MarketDataClient(ABC):
     ) -> tuple[Trade, ...]:
         """Fetch normalized recent trades for an instrument."""
 
-    async def get_recent_trades(self, request: RecentTradesRequest | InstrumentRef) -> RecentTradesResponse:
+    async def get_recent_trades(self, symbol: str | InstrumentRef | RecentTradesRequest) -> RecentTradesResponse:
         """Fetch a v2 normalized recent-trades response."""
 
         raise NotImplementedError
 
-    async def get_bars(self, request: BarsRequest | InstrumentRef, /, **kwargs) -> BarsResponse:
+    async def get_bars(self, symbol: str | InstrumentRef | BarsRequest, /, **kwargs) -> BarsResponse:
         """Fetch a v2 normalized bars response."""
 
         raise NotImplementedError
 
-    async def get_market_status(self, request: MarketStatusRequest) -> MarketStatusResponse:
+    async def get_market_status(
+        self, symbol: str | InstrumentRef | MarketStatusRequest | None = None
+    ) -> MarketStatusResponse:
         """Fetch normalized market status when the provider supports it."""
 
         raise NotImplementedError
 
-    async def get_investor_flow(self, request: InvestorFlowRequest | InstrumentRef) -> InvestorFlowResponse:
+    async def get_investor_flow(
+        self, symbol: str | InstrumentRef | InvestorFlowRequest
+    ) -> InvestorFlowResponse:
         """Fetch normalized investor-flow analytics when the provider supports it."""
 
         raise NotImplementedError
 
     @abstractmethod
-    def stream_trades(self, subscription: TradeSubscription | TradeStreamRequest) -> AsyncIterator[TradeEvent]:
+    def stream_trades(
+        self,
+        symbol: str | InstrumentRef | TradeSubscription | TradeStreamRequest,
+    ) -> AsyncIterator[TradeEvent]:
         """Yield trade events for a single-instrument subscription."""
 
     @abstractmethod
-    def stream_orderbook(self, subscription: OrderBookSubscription | OrderBookStreamRequest) -> AsyncIterator[OrderBookEvent]:
+    def stream_orderbook(
+        self,
+        symbol: str | InstrumentRef | OrderBookSubscription | OrderBookStreamRequest,
+    ) -> AsyncIterator[OrderBookEvent]:
         """Yield order book events for a single-instrument subscription."""
 
     async def fetch_markets(self, *, refresh: bool = False) -> "tuple[Market, ...]":

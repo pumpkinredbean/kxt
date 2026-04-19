@@ -22,10 +22,12 @@ async def get_order_history(
     *,
     start: date | None = None,
     end: date | None = None,
-    instrument: InstrumentRef | None = None,
+    instrument: str | InstrumentRef | None = None,
     side_filter: OrderSide | None = None,
     fill_filter: str = "all",
-    cursor: AccountOverviewCursor | None = None,
+    cursor: OrderHistoryCursor | None = None,
+    account_no: str | None = None,
+    account_product_code: str | None = None,
     account: AccountSummary | None = None,
 ) -> OrderHistoryResponse: ...
 ```
@@ -34,11 +36,12 @@ async def get_order_history(
 
 - **start** (`date`) *required* — 조회 시작일 (KST).
 - **end** (`date`) *required* — 조회 종료일 (KST).
-- **instrument** (`InstrumentRef | None`) — 종목 필터 (KIS 측 `PDNO`로 전달).
+- **instrument** (`str | InstrumentRef | None`) — 종목 필터. 심볼 문자열 가능.
 - **side_filter** (`OrderSide | None`) — `BUY` / `SELL` / `None`(전체).
 - **fill_filter** (`str`, 기본 `"all"`) — `"all"` / `"filled"` / `"unfilled"`.
-- **cursor** (`AccountOverviewCursor | None`) — 페이지네이션 토큰.
-- **account** (`AccountSummary | None`) — 미지정 시 기본 계좌 사용.
+- **cursor** (`OrderHistoryCursor | None`) — 페이지네이션 토큰 (서버 발급값; 이어받기용).
+- **account_no** / **account_product_code** (`str | None`) — 생략 시 `KISClient` 기본 계좌.
+- **account** (`AccountSummary | None`) — power-user alias.
 
 ## Returns
 

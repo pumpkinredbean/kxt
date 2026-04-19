@@ -23,7 +23,7 @@ async def submit_order(
     request: SubmitOrderRequest | OrderInstruction | None = None,
     /,
     *,
-    instrument: InstrumentRef | None = None,
+    symbol: str | InstrumentRef | None = None,
     side: OrderSide | None = None,
     order_type: OrderType | None = None,
     quantity: Decimal | int | float | str | None = None,
@@ -31,13 +31,15 @@ async def submit_order(
     stop_price: Decimal | None = None,
     time_in_force: str | None = None,
     route_hint: OrderRouteHint | None = None,
+    account_no: str | None = None,
+    account_product_code: str | None = None,
     account: AccountSummary | None = None,
 ) -> SubmitOrderResponse: ...
 ```
 
 ## Parameters
 
-- **instrument** (`InstrumentRef`) *required* — 종목.
+- **symbol** (`str | InstrumentRef`) *required* — 종목. 보통 심볼 문자열(예: `"005930"`)로 충분합니다.
 - **side** (`OrderSide`) *required* — `BUY` / `SELL`.
 - **order_type** (`OrderType`) *required* — `MARKET` 또는 `LIMIT` (KIS 슬라이스 범위).
 - **quantity** (`Decimal | int | str`) *required* — 수량.
@@ -45,7 +47,8 @@ async def submit_order(
 - **stop_price** (`Decimal | None`) — 현재 KIS 슬라이스에서는 사용하지 않음.
 - **time_in_force** (`str | None`) — 미사용.
 - **route_hint** (`OrderRouteHint | None`) — 미사용.
-- **account** (`AccountSummary | None`) — 생략 시 기본 계좌.
+- **account_no** / **account_product_code** (`str | None`) — 생략 시 `KISClient` 기본 계좌.
+- **account** (`AccountSummary | None`) — power-user alias.
 
 미리 만들어 둔 `OrderInstruction` 또는 `SubmitOrderRequest`를 첫 positional 인자로 전달하는 것도 가능합니다.
 
@@ -72,7 +75,7 @@ async def submit_order(
 import asyncio
 from decimal import Decimal
 
-from kxt import InstrumentRef, KISClient, OrderSide, OrderType
+from kxt import KISClient, OrderSide, OrderType
 
 
 async def main() -> None:
@@ -83,7 +86,7 @@ async def main() -> None:
         account_product_code="<ACNT_PRDT_CD>",
     ) as client:
         response = await client.submit_order(
-            instrument=InstrumentRef(symbol="005930"),
+            symbol="005930",
             side=OrderSide.BUY,
             order_type=OrderType.LIMIT,
             quantity=Decimal("1"),
@@ -100,7 +103,7 @@ asyncio.run(main())
 
 ```python
 await client.submit_order(
-    instrument=InstrumentRef(symbol="005930"),
+    symbol="005930",
     side=OrderSide.BUY,
     order_type=OrderType.MARKET,
     quantity=Decimal("1"),

@@ -20,16 +20,19 @@ async def get_open_orders(
     request: OpenOrdersRequest | None = None,
     /,
     *,
+    account_no: str | None = None,
+    account_product_code: str | None = None,
     account: AccountSummary | None = None,
-    instrument: InstrumentRef | None = None,
+    instrument: str | InstrumentRef | None = None,
     session: SessionType | None = None,
 ) -> OpenOrdersResponse: ...
 ```
 
 ## Parameters
 
-- **account** (`AccountSummary | None`) — 미지정 시 기본 계좌 사용.
-- **instrument** (`InstrumentRef | None`) — 특정 종목으로 클라이언트 측 필터링.
+- **account_no** / **account_product_code** (`str | None`) — 생략 시 `KISClient` 기본 계좌.
+- **account** (`AccountSummary | None`) — power-user alias.
+- **instrument** (`str | InstrumentRef | None`) — 특정 종목으로 클라이언트 측 필터링 (심볼 문자열도 가능).
 - **session** (`SessionType | None`)
 
 ## Returns

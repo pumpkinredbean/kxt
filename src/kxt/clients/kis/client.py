@@ -58,6 +58,9 @@ from kxt.models import (
     ModifyOrderRequest,
     ModifyOrderResponse,
     OpenOrder,
+    OrderAmendment,
+    OrderInstruction,
+    OrderRouteHint,
     OpenOrdersRequest,
     OpenOrdersResponse,
     OrderAcceptedEvent,
@@ -640,8 +643,10 @@ class KISClient(MarketDataClient):
         request: BalanceRequest | None = None,
         /,
         *,
+        account_no: str | None = None,
+        account_product_code: str | None = None,
         account: AccountSummary | None = None,
-        instrument: InstrumentRef | None = None,
+        instrument: str | InstrumentRef | None = None,
         session: SessionType | None = None,
     ) -> BalanceResponse:
         if isinstance(request, BalanceRequest):
@@ -651,7 +656,7 @@ class KISClient(MarketDataClient):
                 instrument = request.instrument
             if session is None:
                 session = request.session
-        resolved = self._resolve_account(account)
+        resolved = self._resolve_account(account, account_no, account_product_code)
         overview = await self.get_account_overview(account=resolved)
         eq = overview.equity
         snapshot = BalanceSnapshot(
@@ -669,6 +674,8 @@ class KISClient(MarketDataClient):
         request: AccountOverviewRequest | None = None,
         /,
         *,
+        account_no: str | None = None,
+        account_product_code: str | None = None,
         account: AccountSummary | None = None,
         include_afterhours: bool = False,
         include_fund_settlement: bool = True,
@@ -681,7 +688,7 @@ class KISClient(MarketDataClient):
             include_fund_settlement = request.include_fund_settlement
             if cursor is None:
                 cursor = request.cursor
-        resolved = self._resolve_account(account)
+        resolved = self._resolve_account(account, account_no, account_product_code)
         params = self._account_params(resolved)
         params.update(
             {
@@ -714,6 +721,8 @@ class KISClient(MarketDataClient):
         request: PositionsRequest | None = None,
         /,
         *,
+        account_no: str | None = None,
+        account_product_code: str | None = None,
         account: AccountSummary | None = None,
         session: SessionType | None = None,
     ) -> PositionsResponse:
@@ -722,7 +731,7 @@ class KISClient(MarketDataClient):
                 account = request.account
             if session is None:
                 session = request.session
-        resolved = self._resolve_account(account)
+        resolved = self._resolve_account(account, account_no, account_product_code)
         overview = await self.get_account_overview(account=resolved)
         positions = tuple(
             Position(
@@ -742,10 +751,12 @@ class KISClient(MarketDataClient):
         request: BuyingPowerRequest | None = None,
         /,
         *,
-        instrument: InstrumentRef | None = None,
+        instrument: str | InstrumentRef | None = None,
         price: Decimal | int | float | str | None = None,
         order_type: OrderType = OrderType.LIMIT,
         include_cma: bool = False,
+        account_no: str | None = None,
+        account_product_code: str | None = None,
         account: AccountSummary | None = None,
     ) -> BuyingPowerResponse:
         if isinstance(request, BuyingPowerRequest):
@@ -759,8 +770,8 @@ class KISClient(MarketDataClient):
                 account = request.account
         if instrument is None:
             raise KXTValidationError("instrument is required")
-        resolved = self._resolve_account(account)
-        normalized_instrument = self._normalize_instrument(instrument)
+        resolved = self._resolve_account(account, account_no, account_product_code)
+        normalized_instrument = self._normalize_instrument(self._coerce_instrument(instrument))
         price_text = "0" if price is None else str(price)
         params = self._account_params(resolved)
         params.update(
@@ -785,8 +796,10 @@ class KISClient(MarketDataClient):
         request: OpenOrdersRequest | None = None,
         /,
         *,
+        account_no: str | None = None,
+        account_product_code: str | None = None,
         account: AccountSummary | None = None,
-        instrument: InstrumentRef | None = None,
+        instrument: str | InstrumentRef | None = None,
         session: SessionType | None = None,
     ) -> OpenOrdersResponse:
         if isinstance(request, OpenOrdersRequest):
@@ -796,7 +809,8 @@ class KISClient(MarketDataClient):
                 instrument = request.instrument
             if session is None:
                 session = request.session
-        resolved = self._resolve_account(account)
+        resolved = self._resolve_account(account, account_no, account_product_code)
+        instrument_ref = self._resolve_instrument_opt(instrument)
         params = self._account_params(resolved)
         params.update(
             {
@@ -812,8 +826,8 @@ class KISClient(MarketDataClient):
             params=params,
         )
         orders = parse_open_orders(payload, account_id=resolved.account_id)
-        if instrument is not None:
-            sym = instrument.symbol
+        if instrument_ref is not None:
+            sym = instrument_ref.symbol
             orders = tuple(order for order in orders if order.instrument.symbol == sym)
         return OpenOrdersResponse(orders=orders)
 
@@ -824,10 +838,12 @@ class KISClient(MarketDataClient):
         *,
         start: date | None = None,
         end: date | None = None,
-        instrument: InstrumentRef | None = None,
+        instrument: str | InstrumentRef | None = None,
         side_filter: OrderSide | None = None,
         fill_filter: str = "all",
         cursor: AccountOverviewCursor | None = None,
+        account_no: str | None = None,
+        account_product_code: str | None = None,
         account: AccountSummary | None = None,
     ) -> OrderHistoryResponse:
         if isinstance(request, OrderHistoryRequest):
@@ -844,7 +860,8 @@ class KISClient(MarketDataClient):
                 account = request.account
         if start is None or end is None:
             raise KXTValidationError("start and end are required")
-        resolved = self._resolve_account(account)
+        resolved = self._resolve_account(account, account_no, account_product_code)
+        instrument_ref = self._resolve_instrument_opt(instrument)
         params = self._account_params(resolved)
         side_code = {OrderSide.BUY: "02", OrderSide.SELL: "01"}.get(side_filter, "00")
         fill_code = {"all": "00", "filled": "01", "unfilled": "02"}.get(fill_filter, "00")
@@ -854,7 +871,7 @@ class KISClient(MarketDataClient):
                 "INQR_END_DT": end.strftime("%Y%m%d"),
                 "SLL_BUY_DVSN_CD": side_code,
                 "INQR_DVSN": "00",
-                "PDNO": instrument.symbol if instrument else "",
+                "PDNO": instrument_ref.symbol if instrument_ref else "",
                 "CCLD_DVSN": fill_code,
                 "ORD_GNO_BRNO": "",
                 "ODNO": "",
@@ -884,7 +901,8 @@ class KISClient(MarketDataClient):
         request: SubmitOrderRequest | OrderInstruction | None = None,
         /,
         *,
-        instrument: InstrumentRef | None = None,
+        symbol: str | InstrumentRef | None = None,
+        instrument: str | InstrumentRef | None = None,
         side: OrderSide | None = None,
         order_type: OrderType | None = None,
         quantity: Decimal | int | float | str | None = None,
@@ -892,6 +910,8 @@ class KISClient(MarketDataClient):
         stop_price: Decimal | None = None,
         time_in_force: str | None = None,
         route_hint: OrderRouteHint | None = None,
+        account_no: str | None = None,
+        account_product_code: str | None = None,
         account: AccountSummary | None = None,
     ) -> SubmitOrderResponse:
         instruction: OrderInstruction | None = None
@@ -902,12 +922,14 @@ class KISClient(MarketDataClient):
         elif isinstance(request, OrderInstruction):
             instruction = request
         if instruction is None:
-            if instrument is None or side is None or order_type is None or quantity is None:
+            symbol_or_instrument = symbol if symbol is not None else instrument
+            if symbol_or_instrument is None or side is None or order_type is None or quantity is None:
                 raise KXTValidationError(
-                    "submit_order requires instrument, side, order_type, and quantity"
+                    "submit_order requires symbol, side, order_type, and quantity"
                 )
+            instrument_ref = self._coerce_instrument(symbol_or_instrument)
             instruction = OrderInstruction(
-                instrument=instrument,
+                instrument=instrument_ref,
                 side=side,
                 order_type=order_type,
                 quantity=Decimal(str(quantity)) if not isinstance(quantity, Decimal) else quantity,
@@ -920,7 +942,7 @@ class KISClient(MarketDataClient):
                 route_hint=route_hint,
             )
 
-        resolved = self._resolve_account(account)
+        resolved = self._resolve_account(account, account_no, account_product_code)
         normalized_instrument = self._normalize_instrument(instruction.instrument)
         tr_id = (
             KIS_ORDER_CASH_BUY_TR_ID
@@ -969,6 +991,8 @@ class KISClient(MarketDataClient):
         correlation_key: OrderCorrelationKey | None = None,
         origin_org_no: str | None = None,
         branch_no: str | None = None,
+        account_no: str | None = None,
+        account_product_code: str | None = None,
         account: AccountSummary | None = None,
     ) -> CancelOrderResponse:
         if isinstance(request, CancelOrderRequest):
@@ -1001,7 +1025,7 @@ class KISClient(MarketDataClient):
                 branch_no=branch_no,
             )
 
-        resolved = self._resolve_account(account)
+        resolved = self._resolve_account(account, account_no, account_product_code)
         qty_dec = (
             None if quantity is None
             else (quantity if isinstance(quantity, Decimal) else Decimal(str(quantity)))
@@ -1049,6 +1073,8 @@ class KISClient(MarketDataClient):
         correlation_key: OrderCorrelationKey | None = None,
         origin_org_no: str | None = None,
         branch_no: str | None = None,
+        account_no: str | None = None,
+        account_product_code: str | None = None,
         account: AccountSummary | None = None,
     ) -> ModifyOrderResponse:
         if isinstance(request, ModifyOrderRequest):
@@ -1094,7 +1120,7 @@ class KISClient(MarketDataClient):
                 branch_no=branch_no,
             )
 
-        resolved = self._resolve_account(account)
+        resolved = self._resolve_account(account, account_no, account_product_code)
         body = self._rvsecncl_body(
             account=resolved,
             order_ref=order_ref,
@@ -1127,17 +1153,30 @@ class KISClient(MarketDataClient):
         raise KXTUnsupportedError("KIS market-status streaming is not yet implemented in kxt")
 
     async def stream_order_events(
-        self, request: OrderEventsStreamRequest | None = None
+        self,
+        request: OrderEventsStreamRequest | None = None,
+        /,
+        *,
+        hts_id: str | None = None,
+        account_no: str | None = None,
+        account_product_code: str | None = None,
+        account: AccountSummary | None = None,
     ) -> AsyncIterator["OrderAcceptedEvent | OrderAmendAckEvent | OrderCancelAckEvent | OrderRejectedEvent | FillNotificationEvent"]:
         """Unified realtime order + fill event stream (KIS H0STCNI0)."""
 
-        normalized = request or OrderEventsStreamRequest()
-        hts_id = (normalized.hts_id or self._default_hts_id or "").strip()
-        if not hts_id:
+        if isinstance(request, OrderEventsStreamRequest):
+            if hts_id is None:
+                hts_id = request.hts_id
+            if account is None:
+                account = request.account
+        resolved_hts_id = (hts_id or self._default_hts_id or "").strip()
+        if not resolved_hts_id:
             raise KXTUnsupportedError(
                 "KIS realtime notifications require an HTS user id (hts_id on the request or the client)"
             )
-        account = normalized.account or self._default_account_summary()
+        resolved_account = self._resolve_account_optional(
+            account, account_no, account_product_code
+        )
 
         approval_key = await self._transport.get_approval_key()
         websocket = await self._transport.connect_websocket()
@@ -1147,7 +1186,7 @@ class KISClient(MarketDataClient):
                     json.dumps(
                         notification_subscription_message(
                             approval_key=approval_key,
-                            hts_id=hts_id,
+                            hts_id=resolved_hts_id,
                         )
                     )
                 )
@@ -1158,7 +1197,7 @@ class KISClient(MarketDataClient):
                         if ((payload.get("header") or {}).get("tr_id")) == "PINGPONG":
                             await websocket.pong(raw_message if isinstance(raw_message, bytes) else text.encode())
                             continue
-                    event = parse_notification_event(text, account=account)
+                    event = parse_notification_event(text, account=resolved_account)
                     if event is not None:
                         yield event
             except Exception as exc:
@@ -1171,14 +1210,26 @@ class KISClient(MarketDataClient):
                 await websocket.close()
 
     async def stream_order_updates(
-        self, request: OrderUpdatesStreamRequest | None = None
+        self,
+        request: OrderUpdatesStreamRequest | None = None,
+        /,
+        *,
+        hts_id: str | None = None,
+        account_no: str | None = None,
+        account_product_code: str | None = None,
+        account: AccountSummary | None = None,
     ) -> AsyncIterator[OrderUpdateEvent]:
         """Legacy alias yielding OrderUpdateEvent values for order lifecycle notifications."""
 
-        normalized = OrderEventsStreamRequest(
-            account=(request.account if request is not None else None)
-        )
-        async for event in self.stream_order_events(normalized):
+        if isinstance(request, OrderUpdatesStreamRequest):
+            if account is None:
+                account = request.account
+        async for event in self.stream_order_events(
+            hts_id=hts_id,
+            account_no=account_no,
+            account_product_code=account_product_code,
+            account=account,
+        ):
             if isinstance(event, FillNotificationEvent):
                 continue
             state = _lifecycle_event_state(event)
@@ -1193,14 +1244,26 @@ class KISClient(MarketDataClient):
             )
 
     async def stream_fill_updates(
-        self, request: FillUpdatesStreamRequest | None = None
+        self,
+        request: FillUpdatesStreamRequest | None = None,
+        /,
+        *,
+        hts_id: str | None = None,
+        account_no: str | None = None,
+        account_product_code: str | None = None,
+        account: AccountSummary | None = None,
     ) -> AsyncIterator[FillEvent]:
         """Legacy alias yielding FillEvent values for realtime fills."""
 
-        normalized = OrderEventsStreamRequest(
-            account=(request.account if request is not None else None)
-        )
-        async for event in self.stream_order_events(normalized):
+        if isinstance(request, FillUpdatesStreamRequest):
+            if account is None:
+                account = request.account
+        async for event in self.stream_order_events(
+            hts_id=hts_id,
+            account_no=account_no,
+            account_product_code=account_product_code,
+            account=account,
+        ):
             if not isinstance(event, FillNotificationEvent):
                 continue
             report = ExecutionReport(
@@ -1224,17 +1287,59 @@ class KISClient(MarketDataClient):
             product_code=self._default_account_product_code,
         )
 
-    def _resolve_account(self, account: AccountSummary | None) -> AccountSummary:
+    def _resolve_account(
+        self,
+        account: AccountSummary | None = None,
+        account_no: str | None = None,
+        account_product_code: str | None = None,
+    ) -> AccountSummary:
         if account is not None:
             if not account.account_id:
                 raise KXTValidationError("account.account_id is required")
             return account
+        if account_no:
+            aid = account_no.strip()
+            if not aid:
+                raise KXTValidationError("account_no must not be empty")
+            return AccountSummary(
+                provider=ProviderRef(provider="kis"),
+                account_id=aid,
+                name=None,
+                product_code=(account_product_code or "").strip() or None,
+            )
         default = self._default_account_summary()
         if default is None:
             raise KXTValidationError(
-                "account is required (pass AccountSummary or configure account_no/account_product_code on the client)"
+                "account is required (pass account_no/account_product_code or AccountSummary, "
+                "or configure account_no/account_product_code on the client)"
             )
         return default
+
+    def _resolve_account_optional(
+        self,
+        account: AccountSummary | None = None,
+        account_no: str | None = None,
+        account_product_code: str | None = None,
+    ) -> AccountSummary | None:
+        if account is not None:
+            return account
+        if account_no:
+            aid = account_no.strip()
+            if not aid:
+                return None
+            return AccountSummary(
+                provider=ProviderRef(provider="kis"),
+                account_id=aid,
+                name=None,
+                product_code=(account_product_code or "").strip() or None,
+            )
+        return self._default_account_summary()
+
+    @staticmethod
+    def _resolve_instrument_opt(value: str | InstrumentRef | None) -> InstrumentRef | None:
+        if value is None:
+            return None
+        return KISClient._coerce_instrument(value)
 
     def _account_params(self, account: AccountSummary) -> dict[str, str]:
         return {

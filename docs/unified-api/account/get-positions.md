@@ -20,6 +20,8 @@ async def get_positions(
     request: PositionsRequest | None = None,
     /,
     *,
+    account_no: str | None = None,
+    account_product_code: str | None = None,
     account: AccountSummary | None = None,
     session: SessionType | None = None,
 ) -> PositionsResponse: ...
@@ -27,7 +29,8 @@ async def get_positions(
 
 ## Parameters
 
-- **account** (`AccountSummary | None`) — 미지정 시 기본 계좌 사용.
+- **account_no** / **account_product_code** (`str | None`) — 생략 시 `KISClient` 기본 계좌.
+- **account** (`AccountSummary | None`) — power-user alias.
 - **session** (`SessionType | None`)
 
 ## Returns

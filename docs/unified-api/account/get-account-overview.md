@@ -20,6 +20,8 @@ async def get_account_overview(
     request: AccountOverviewRequest | None = None,
     /,
     *,
+    account_no: str | None = None,
+    account_product_code: str | None = None,
     account: AccountSummary | None = None,
     include_afterhours: bool = False,
     include_fund_settlement: bool = True,
@@ -29,10 +31,11 @@ async def get_account_overview(
 
 ## Parameters
 
-- **account** (`AccountSummary | None`) — 생략 시 `KISClient(account_no=..., account_product_code=...)`에서 가져옵니다.
+- **account_no** / **account_product_code** (`str | None`) — 계좌 번호/상품 코드. 생략 시 `KISClient(account_no=..., account_product_code=...)` 기본값 사용.
+- **account** (`AccountSummary | None`) — power-user alias.
 - **include_afterhours** (`bool`, 기본 `False`) — 시간외 단일가 평가가격을 포함할지 여부.
 - **include_fund_settlement** (`bool`, 기본 `True`) — 펀드 결제 포함 여부.
-- **cursor** (`AccountOverviewCursor | None`) — 페이지네이션 토큰.
+- **cursor** (`AccountOverviewCursor | None`) — 페이지네이션 토큰 (서버 발급값; 이어받기용).
 
 power-user용으로 `AccountOverviewRequest`를 첫 positional 인자로 전달하는 것도 가능합니다(legacy 호환).
 
@@ -84,7 +87,7 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
-다른 계좌를 임시로 조회하려면 `account=`에 `AccountSummary`를 넘길 수 있습니다.
+다른 계좌를 임시로 조회하려면 `account_no=` / `account_product_code=`를 그 호출에 직접 넘기세요.
 
 ## Sample response
 

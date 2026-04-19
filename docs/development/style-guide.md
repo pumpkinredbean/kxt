@@ -50,7 +50,12 @@ kxt 문서는 영어 헤딩과 한국어 본문을 사용합니다.
 
 ## Public input naming policy
 
-`kxt`의 public 메서드(시세, 호가, 체결, 스트리밍)는 ccxt 계열 라이브러리와 일관성을 맞춰 **종목 코드 문자열(`symbol`)을 1차 입력 형태**로 받습니다.
+`kxt`의 모든 public 메서드는 **primitive-first 입력**을 1차 형태로 받습니다. 이 규칙은 시세·호가·체결·스트리밍 뿐만 아니라 **계좌(account), 트레이딩(order submit/cancel/modify), 주문 이벤트 스트림(`stream_order_events`, `stream_order_updates`, `stream_fill_updates`) 전 surface에 공통 적용**됩니다.
+
+- 종목 입력은 심볼 문자열(`"005930"`) — `InstrumentRef(symbol=...)`가 아님.
+- 계좌 입력은 `account_no` / `account_product_code` 문자열 kwargs — `AccountSummary(...)` 구성이 아님.
+- HTS ID 입력은 `hts_id` 문자열 kwarg — request DTO 구성이 아님.
+- 그 외 필드(price, quantity, limit_price, timeframe, start/end 등)도 전부 primitive kwargs.
 
 - **권장**: 첫 위치인자에 종목 코드 문자열을 그대로 넘깁니다.
 
@@ -59,22 +64,33 @@ kxt 문서는 영어 헤딩과 한국어 본문을 사용합니다.
     await client.get_bars("005930", timeframe="day", start=..., end=...)
     async for event in client.stream_trades("005930"):
         ...
+    await client.submit_order(
+        symbol="005930",
+        side=OrderSide.BUY,
+        order_type=OrderType.LIMIT,
+        quantity=Decimal("1"),
+        limit_price=Decimal("70000"),
+    )
+    await client.get_buying_power(instrument="005930", price=Decimal("70000"))
+    async for event in client.stream_order_events():
+        ...
     ```
 
-- **응답 모델은 그대로 `InstrumentRef`를 유지**합니다. 입력은 primitive-friendly, 출력은 broker-neutral structured DTO라는 비대칭이 의도적인 설계입니다.
-- 내부적으로 `*Request` / `InstrumentRef` DTO가 존재하지만, 사용자 문서의 입력 예제에서는 가르치지 않습니다. DTO는 `kxt.requests`의 power-user용 surface로만 유지합니다.
+- 응답 모델은 그대로 `InstrumentRef` / `AccountSummary` / `ProviderOrderRef` 등을 유지합니다. 입력은 primitive-friendly, 출력은 broker-neutral structured DTO라는 비대칭이 의도적인 설계입니다.
+- 내부적으로 `*Request` / `InstrumentRef` / `AccountSummary` DTO가 존재하지만, 사용자 문서의 입력 예제에서는 가르치지 않습니다. 이들은 `kxt.requests` / `kxt`의 power-user alias로만 유지합니다.
+- **`*Cursor` 예외**: 서버가 발급하는 연속 토큰(`AccountOverviewCursor`, `OrderHistoryCursor`, `BarCursor` 등)은 다음 페이지 요청 시 호출자가 그대로 재전달해야 하므로 입력 예제에서 노출이 허용됩니다.
 
 ### Public import policy
 
-- `from kxt import ...` — `KISClient`, 응답·이벤트 DTO, enum, 에러, value object(`InstrumentRef`, `OrderCorrelationKey` 등). 사용자가 *읽는* 타입만 노출합니다.
-- `from kxt.requests import ...` — `*Request`, `*Cursor`, `*Subscription`, `OrderInstruction`, `OrderAmendment`, `ProviderRef` 등 power-user 입력 DTO. 일반 호출은 symbol 문자열과 kwargs만으로 충분하므로 top-level에서 의도적으로 제외했습니다.
+- `from kxt import ...` — `KISClient`, 응답·이벤트 DTO, enum, 에러, value object(`InstrumentRef`, `AccountSummary`, `OrderCorrelationKey`, `ProviderOrderRef` 등). 사용자가 *읽는* 타입만 노출합니다.
+- `from kxt.requests import ...` — `*Request`, `*Cursor`, `*Subscription`, `OrderInstruction`, `OrderAmendment`, `ProviderRef` 등 power-user 입력 DTO. 일반 호출은 primitive kwargs로 충분하므로 top-level에서 의도적으로 제외했습니다.
 - `from kxt.models import ...` — 전체 DTO를 한 번에 가져오는 introspection용 별칭.
 
 문서 작성 시:
 
-- **Primary 예제는 항상 `symbol` 문자열 형태**로 작성합니다.
-- Parameters 섹션의 첫 항목은 `**symbol** (str) *required*`로 시작합니다. 옵션 필드는 kwargs로 전달한다는 점을 명시합니다.
-- **사용자용 예제에서는 `*Request(...)` 또는 `InstrumentRef(...)`를 입력 인자로 구성하는 형태를 보이지 않습니다.** 내부 정규화 설명이나 응답 스키마 예제에서 타입명이 등장하는 것은 허용되지만, "호출자가 이렇게 감싸서 전달하라"는 형태의 코드 조각은 금지합니다.
+- **Primary 예제는 항상 primitive 형태**로 작성합니다. 종목은 `symbol` 문자열, 계좌는 `account_no`/`account_product_code`, HTS는 `hts_id` kwargs.
+- Parameters 섹션의 첫 항목(종목 기반 메서드) 또는 계좌 필드(account 기반 메서드)는 primitive 타입을 우선 표기합니다 (`str`, `str | InstrumentRef`, `str | None`).
+- **사용자용 예제에서는 `*Request(...)`, `InstrumentRef(...)`, `AccountSummary(...)`, `ProviderRef(...)`를 입력 인자로 구성하는 형태를 보이지 않습니다.** 시장 데이터·계좌·트레이딩·스트리밍 어디에서도 금지합니다. 내부 정규화 설명이나 응답 스키마 예제에서 타입명이 등장하는 것은 허용됩니다. `*Cursor` 값은 서버 발급 연속 토큰이므로 예외입니다.
 
 ## Code examples
 
@@ -136,7 +152,7 @@ async with KISClient(
 - 구현되지 않은 기능을 현재 시제로 단정.
 - 영어/한국어 어절을 공백 없이 붙여쓰기 (`API를`는 허용, `API와같이` 같은 경우 공백 사용).
 - 이모지 (사용자가 명시적으로 요청하지 않은 한).
-- **Request DTO / `InstrumentRef` 구성형 입력 예제.** User-facing examples never show request DTOs / `InstrumentRef` construction as normal input. Use primitive-first arguments (symbol strings, timeframe strings, datetime params, etc.). 즉, `client.get_bars(BarsRequest(instrument=InstrumentRef(symbol="005930"), ...))` 같은 코드 조각은 사용자용 문서에 올리지 않습니다. 타입 시그니처 표기, 내부 정규화 설명, 응답 스키마 예제에서 타입명이 등장하는 것은 허용됩니다.
+- **Request DTO / `InstrumentRef` / `AccountSummary` / `ProviderRef` 구성형 입력 예제.** User-facing examples never show request DTOs, `InstrumentRef(...)`, `AccountSummary(...)`, 또는 `ProviderRef(...)` construction as normal input — 이는 market-data, account, trading, streaming 전 surface에 공통 적용됩니다. Use primitive-first arguments (symbol strings, `account_no`/`account_product_code` kwargs, `hts_id` kwarg, timeframe strings, datetime params 등). 즉, `client.get_bars(BarsRequest(instrument=InstrumentRef(symbol="005930"), ...))` 또는 `client.submit_order(SubmitOrderRequest(account=AccountSummary(...), instruction=OrderInstruction(instrument=InstrumentRef(symbol="005930"), ...)))` 같은 코드 조각은 사용자용 문서에 올리지 않습니다. 타입 시그니처 표기, 내부 정규화 설명, 응답 스키마 예제에서 타입명이 등장하는 것은 허용됩니다. 서버 발급 연속 토큰(`*Cursor`)은 이어받기 용도로 입력 예제에서 노출해도 됩니다.
 
 ## Adoption
 

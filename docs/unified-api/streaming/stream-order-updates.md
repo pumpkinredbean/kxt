@@ -18,16 +18,22 @@
 ```python
 async def stream_order_updates(
     request: OrderUpdatesStreamRequest | None = None,
+    /,
+    *,
+    hts_id: str | None = None,
+    account_no: str | None = None,
+    account_product_code: str | None = None,
+    account: AccountSummary | None = None,
 ) -> AsyncIterator[OrderUpdateEvent]: ...
 ```
 
 ## Parameters
 
-`OrderUpdatesStreamRequest`:
+- **hts_id** (`str | None`) — HTS 사용자 ID. 미지정 시 `KISClient(hts_id=...)` 기본값 사용. 둘 다 비면 `KXTUnsupportedError`.
+- **account_no** / **account_product_code** (`str | None`) — 생략 시 클라이언트 기본 계좌.
+- **account** (`AccountSummary | None`) — power-user alias.
 
-- **account** (`AccountSummary | None`) — 미지정 시 클라이언트 기본 계좌.
-
-`hts_id`는 별칭 메서드에서 직접 받지 않습니다. `KISClient(hts_id=...)`로 미리 설정해 두어야 합니다(`stream_order_events`와 동일한 H0STCNI0 채널을 공유).
+`stream_order_events`와 동일한 H0STCNI0 채널을 공유합니다.
 
 ## Returns
 
@@ -49,7 +55,6 @@ async def stream_order_updates(
 import asyncio
 
 from kxt import KISClient
-from kxt.requests import OrderUpdatesStreamRequest
 
 
 async def main() -> None:
@@ -61,7 +66,7 @@ async def main() -> None:
         hts_id="<HTS_ID>",
     ) as client:
         count = 0
-        async for update in client.stream_order_updates(OrderUpdatesStreamRequest()):
+        async for update in client.stream_order_updates():
             print(update.order_ref.order_id, update.state, update.occurred_at)
             count += 1
             if count >= 5:

@@ -20,6 +20,12 @@
 ```python
 async def stream_order_events(
     request: OrderEventsStreamRequest | None = None,
+    /,
+    *,
+    hts_id: str | None = None,
+    account_no: str | None = None,
+    account_product_code: str | None = None,
+    account: AccountSummary | None = None,
 ) -> AsyncIterator[
     OrderAcceptedEvent
     | OrderAmendAckEvent
@@ -31,10 +37,9 @@ async def stream_order_events(
 
 ## Parameters
 
-`OrderEventsStreamRequest` (모두 선택):
-
-- **account** (`AccountSummary | None`) — 미지정 시 클라이언트 기본 계좌.
-- **hts_id** (`str | None`) — HTS 사용자 ID. 미지정 시 `KISClient(hts_id=...)` 기본값을 사용. 둘 다 비어 있으면 `KXTUnsupportedError`.
+- **hts_id** (`str | None`) — HTS 사용자 ID. 미지정 시 `KISClient(hts_id=...)` 기본값을 사용. 둘 다 비면 `KXTUnsupportedError`.
+- **account_no** / **account_product_code** (`str | None`) — 계좌 식별. 생략 시 클라이언트 기본 계좌.
+- **account** (`AccountSummary | None`) — power-user alias.
 
 ## Returns
 
@@ -67,7 +72,6 @@ from kxt import (
     KISClient,
     OrderAcceptedEvent,
 )
-from kxt.requests import OrderEventsStreamRequest
 
 
 async def main() -> None:
@@ -78,9 +82,8 @@ async def main() -> None:
         account_product_code="<ACNT_PRDT_CD>",
         hts_id="<HTS_ID>",
     ) as client:
-        request = OrderEventsStreamRequest()
         count = 0
-        async for event in client.stream_order_events(request):
+        async for event in client.stream_order_events():
             if isinstance(event, FillNotificationEvent):
                 print("FILL", event.order_ref.order_id, event.price, event.quantity)
             elif isinstance(event, OrderAcceptedEvent):

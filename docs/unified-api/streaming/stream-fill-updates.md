@@ -18,16 +18,20 @@
 ```python
 async def stream_fill_updates(
     request: FillUpdatesStreamRequest | None = None,
+    /,
+    *,
+    hts_id: str | None = None,
+    account_no: str | None = None,
+    account_product_code: str | None = None,
+    account: AccountSummary | None = None,
 ) -> AsyncIterator[FillEvent]: ...
 ```
 
 ## Parameters
 
-`FillUpdatesStreamRequest`:
-
-- **account** (`AccountSummary | None`) — 미지정 시 클라이언트 기본 계좌.
-
-`hts_id`는 `KISClient(hts_id=...)`로 미리 설정해야 합니다.
+- **hts_id** (`str | None`) — HTS 사용자 ID. 미지정 시 `KISClient(hts_id=...)` 기본값 사용. 둘 다 비면 `KXTUnsupportedError`.
+- **account_no** / **account_product_code** (`str | None`) — 생략 시 클라이언트 기본 계좌.
+- **account** (`AccountSummary | None`) — power-user alias.
 
 ## Returns
 
@@ -54,7 +58,6 @@ async def stream_fill_updates(
 import asyncio
 
 from kxt import KISClient
-from kxt.requests import FillUpdatesStreamRequest
 
 
 async def main() -> None:
@@ -66,7 +69,7 @@ async def main() -> None:
         hts_id="<HTS_ID>",
     ) as client:
         count = 0
-        async for fill in client.stream_fill_updates(FillUpdatesStreamRequest()):
+        async for fill in client.stream_fill_updates():
             r = fill.report
             print("FILL", fill.instrument.symbol, r.order_ref.order_id, r.price, r.quantity)
             count += 1
