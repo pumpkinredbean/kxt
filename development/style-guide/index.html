@@ -2465,17 +2465,9 @@
 </code></pre></div>
 </li>
 <li>
-<p><strong>Advanced</strong>: 베뉴/마켓 세그먼트 같은 추가 컨텍스트가 필요하거나 모든 필드를 한꺼번에 묶고 싶을 때만 같은 위치인자에 <code>InstrumentRef</code> 또는 <code>*Request</code> DTO를 넘깁니다. 입력 DTO는 <code>kxt.requests</code>에 모여 있습니다.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">kxt</span><span class="w"> </span><span class="kn">import</span> <span class="n">InstrumentRef</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">kxt.requests</span><span class="w"> </span><span class="kn">import</span> <span class="n">BarsRequest</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get_quote</span><span class="p">(</span><span class="n">InstrumentRef</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s2">&quot;005930&quot;</span><span class="p">))</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get_bars</span><span class="p">(</span><span class="n">BarsRequest</span><span class="p">(</span><span class="n">instrument</span><span class="o">=</span><span class="n">InstrumentRef</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s2">&quot;005930&quot;</span><span class="p">),</span> <span class="n">timeframe</span><span class="o">=</span><span class="s2">&quot;day&quot;</span><span class="p">))</span>
-</code></pre></div>
-</li>
-<li>
 <p><strong>응답 모델은 그대로 <code>InstrumentRef</code>를 유지</strong>합니다. 입력은 primitive-friendly, 출력은 broker-neutral structured DTO라는 비대칭이 의도적인 설계입니다.</p>
 </li>
+<li>내부적으로 <code>*Request</code> / <code>InstrumentRef</code> DTO가 존재하지만, 사용자 문서의 입력 예제에서는 가르치지 않습니다. DTO는 <code>kxt.requests</code>의 power-user용 surface로만 유지합니다.</li>
 </ul>
 <h3 id="public-import-policy">Public import policy<a class="headerlink" href="#public-import-policy" title="Permanent link">&para;</a></h3>
 <ul>
@@ -2483,12 +2475,11 @@
 <li><code>from kxt.requests import ...</code> — <code>*Request</code>, <code>*Cursor</code>, <code>*Subscription</code>, <code>OrderInstruction</code>, <code>OrderAmendment</code>, <code>ProviderRef</code> 등 power-user 입력 DTO. 일반 호출은 symbol 문자열과 kwargs만으로 충분하므로 top-level에서 의도적으로 제외했습니다.</li>
 <li><code>from kxt.models import ...</code> — 전체 DTO를 한 번에 가져오는 introspection용 별칭.</li>
 </ul>
-<p>문서 코드 예제도 같은 규약을 따릅니다. 입력 DTO를 보여줄 때는 <code>kxt.requests</code>에서 가져오세요.</p>
 <p>문서 작성 시:</p>
 <ul>
 <li><strong>Primary 예제는 항상 <code>symbol</code> 문자열 형태</strong>로 작성합니다.</li>
-<li><code>InstrumentRef</code>/<code>*Request</code> 형태는 "Advanced"로 명확히 표시한 보조 예제(<code>!!! note</code>)에서만 보여줍니다.</li>
-<li>Parameters 섹션의 첫 항목은 <code>**symbol** (str) *required*</code>로 시작합니다. 옵션 필드는 <code>*Request</code> DTO로 호출할 때만 의미가 있다고 명시합니다.</li>
+<li>Parameters 섹션의 첫 항목은 <code>**symbol** (str) *required*</code>로 시작합니다. 옵션 필드는 kwargs로 전달한다는 점을 명시합니다.</li>
+<li><strong>사용자용 예제에서는 <code>*Request(...)</code> 또는 <code>InstrumentRef(...)</code>를 입력 인자로 구성하는 형태를 보이지 않습니다.</strong> 내부 정규화 설명이나 응답 스키마 예제에서 타입명이 등장하는 것은 허용되지만, "호출자가 이렇게 감싸서 전달하라"는 형태의 코드 조각은 금지합니다.</li>
 </ul>
 <h2 id="code-examples">Code examples<a class="headerlink" href="#code-examples" title="Permanent link">&para;</a></h2>
 <ul>
@@ -2502,21 +2493,21 @@
 <li><strong>금지</strong>: <code>os.environ</code>, <code>os.getenv</code>, <code>import os</code>를 SDK 예제에 사용하지 마세요. <code>KIS_APP_KEY</code> 같은 환경변수명도 SDK 예제 본문에 등장시키지 않습니다.</li>
 <li><strong>권장</strong>: 자격증명은 placeholder 리터럴로 표기하거나, 호출자가 임의 경로(설정 파일·시크릿 매니저·CLI 환경 등)로 주입한다는 가정을 둡니다.</li>
 </ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">KISClient</span><span class="p">(</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">app_key</span><span class="o">=</span><span class="s2">&quot;&lt;APP_KEY&gt;&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">app_secret</span><span class="o">=</span><span class="s2">&quot;&lt;APP_SECRET&gt;&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="o">...</span>
+</code></pre></div>
+<p>계좌·HTS ID가 필요한 메서드도 같은 방식입니다.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">KISClient</span><span class="p">(</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">app_key</span><span class="o">=</span><span class="s2">&quot;&lt;APP_KEY&gt;&quot;</span><span class="p">,</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">app_secret</span><span class="o">=</span><span class="s2">&quot;&lt;APP_SECRET&gt;&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="o">...</span>
-</code></pre></div>
-<p>계좌·HTS ID가 필요한 메서드도 같은 방식입니다.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">KISClient</span><span class="p">(</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">app_key</span><span class="o">=</span><span class="s2">&quot;&lt;APP_KEY&gt;&quot;</span><span class="p">,</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">app_secret</span><span class="o">=</span><span class="s2">&quot;&lt;APP_SECRET&gt;&quot;</span><span class="p">,</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">account_no</span><span class="o">=</span><span class="s2">&quot;&lt;CANO&gt;&quot;</span><span class="p">,</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">account_product_code</span><span class="o">=</span><span class="s2">&quot;&lt;ACNT_PRDT_CD&gt;&quot;</span><span class="p">,</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">hts_id</span><span class="o">=</span><span class="s2">&quot;&lt;HTS_ID&gt;&quot;</span><span class="p">,</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="o">...</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">account_no</span><span class="o">=</span><span class="s2">&quot;&lt;CANO&gt;&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">account_product_code</span><span class="o">=</span><span class="s2">&quot;&lt;ACNT_PRDT_CD&gt;&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">hts_id</span><span class="o">=</span><span class="s2">&quot;&lt;HTS_ID&gt;&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="o">...</span>
 </code></pre></div>
 <p>환경변수 기반 흐름은 CLI 전용 관심사이며, <a href="../../cli/">CLI 레퍼런스</a>와 <a href="../../getting-started/authentication/">Authentication</a>의 CLI 섹션에서만 다룹니다.</p>
 <h2 id="tables">Tables<a class="headerlink" href="#tables" title="Permanent link">&para;</a></h2>
@@ -2543,6 +2534,7 @@
 <li>구현되지 않은 기능을 현재 시제로 단정.</li>
 <li>영어/한국어 어절을 공백 없이 붙여쓰기 (<code>API를</code>는 허용, <code>API와같이</code> 같은 경우 공백 사용).</li>
 <li>이모지 (사용자가 명시적으로 요청하지 않은 한).</li>
+<li><strong>Request DTO / <code>InstrumentRef</code> 구성형 입력 예제.</strong> User-facing examples never show request DTOs / <code>InstrumentRef</code> construction as normal input. Use primitive-first arguments (symbol strings, timeframe strings, datetime params, etc.). 즉, <code>client.get_bars(BarsRequest(instrument=InstrumentRef(symbol="005930"), ...))</code> 같은 코드 조각은 사용자용 문서에 올리지 않습니다. 타입 시그니처 표기, 내부 정규화 설명, 응답 스키마 예제에서 타입명이 등장하는 것은 허용됩니다.</li>
 </ul>
 <h2 id="adoption">Adoption<a class="headerlink" href="#adoption" title="Permanent link">&para;</a></h2>
 <p>이 가이드는 새 문서 작성과 기존 문서 정비 모두에 적용됩니다.</p>

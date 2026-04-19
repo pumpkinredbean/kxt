@@ -2256,7 +2256,7 @@
 <h2 id="what-happened">What happened<a class="headerlink" href="#what-happened" title="Permanent link">&para;</a></h2>
 <ol>
 <li><code>KISClient</code>가 컨텍스트 매니저로 들어가며 내부 트랜스포트(HTTP 세션, 토큰)가 준비됩니다.</li>
-<li><code>get_bars(...)</code>는 종목 코드 문자열(<code>symbol</code>)을 첫 인자로 받습니다. 더 명시적인 형태가 필요하면 <code>BarsRequest(instrument=InstrumentRef(...))</code>를 그대로 넘길 수도 있습니다.</li>
+<li><code>get_bars(...)</code>는 종목 코드 문자열(<code>symbol</code>)을 첫 인자로 받고, <code>timeframe</code>·<code>start</code>·<code>end</code> 같은 옵션을 키워드 인자로 받습니다.</li>
 <li><code>get_bars(...)</code>는 KIS 일봉 엔드포인트(<code>FHKST03010100</code>)를 호출하고 응답을 <code>Bar</code> 튜플로 정규화합니다.</li>
 <li>컨텍스트를 빠져나오면 HTTP 커넥션이 반환됩니다.</li>
 </ol>
