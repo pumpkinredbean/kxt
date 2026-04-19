@@ -84,7 +84,6 @@ KIS_APP_KEY=PSxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 KIS_APP_SECRET=yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
 KIS_ACCOUNT_NO=12345678
 KIS_ACCOUNT_PRODUCT_CODE=01
-KIS_HTS_ID=myhtsid
 ```
 
 ### CLI check
