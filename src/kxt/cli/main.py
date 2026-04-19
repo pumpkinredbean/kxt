@@ -4,14 +4,11 @@ from __future__ import annotations
 
 import argparse
 import asyncio
-import json
 import os
 import sys
 import traceback
-from dataclasses import asdict, is_dataclass
 from datetime import date, datetime
 from decimal import Decimal
-from enum import Enum
 from typing import Any, Sequence
 
 from kxt import (
@@ -21,6 +18,7 @@ from kxt import (
     OrderSide,
     OrderType,
 )
+from kxt.cli.format import render_output
 from kxt.errors import KXTAuthenticationError, KXTError, KXTValidationError
 
 KIS_APP_KEY_ENV = "KIS_APP_KEY"
@@ -63,14 +61,18 @@ def build_parser() -> argparse.ArgumentParser:
         prog="kxt",
         description=(
             "Thin broker-neutral CLI over the currently implemented kxt SDK surface.\n\n"
-            "Use this CLI to inspect capabilities, verify auth setup, fetch normalized market-data snapshots, "
-            "and consume the currently exposed live streams. Command grammar stays provider-neutral via "
-            "--provider even though only KIS is implemented today."
+            "Use this CLI to inspect capabilities, verify auth setup, and fetch normalized market-data and "
+            "account snapshots. Output defaults to structured plain text that is readable by both humans and "
+            "LLM-based tools; pass the global `--json` flag for raw JSON. Command grammar stays "
+            "provider-neutral via --provider even though only KIS is implemented today."
         ),
         epilog=(
             f"Provider support: {_supported_providers_text()}\n"
             f"{_scope_help_text()}\n"
             f"{_auth_help_text()}\n\n"
+            "Global flags:\n"
+            "  --json    Emit raw JSON instead of the default structured plain text.\n"
+            "  --debug   Show Python tracebacks for unexpected internal errors.\n\n"
             "Representative commands:\n"
             "  kxt capabilities\n"
             "  kxt doctor\n"
@@ -79,15 +81,19 @@ def build_parser() -> argparse.ArgumentParser:
             "  kxt bars 005930 --provider kis --timeframe 5m\n"
             "  kxt recent-trades 005930 --provider kis --limit 5\n"
             "  kxt orderbook 005930 --provider kis\n"
-            "  kxt orderbook 005930 --provider kis --stream --count 5\n"
             "  kxt market-status --provider kis --symbol 005930\n"
             "  kxt investor-flow 005930 --provider kis\n"
-            "  kxt trades 005930 --provider kis --count 5\n\n"
+            "  kxt --json quote 005930 --provider kis\n\n"
             "Run `kxt <command> --help` for command-specific examples and constraints."
         ),
         formatter_class=_HelpFormatter,
     )
     parser.add_argument("--debug", action="store_true", help="Show Python tracebacks for unexpected internal errors")
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit raw JSON instead of the default structured plain-text output.",
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     capabilities_parser = subparsers.add_parser(
@@ -198,8 +204,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Fetch normalized recent trades",
         description=(
             "Fetch recent trade prints for one symbol.\n\n"
-            "Current KIS support is limited to same-day domestic-equity trades. Use `trades` for the live stream "
-            "surface instead of historical polling."
+            "Current KIS support is limited to same-day domestic-equity trades."
         ),
         epilog=(
             f"{_scope_help_text()}\n"
@@ -226,20 +231,16 @@ def build_parser() -> argparse.ArgumentParser:
 
     orderbook_parser = subparsers.add_parser(
         "orderbook",
-        help="Fetch or stream a normalized order book",
+        help="Fetch a normalized order book snapshot",
         description=(
-            "Fetch a snapshot order book or stream live order book updates for one symbol.\n\n"
-            "Without `--stream`, this command performs a one-shot snapshot read. With `--stream`, it keeps "
-            "printing normalized updates until interrupted or until `--count` is reached."
+            "Fetch a snapshot order book for one symbol.\n\n"
+            "This command performs a one-shot snapshot read and returns the current normalized ask/bid ladder."
         ),
         epilog=(
             f"{_scope_help_text()}\n"
-            "Constraint: `--count` matters only with `--stream`.\n"
             f"{_auth_help_text()}\n\n"
             "Examples:\n"
             "  kxt orderbook 005930\n"
-            "  kxt orderbook 005930 --stream\n"
-            "  kxt orderbook 005930 --stream --count 5\n"
             "  kxt orderbook 005930 --market-segment KOSPI"
         ),
         formatter_class=_HelpFormatter,
@@ -251,8 +252,6 @@ def build_parser() -> argparse.ArgumentParser:
         choices=tuple(segment.value for segment in MarketSegment),
         help="Optional domestic-equity market segment hint",
     )
-    orderbook_parser.add_argument("--stream", action="store_true", help="Stream live order book updates")
-    orderbook_parser.add_argument("--count", type=int, help="Stop after emitting this many streamed snapshots; only applies with --stream")
     orderbook_parser.set_defaults(handler=_handle_orderbook)
 
     market_status_parser = subparsers.add_parser(
@@ -311,36 +310,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     investor_flow_parser.set_defaults(handler=_handle_investor_flow)
 
-    trades_parser = subparsers.add_parser(
-        "trades",
-        help="Stream normalized live trades",
-        description=(
-            "Stream normalized live trades for one symbol.\n\n"
-            "This is a streaming command, not a historical query. It keeps printing events until interrupted or "
-            "until `--count` is reached."
-        ),
-        epilog=(
-            f"{_scope_help_text()}\n"
-            "Constraint: `trades` is stream-only; use `recent-trades` for same-day snapshot-style trade retrieval.\n"
-            f"{_auth_help_text()}\n\n"
-            "Examples:\n"
-            "  kxt trades 005930\n"
-            "  kxt trades 005930 --count 5\n"
-            "  kxt trades 005930 --provider kis --market-segment KOSPI --count 20"
-        ),
-        formatter_class=_HelpFormatter,
-    )
-    trades_parser.add_argument("symbol", help="Instrument symbol, for example 005930")
-    trades_parser.add_argument("--provider", choices=SUPPORTED_PROVIDERS, default="kis", help=_provider_help())
-    trades_parser.add_argument(
-        "--market-segment",
-        choices=tuple(segment.value for segment in MarketSegment),
-        help="Optional domestic-equity market segment hint",
-    )
-    trades_parser.add_argument("--count", type=int, help="Stop after emitting this many trades")
-    trades_parser.set_defaults(handler=_handle_trades)
-
-    # ---- account / trading / notifications ----
+    # ---- account / trading ----
 
     balance_parser = subparsers.add_parser(
         "balance",
@@ -453,19 +423,6 @@ def build_parser() -> argparse.ArgumentParser:
     _add_account_args(modify_order_parser)
     modify_order_parser.set_defaults(handler=_handle_modify_order)
 
-    order_events_parser = subparsers.add_parser(
-        "order-events",
-        help="Stream realtime order+fill notifications (KIS H0STCNI0)",
-        formatter_class=_HelpFormatter,
-    )
-    order_events_parser.add_argument(
-        "--hts-id",
-        help=f"HTS user id for subscription (fallback: {KIS_HTS_ID_ENV} env var)",
-    )
-    order_events_parser.add_argument("--count", type=int, help="Stop after N events")
-    _add_account_args(order_events_parser)
-    order_events_parser.set_defaults(handler=_handle_order_events)
-
     return parser
 
 
@@ -493,8 +450,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 1
 
 
+def _emit(args: argparse.Namespace, value: Any) -> None:
+    print(render_output(value, as_json=bool(getattr(args, "json", False))))
+
+
 def _handle_capabilities(args: argparse.Namespace) -> int:
-    print(_to_json(_capabilities_for_provider(args.provider)))
+    _emit(args, _capabilities_for_provider(args.provider))
     return 0
 
 
@@ -523,7 +484,7 @@ def _handle_doctor(args: argparse.Namespace) -> int:
             "KIS websocket streaming connects directly by default; set KXT_KIS_WS_PROXY=auto or a proxy URL to opt into websocket proxying.",
         ),
     }
-    print(_to_json(result))
+    _emit(args, result)
     return 0 if ready else 1
 
 
@@ -533,7 +494,7 @@ async def _handle_quote(args: argparse.Namespace) -> int:
     async with _build_kis_client() as client:
         quote = await client.get_quote(_instrument_from_args(args))
 
-    print(_to_json(quote))
+    _emit(args, quote)
     return 0
 
 
@@ -552,7 +513,7 @@ async def _handle_bars(args: argparse.Namespace) -> int:
             adjusted=args.adjusted,
         )
 
-    print(_to_json(bars))
+    _emit(args, bars)
     return 0
 
 
@@ -569,29 +530,18 @@ async def _handle_recent_trades(args: argparse.Namespace) -> int:
             limit=args.limit,
         )
 
-    print(_to_json(trades))
+    _emit(args, trades)
     return 0
 
 
 async def _handle_orderbook(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
-    if args.count is not None and args.count < 1:
-        raise KXTValidationError("--count must be >= 1 when provided")
 
     instrument = _instrument_from_args(args)
     async with _build_kis_client() as client:
-        if not args.stream:
-            orderbook = await client.get_orderbook(instrument)
-            print(_to_json(orderbook))
-            return 0
+        orderbook = await client.get_orderbook(instrument)
 
-        emitted = 0
-        async for orderbook in client.stream_orderbook(instrument):
-            print(_to_json(orderbook))
-            emitted += 1
-            if args.count is not None and emitted >= args.count:
-                break
-
+    _emit(args, orderbook)
     return 0
 
 
@@ -602,7 +552,7 @@ async def _handle_market_status(args: argparse.Namespace) -> int:
     async with _build_kis_client() as client:
         status = await client.get_market_status(instrument)
 
-    print(_to_json(status))
+    _emit(args, status)
     return 0
 
 
@@ -612,25 +562,7 @@ async def _handle_investor_flow(args: argparse.Namespace) -> int:
     async with _build_kis_client() as client:
         investor_flow = await client.get_investor_flow(_instrument_from_args(args))
 
-    print(_to_json(investor_flow))
-    return 0
-
-
-async def _handle_trades(args: argparse.Namespace) -> int:
-    _require_supported_provider(args.provider)
-    if args.count is not None and args.count < 1:
-        raise KXTValidationError("--count must be >= 1 when provided")
-
-    instrument = _instrument_from_args(args)
-    emitted = 0
-
-    async with _build_kis_client() as client:
-        async for trade in client.stream_trades(instrument):
-            print(_to_json(trade))
-            emitted += 1
-            if args.count is not None and emitted >= args.count:
-                break
-
+    _emit(args, investor_flow)
     return 0
 
 
@@ -685,29 +617,11 @@ def _parse_temporal_arg(value: str | None, *, field_name: str) -> date | datetim
         raise KXTValidationError(f"{field_name} must be a valid ISO-8601 date or datetime") from exc
 
 
-def _to_json(value: Any) -> str:
-    return json.dumps(value, default=_json_default, ensure_ascii=False, indent=2)
-
-
-def _json_default(value: Any) -> Any:
-    if isinstance(value, Decimal):
-        return str(value)
-    if isinstance(value, (date, datetime)):
-        return value.isoformat()
-    if isinstance(value, Enum):
-        return value.value
-    if is_dataclass(value):
-        return asdict(value)
-    if isinstance(value, tuple):
-        return list(value)
-    raise TypeError(f"Object of type {type(value).__name__} is not JSON serializable")
-
-
 if __name__ == "__main__":
     raise SystemExit(main())
 
 
-# ---- account / trading / notification CLI helpers ------------------------------
+# ---- account / trading CLI helpers ---------------------------------------------
 
 
 def _add_account_args(parser: argparse.ArgumentParser) -> None:
@@ -758,7 +672,7 @@ async def _handle_balance(args: argparse.Namespace) -> int:
             account_no=account_no,
             account_product_code=product_code,
         )
-    print(_to_json(overview))
+    _emit(args, overview)
     return 0
 
 
@@ -770,7 +684,7 @@ async def _handle_positions(args: argparse.Namespace) -> int:
             account_no=account_no,
             account_product_code=product_code,
         )
-    print(_to_json(response))
+    _emit(args, response)
     return 0
 
 
@@ -786,7 +700,7 @@ async def _handle_buying_power(args: argparse.Namespace) -> int:
             account_no=account_no,
             account_product_code=product_code,
         )
-    print(_to_json(response))
+    _emit(args, response)
     return 0
 
 
@@ -799,7 +713,7 @@ async def _handle_open_orders(args: argparse.Namespace) -> int:
             account_no=account_no,
             account_product_code=product_code,
         )
-    print(_to_json(response))
+    _emit(args, response)
     return 0
 
 
@@ -819,7 +733,7 @@ async def _handle_order_history(args: argparse.Namespace) -> int:
             account_no=account_no,
             account_product_code=product_code,
         )
-    print(_to_json(response))
+    _emit(args, response)
     return 0
 
 
@@ -839,7 +753,7 @@ async def _handle_place_order(args: argparse.Namespace) -> int:
             account_no=account_no,
             account_product_code=product_code,
         )
-    print(_to_json(response))
+    _emit(args, response)
     return 0
 
 
@@ -855,7 +769,7 @@ async def _handle_cancel_order(args: argparse.Namespace) -> int:
             account_no=account_no,
             account_product_code=product_code,
         )
-    print(_to_json(response))
+    _emit(args, response)
     return 0
 
 
@@ -872,29 +786,5 @@ async def _handle_modify_order(args: argparse.Namespace) -> int:
             account_no=account_no,
             account_product_code=product_code,
         )
-    print(_to_json(response))
-    return 0
-
-
-async def _handle_order_events(args: argparse.Namespace) -> int:
-    _require_supported_provider(args.provider)
-    if args.count is not None and args.count < 1:
-        raise KXTValidationError("--count must be >= 1 when provided")
-    account_no = (getattr(args, "account_no", None) or os.getenv(KIS_ACCOUNT_NO_ENV, "")).strip() or None
-    product_code = (
-        getattr(args, "account_product_code", None)
-        or os.getenv(KIS_ACCOUNT_PRODUCT_CODE_ENV, "")
-    ).strip() or None
-    hts_id = (args.hts_id or os.getenv(KIS_HTS_ID_ENV, "")).strip() or None
-    emitted = 0
-    async with _build_kis_client() as client:
-        async for event in client.stream_order_events(
-            hts_id=hts_id,
-            account_no=account_no,
-            account_product_code=product_code,
-        ):
-            print(_to_json(event))
-            emitted += 1
-            if args.count is not None and emitted >= args.count:
-                break
+    _emit(args, response)
     return 0

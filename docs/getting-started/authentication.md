@@ -70,8 +70,9 @@ CLI는 시크릿을 플래그로 받지 않습니다. 아래 환경변수를 사
 | `KIS_APP_SECRET` | 필수 | App secret |
 | `KIS_ACCOUNT_NO` | 계좌·주문 명령에서 필수 (또는 `--account-no` 플래그) | 계좌번호(CANO) |
 | `KIS_ACCOUNT_PRODUCT_CODE` | 계좌·주문 명령에서 필수 (또는 `--account-product-code` 플래그) | 상품코드 (예: `01`) |
-| `KIS_HTS_ID` | `kxt order-events`에서 필수 (또는 `--hts-id` 플래그) | HTS ID |
 | `KXT_KIS_WS_PROXY` | 선택 | 웹소켓 프록시 URL (`auto` 또는 URL) |
+
+HTS ID는 SDK `stream_order_events` 호출에서만 필요한 키워드 인자이며 CLI 표면에서는 더 이상 소비되지 않습니다. SDK 호출부에서 `KISClient(..., hts_id=...)`에 직접 넘기세요.
 
 ### `.env` example
 
@@ -90,12 +91,15 @@ KIS_HTS_ID=myhtsid
 
 ```bash
 kxt doctor
-# {
-#   "KIS_APP_KEY": "set",
-#   "KIS_APP_SECRET": "set",
-#   ...
-# }
+# Provider: kis   Ready: yes
+#
+# Credentials:
+#   KIS_APP_KEY: set
+#   KIS_APP_SECRET: set
+# ...
 ```
+
+원시 JSON 형식이 필요하면 `kxt --json doctor`를 사용하세요.
 
 자세한 CLI 사용법은 [CLI 레퍼런스](../cli.md)를 참조하세요.
 
