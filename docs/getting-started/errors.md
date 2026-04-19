@@ -49,32 +49,23 @@ from kxt import (
 import asyncio
 
 from kxt import (
-    InstrumentRef,
     KISClient,
     KXTAPIError,
     KXTAuthenticationError,
     KXTTimeoutError,
 )
-from kxt.requests import BarsRequest
 
 
 async def safe_bars(client: KISClient, symbol: str):
     try:
-        return await client.get_bars(
-            BarsRequest(
-                instrument=InstrumentRef(symbol=symbol),
-                timeframe="day",
-            )
-        )
+        return await client.get_bars(symbol, timeframe="day")
     except KXTAuthenticationError:
         # 자격증명 문제: 상위로 올려 사용자 개입 유도
         raise
     except KXTTimeoutError:
         # 일시적 네트워크 지연: 짧게 대기 후 한 번 재시도
         await asyncio.sleep(1.0)
-        return await client.get_bars(
-            BarsRequest(instrument=InstrumentRef(symbol=symbol), timeframe="day")
-        )
+        return await client.get_bars(symbol, timeframe="day")
     except KXTAPIError as exc:
         # 프로바이더 에러 코드를 기록해 후속 조치
         print(f"KIS error: code={exc.code} message={exc}")
@@ -91,14 +82,20 @@ async def safe_bars(client: KISClient, symbol: str):
 ## `KXTValidationError` example
 
 ```python
-from kxt import InstrumentRef
-from kxt.requests import BarsRequest
+import asyncio
 
-# timeframe이 빠지면 생성 단계에서 바로 거부됩니다
-BarsRequest(instrument=InstrumentRef(symbol="005930"))  # TypeError
+from kxt import KISClient, KXTValidationError
+
+
+async def demo(client: KISClient) -> None:
+    try:
+        # timeframe 키워드 누락 — 필수 인자 검증에서 실패
+        await client.get_bars("005930")
+    except KXTValidationError as exc:
+        print(f"validation failed: {exc}")
 ```
 
-`BarsRequest.timeframe`은 필수 필드입니다. `InstrumentRef`만 넘기는 느슨한 오버로드를 쓸 때는 `timeframe` 키워드를 함께 제공해야 하며, 누락 시 `KXTValidationError`가 발생합니다.
+`get_bars(...)`는 `timeframe` 키워드 인자가 필수입니다. 누락하면 `KXTValidationError`가 발생합니다.
 
 ## See also
 

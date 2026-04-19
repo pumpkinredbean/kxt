@@ -61,17 +61,8 @@ kxt 문서는 영어 헤딩과 한국어 본문을 사용합니다.
         ...
     ```
 
-- **Advanced**: 베뉴/마켓 세그먼트 같은 추가 컨텍스트가 필요하거나 모든 필드를 한꺼번에 묶고 싶을 때만 같은 위치인자에 `InstrumentRef` 또는 `*Request` DTO를 넘깁니다. 입력 DTO는 `kxt.requests`에 모여 있습니다.
-
-    ```python
-    from kxt import InstrumentRef
-    from kxt.requests import BarsRequest
-
-    await client.get_quote(InstrumentRef(symbol="005930"))
-    await client.get_bars(BarsRequest(instrument=InstrumentRef(symbol="005930"), timeframe="day"))
-    ```
-
 - **응답 모델은 그대로 `InstrumentRef`를 유지**합니다. 입력은 primitive-friendly, 출력은 broker-neutral structured DTO라는 비대칭이 의도적인 설계입니다.
+- 내부적으로 `*Request` / `InstrumentRef` DTO가 존재하지만, 사용자 문서의 입력 예제에서는 가르치지 않습니다. DTO는 `kxt.requests`의 power-user용 surface로만 유지합니다.
 
 ### Public import policy
 
@@ -79,13 +70,11 @@ kxt 문서는 영어 헤딩과 한국어 본문을 사용합니다.
 - `from kxt.requests import ...` — `*Request`, `*Cursor`, `*Subscription`, `OrderInstruction`, `OrderAmendment`, `ProviderRef` 등 power-user 입력 DTO. 일반 호출은 symbol 문자열과 kwargs만으로 충분하므로 top-level에서 의도적으로 제외했습니다.
 - `from kxt.models import ...` — 전체 DTO를 한 번에 가져오는 introspection용 별칭.
 
-문서 코드 예제도 같은 규약을 따릅니다. 입력 DTO를 보여줄 때는 `kxt.requests`에서 가져오세요.
-
 문서 작성 시:
 
 - **Primary 예제는 항상 `symbol` 문자열 형태**로 작성합니다.
-- `InstrumentRef`/`*Request` 형태는 "Advanced"로 명확히 표시한 보조 예제(`!!! note`)에서만 보여줍니다.
-- Parameters 섹션의 첫 항목은 `**symbol** (str) *required*`로 시작합니다. 옵션 필드는 `*Request` DTO로 호출할 때만 의미가 있다고 명시합니다.
+- Parameters 섹션의 첫 항목은 `**symbol** (str) *required*`로 시작합니다. 옵션 필드는 kwargs로 전달한다는 점을 명시합니다.
+- **사용자용 예제에서는 `*Request(...)` 또는 `InstrumentRef(...)`를 입력 인자로 구성하는 형태를 보이지 않습니다.** 내부 정규화 설명이나 응답 스키마 예제에서 타입명이 등장하는 것은 허용되지만, "호출자가 이렇게 감싸서 전달하라"는 형태의 코드 조각은 금지합니다.
 
 ## Code examples
 
@@ -147,6 +136,7 @@ async with KISClient(
 - 구현되지 않은 기능을 현재 시제로 단정.
 - 영어/한국어 어절을 공백 없이 붙여쓰기 (`API를`는 허용, `API와같이` 같은 경우 공백 사용).
 - 이모지 (사용자가 명시적으로 요청하지 않은 한).
+- **Request DTO / `InstrumentRef` 구성형 입력 예제.** User-facing examples never show request DTOs / `InstrumentRef` construction as normal input. Use primitive-first arguments (symbol strings, timeframe strings, datetime params, etc.). 즉, `client.get_bars(BarsRequest(instrument=InstrumentRef(symbol="005930"), ...))` 같은 코드 조각은 사용자용 문서에 올리지 않습니다. 타입 시그니처 표기, 내부 정규화 설명, 응답 스키마 예제에서 타입명이 등장하는 것은 허용됩니다.
 
 ## Adoption
 

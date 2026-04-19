@@ -76,18 +76,6 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
-!!! note "Advanced: 명시적 DTO 형태"
-    같은 자리에 `InvestorFlowRequest`를 넘기면 `instrument`/`session` 등을 명시적으로 표현할 수 있습니다.
-
-    ```python
-    from kxt import InstrumentRef
-    from kxt.requests import InvestorFlowRequest
-
-    response = await client.get_investor_flow(
-        InvestorFlowRequest(instrument=InstrumentRef(symbol="005930"))
-    )
-    ```
-
 ## Sample response
 
 ```python

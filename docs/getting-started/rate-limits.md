@@ -26,17 +26,16 @@ KIS OpenAPI는 대략 아래 버킷으로 나뉩니다. 정확한 수치는 KIS 
 
 ```python
 import asyncio
-from kxt import KXTAPIError, KISClient, InstrumentRef
-from kxt.requests import QuoteRequest
+from kxt import KXTAPIError, KISClient
 
 
 async def guarded_call(client, symbol):
     try:
-        return await client.get_quote(QuoteRequest(instrument=InstrumentRef(symbol=symbol)))
+        return await client.get_quote(symbol)
     except KXTAPIError as exc:
         if exc.code and "EGW00201" in exc.code:  # 예: 호출 빈도 초과 코드
             await asyncio.sleep(1.0)
-            return await client.get_quote(QuoteRequest(instrument=InstrumentRef(symbol=symbol)))
+            return await client.get_quote(symbol)
         raise
 ```
 

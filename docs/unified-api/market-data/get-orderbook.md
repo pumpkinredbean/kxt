@@ -68,17 +68,6 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
-!!! note "Advanced: 명시적 DTO 형태"
-    같은 자리에 `InstrumentRef`나 `OrderBookRequest`를 넘길 수 있습니다.
-
-    ```python
-    from kxt import InstrumentRef
-    from kxt.requests import OrderBookRequest
-
-    response = await client.get_orderbook(InstrumentRef(symbol="000660"))
-    response = await client.get_orderbook(OrderBookRequest(instrument=InstrumentRef(symbol="005930")))
-    ```
-
 ## Sample response
 
 ```python

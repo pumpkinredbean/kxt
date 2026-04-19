@@ -62,17 +62,6 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
-!!! note "Advanced: 명시적 DTO 형태"
-    베뉴 힌트나 세션 컨텍스트가 필요하면 `InstrumentRef` 또는 `QuoteRequest`를 같은 위치인자로 넘길 수 있습니다.
-
-    ```python
-    from kxt import InstrumentRef
-    from kxt.requests import QuoteRequest
-
-    response = await client.get_quote(InstrumentRef(symbol="000660"))
-    response = await client.get_quote(QuoteRequest(instrument=InstrumentRef(symbol="005930")))
-    ```
-
 ## Sample response
 
 ```python

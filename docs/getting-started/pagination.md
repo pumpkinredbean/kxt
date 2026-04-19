@@ -14,8 +14,7 @@ KIS OpenAPI는 호출당 반환 개수에 상한이 있고, 일부 엔드포인�
 import asyncio
 from datetime import date
 
-from kxt import InstrumentRef, KISClient
-from kxt.requests import BarsRequest
+from kxt import KISClient
 
 
 async def main() -> None:
@@ -26,12 +25,10 @@ async def main() -> None:
 
         while True:
             response = await client.get_bars(
-                BarsRequest(
-                    instrument=InstrumentRef(symbol="005930"),
-                    timeframe="day",
-                    start=start,
-                    end=end,
-                )
+                "005930",
+                timeframe="day",
+                start=start,
+                end=end,
             )
             if not response.bars:
                 break

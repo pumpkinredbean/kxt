@@ -62,18 +62,6 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
-!!! note "Advanced: 명시적 DTO 형태"
-    같은 자리에 `MarketStatusRequest`를 넘기면 `instrument`/`session` 등을 함께 묶어 표현할 수 있습니다.
-
-    ```python
-    from kxt import InstrumentRef
-    from kxt.requests import MarketStatusRequest
-
-    response = await client.get_market_status(
-        MarketStatusRequest(instrument=InstrumentRef(symbol="005930"))
-    )
-    ```
-
 ## Sample response
 
 ```python

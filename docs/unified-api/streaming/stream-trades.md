@@ -67,21 +67,6 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
-!!! note "Advanced: 명시적 DTO 형태"
-    같은 자리에 `TradeSubscription` 또는 `InstrumentRef`를 넘길 수 있습니다.
-
-    ```python
-    from kxt import InstrumentRef
-    from kxt.requests import TradeSubscription
-
-    async for event in client.stream_trades(InstrumentRef(symbol="005930")):
-        ...
-
-    subscription = TradeSubscription(instrument=InstrumentRef(symbol="005930"))
-    async for event in client.stream_trades(subscription):
-        ...
-    ```
-
 ## Sample event
 
 ```python

@@ -107,21 +107,6 @@ response = await client.get_bars(
 )
 ```
 
-!!! note "Advanced: 명시적 DTO 형태"
-    베뉴 힌트나 모든 필드를 한꺼번에 표현해야 하면 동일 자리에 `BarsRequest`를 넘길 수 있습니다.
-
-    ```python
-    from kxt import InstrumentRef
-    from kxt.requests import BarsRequest
-
-    response = await client.get_bars(
-        BarsRequest(
-            instrument=InstrumentRef(symbol="005930"),
-            timeframe="day",
-        )
-    )
-    ```
-
 ## Sample response
 
 ```python

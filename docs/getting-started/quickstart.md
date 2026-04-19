@@ -66,7 +66,7 @@ date             open     high      low    close       volume
 ## What happened
 
 1. `KISClient`가 컨텍스트 매니저로 들어가며 내부 트랜스포트(HTTP 세션, 토큰)가 준비됩니다.
-2. `get_bars(...)`는 종목 코드 문자열(`symbol`)을 첫 인자로 받습니다. 더 명시적인 형태가 필요하면 `BarsRequest(instrument=InstrumentRef(...))`를 그대로 넘길 수도 있습니다.
+2. `get_bars(...)`는 종목 코드 문자열(`symbol`)을 첫 인자로 받고, `timeframe`·`start`·`end` 같은 옵션을 키워드 인자로 받습니다.
 3. `get_bars(...)`는 KIS 일봉 엔드포인트(`FHKST03010100`)를 호출하고 응답을 `Bar` 튜플로 정규화합니다.
 4. 컨텍스트를 빠져나오면 HTTP 커넥션이 반환됩니다.
 

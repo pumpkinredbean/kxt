@@ -72,20 +72,8 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
-!!! note "Advanced: 옵션을 묶어 호출"
-    `limit`이나 시간 범위를 함께 지정하려면 `RecentTradesRequest`를 같은 자리에 넘깁니다.
-
-    ```python
-    from kxt import InstrumentRef
-    from kxt.requests import RecentTradesRequest
-
-    response = await client.get_recent_trades(
-        RecentTradesRequest(
-            instrument=InstrumentRef(symbol="005930"),
-            limit=20,
-        )
-    )
-    ```
+!!! note "Advanced: limit·범위 옵션"
+    `limit`이나 시간 범위 같은 옵션을 함께 지정해야 한다면 `kxt.requests.RecentTradesRequest` power-user surface를 사용합니다. 사용자용 코드 조각으로 권장하지는 않으며, 세부 필드는 [Schemas](../../reference/schemas.md)를 참고하세요.
 
 ## Sample response
 

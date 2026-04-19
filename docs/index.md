@@ -17,19 +17,16 @@
 import asyncio
 from datetime import date
 
-from kxt import InstrumentRef, KISClient
-from kxt.requests import BarsRequest
+from kxt import KISClient
 
 
 async def main() -> None:
     async with KISClient(app_key="...", app_secret="...") as client:
         response = await client.get_bars(
-            BarsRequest(
-                instrument=InstrumentRef(symbol="005930"),  # 삼성전자
-                timeframe="day",
-                start=date(2025, 4, 1),
-                end=date(2025, 4, 14),
-            )
+            "005930",  # 삼성전자
+            timeframe="day",
+            start=date(2025, 4, 1),
+            end=date(2025, 4, 14),
         )
         for bar in response.bars[-5:]:
             print(bar.opened_at.date(), bar.close)
