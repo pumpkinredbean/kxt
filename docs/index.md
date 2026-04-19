@@ -68,4 +68,4 @@ asyncio.run(main())
 - **[Development](development/architecture.md)** — 아키텍처 원칙, 문서 스타일 가이드, 기여 절차.
 
 !!! warning "알파 상태"
-    `kxt`는 현재 `0.1.0a1` 알파입니다. 공개 API는 1.0 이전까지 예고 없이 변경될 수 있습니다.
+    `kxt`는 현재 알파(0.1.x alpha) 단계입니다. 공개 API는 1.0 이전까지 예고 없이 변경될 수 있습니다.
