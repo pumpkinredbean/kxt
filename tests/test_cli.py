@@ -22,7 +22,6 @@ from kxt.models.api import (
     BarsResponse,
     InvestorFlowBucket,
     InvestorFlowResponse,
-    MarketStatusResponse,
     OpenOrder,
     OpenOrdersResponse,
     OrderBookResponse,
@@ -34,7 +33,7 @@ from kxt.models.api import (
     RecentTradesResponse,
     TradePrint,
 )
-from kxt.models.enums import MarketPhase, OrderLifecycleState, OrderSide, OrderType
+from kxt.models.enums import OrderLifecycleState, OrderSide, OrderType
 from kxt.models.market_data import InstrumentRef, QuoteLevel
 from kxt.models.api import Bar
 
@@ -259,16 +258,6 @@ def test_render_output_orderbook_plain_text():
     out = cli_format.render_output(resp, as_json=False)
     assert "total_ask_qty" in out
     assert "101" in out and "99" in out
-
-
-def test_render_output_market_status_plain_text():
-    resp = MarketStatusResponse(
-        phase=MarketPhase.OPEN,
-        occurred_at=datetime(2025, 4, 14, 9, 0, tzinfo=timezone.utc),
-    )
-    out = cli_format.render_output(resp, as_json=False)
-    assert "phase" in out
-    assert MarketPhase.OPEN.value in out
 
 
 def test_render_output_investor_flow_plain_text():

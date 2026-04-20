@@ -39,7 +39,6 @@ kxt bars 005930 --provider kis --timeframe day --start 2025-04-01 --end 2025-04-
 kxt bars 005930 --provider kis --timeframe 5m
 kxt recent-trades 005930 --provider kis --limit 5
 kxt orderbook 005930 --provider kis
-kxt market-status --provider kis --symbol 005930
 kxt investor-flow 005930 --provider kis
 ```
 

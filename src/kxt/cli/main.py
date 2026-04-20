@@ -81,7 +81,6 @@ def build_parser() -> argparse.ArgumentParser:
             "  kxt bars 005930 --provider kis --timeframe 5m\n"
             "  kxt recent-trades 005930 --provider kis --limit 5\n"
             "  kxt orderbook 005930 --provider kis\n"
-            "  kxt market-status --provider kis --symbol 005930\n"
             "  kxt investor-flow 005930 --provider kis\n"
             "  kxt --json quote 005930 --provider kis\n\n"
             "Run `kxt <command> --help` for command-specific examples and constraints."
@@ -253,34 +252,6 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional domestic-equity market segment hint",
     )
     orderbook_parser.set_defaults(handler=_handle_orderbook)
-
-    market_status_parser = subparsers.add_parser(
-        "market-status",
-        help="Fetch normalized market status",
-        description=(
-            "Fetch the current normalized market status.\n\n"
-            "For KIS, this is derived from provider quote-state fields. Use `--symbol` when you want to anchor the "
-            "lookup to a representative instrument."
-        ),
-        epilog=(
-            f"{_scope_help_text()}\n"
-            "Constraint: current KIS market-status is derived from quote payload state fields, not a dedicated stream.\n"
-            f"{_auth_help_text()}\n\n"
-            "Examples:\n"
-            "  kxt market-status\n"
-            "  kxt market-status --symbol 005930\n"
-            "  kxt market-status --provider kis --symbol 005930 --market-segment KOSPI"
-        ),
-        formatter_class=_HelpFormatter,
-    )
-    market_status_parser.add_argument("--provider", choices=SUPPORTED_PROVIDERS, default="kis", help=_provider_help())
-    market_status_parser.add_argument("--symbol", help="Optional instrument symbol to anchor the status lookup")
-    market_status_parser.add_argument(
-        "--market-segment",
-        choices=tuple(segment.value for segment in MarketSegment),
-        help="Optional domestic-equity market segment hint",
-    )
-    market_status_parser.set_defaults(handler=_handle_market_status)
 
     investor_flow_parser = subparsers.add_parser(
         "investor-flow",
@@ -542,17 +513,6 @@ async def _handle_orderbook(args: argparse.Namespace) -> int:
         orderbook = await client.get_orderbook(instrument)
 
     _emit(args, orderbook)
-    return 0
-
-
-async def _handle_market_status(args: argparse.Namespace) -> int:
-    _require_supported_provider(args.provider)
-    instrument = None if not args.symbol else _instrument_from_args(args)
-
-    async with _build_kis_client() as client:
-        status = await client.get_market_status(instrument)
-
-    _emit(args, status)
     return 0
 
 

@@ -29,7 +29,6 @@ from kxt.models.api import (
     BuyingPowerResponse,
     CancelOrderResponse,
     InvestorFlowResponse,
-    MarketStatusResponse,
     ModifyOrderResponse,
     OpenOrdersResponse,
     OrderHistoryResponse,
@@ -326,17 +325,6 @@ def _render_orderbook(resp: OrderBookResponse) -> str:
     else:
         lines.append("  (empty)")
     return "\n".join(lines)
-
-
-def _render_market_status(resp: MarketStatusResponse) -> str:
-    return "\n".join(
-        _render_kv_block(
-            [
-                ("phase", resp.phase),
-                ("occurred_at", resp.occurred_at),
-            ]
-        )
-    )
 
 
 def _render_investor_flow(resp: InvestorFlowResponse) -> str:
@@ -661,7 +649,6 @@ _RENDERERS: dict[type, Callable[[Any], str]] = {
     BarsResponse: _render_bars,
     RecentTradesResponse: _render_recent_trades,
     OrderBookResponse: _render_orderbook,
-    MarketStatusResponse: _render_market_status,
     InvestorFlowResponse: _render_investor_flow,
     AccountOverviewResponse: _render_account_overview,
     PositionsResponse: _render_positions,
