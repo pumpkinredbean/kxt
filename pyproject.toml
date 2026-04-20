@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kxt"
-version = "0.1.0a7"
-description = "Async Python client for Korean exchange (KRX) stocks, futures, and options via KIS"
+version = "0.1.0a8"
+description = "Python SDK for Korea Exchange (KRX) market data and trading"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
