@@ -285,7 +285,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     balance_parser = subparsers.add_parser(
         "balance",
-        help="Fetch account equity snapshot + positions (KIS inquire-balance)",
+        help="Fetch account equity snapshot and positions",
         formatter_class=_HelpFormatter,
     )
     _add_account_args(balance_parser)
@@ -293,7 +293,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     positions_parser = subparsers.add_parser(
         "positions",
-        help="Fetch positions (projection of inquire-balance output1)",
+        help="Fetch positions",
         formatter_class=_HelpFormatter,
     )
     _add_account_args(positions_parser)
@@ -301,7 +301,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     buying_power_parser = subparsers.add_parser(
         "buying-power",
-        help="Fetch buying power for a symbol (KIS inquire-psbl-order)",
+        help="Fetch buying power for a symbol",
         formatter_class=_HelpFormatter,
     )
     buying_power_parser.add_argument("symbol", help="Instrument symbol, e.g. 005930")
@@ -317,7 +317,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     open_orders_parser = subparsers.add_parser(
         "open-orders",
-        help="Fetch cancelable/modifiable open orders (KIS inquire-psbl-rvsecncl)",
+        help="Fetch cancelable/modifiable open orders",
         formatter_class=_HelpFormatter,
     )
     open_orders_parser.add_argument("--symbol", help="Optional symbol filter")
@@ -326,7 +326,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     order_history_parser = subparsers.add_parser(
         "order-history",
-        help="Fetch 3-month order/fill history (KIS inquire-daily-ccld)",
+        help="Fetch 3-month order/fill history",
         formatter_class=_HelpFormatter,
     )
     order_history_parser.add_argument("--start", required=True, help="Start date YYYY-MM-DD")
@@ -347,7 +347,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     place_order_parser = subparsers.add_parser(
         "place-order",
-        help="Submit a cash order (KIS order-cash)",
+        help="Submit a cash order",
         formatter_class=_HelpFormatter,
     )
     place_order_parser.add_argument("symbol", help="Instrument symbol, e.g. 005930")
@@ -368,7 +368,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     cancel_order_parser = subparsers.add_parser(
         "cancel-order",
-        help="Cancel an existing order (KIS order-rvsecncl, 02)",
+        help="Cancel an existing order",
         formatter_class=_HelpFormatter,
     )
     cancel_order_parser.add_argument("--order-id", required=True)
@@ -380,7 +380,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     modify_order_parser = subparsers.add_parser(
         "modify-order",
-        help="Modify an existing order (KIS order-rvsecncl, 01)",
+        help="Modify an existing order",
         formatter_class=_HelpFormatter,
     )
     modify_order_parser.add_argument("--order-id", required=True)
