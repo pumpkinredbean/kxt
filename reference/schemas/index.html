@@ -3443,7 +3443,7 @@
 <h3 id="marketbar">MarketBar<a class="headerlink" href="#marketbar" title="Permanent link">&para;</a></h3>
 <p>내부 브로커 중립 표현. 레거시 <code>fetch_bars</code> 경로에서 튜플로 반환됩니다. 신규 코드는 <code>Bar</code>를 사용하세요.</p>
 <ul>
-<li><strong>instrument</strong> (<code>InstrumentRef</code>)</li>
+<li><strong>symbol</strong> (<code>str</code>)</li>
 <li><strong>opened_at</strong> (<code>datetime</code>)</li>
 <li><strong>timeframe</strong> (<code>BarTimeframe</code>)</li>
 <li><strong>interval_minutes</strong> (<code>int | None</code>)</li>
@@ -3484,7 +3484,7 @@
 </ul>
 <h3 id="orderbooksnapshot">OrderBookSnapshot<a class="headerlink" href="#orderbooksnapshot" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>instrument</strong> (<code>InstrumentRef</code>)</li>
+<li><strong>symbol</strong> (<code>str</code>)</li>
 <li><strong>occurred_at</strong> (<code>datetime</code>)</li>
 <li><strong>asks</strong> (<code>tuple[QuoteLevel, ...]</code>)</li>
 <li><strong>bids</strong> (<code>tuple[QuoteLevel, ...]</code>)</li>
@@ -3498,7 +3498,7 @@
 <h3 id="trade-tradeprint">Trade / TradePrint<a class="headerlink" href="#trade-tradeprint" title="Permanent link">&para;</a></h3>
 <p><code>Trade</code> — 인스트루먼트 포함 체결 팩트.</p>
 <ul>
-<li><strong>instrument</strong> (<code>InstrumentRef</code>)</li>
+<li><strong>symbol</strong> (<code>str</code>)</li>
 <li><strong>occurred_at</strong> (<code>datetime</code>)</li>
 <li><strong>price / quantity</strong> (<code>Decimal</code>)</li>
 <li><strong>side</strong> (<code>TradeSide | None</code>)</li>
@@ -4222,7 +4222,7 @@
 <h3 id="positionlot">PositionLot<a class="headerlink" href="#positionlot" title="Permanent link">&para;</a></h3>
 <p><a id="positionlot"></a></p>
 <ul>
-<li><strong>instrument</strong> (<code>InstrumentRef</code>)</li>
+<li><strong>symbol</strong> (<code>str</code>)</li>
 <li><strong>quantity</strong> (<code>Decimal</code>)</li>
 <li><strong>orderable_quantity, average_price, cost_basis</strong> (<code>Decimal | None</code>)</li>
 <li><strong>market_price, market_value</strong> (<code>Decimal | None</code>)</li>
@@ -4246,7 +4246,7 @@
 <h3 id="positionsrequest-positionsresponse-position">PositionsRequest / PositionsResponse / Position<a class="headerlink" href="#positionsrequest-positionsresponse-position" title="Permanent link">&para;</a></h3>
 <p><code>Position</code>:</p>
 <ul>
-<li><strong>instrument</strong> (<code>InstrumentRef</code>)</li>
+<li><strong>symbol</strong> (<code>str</code>)</li>
 <li><strong>quantity</strong> (<code>Decimal</code>)</li>
 <li><strong>average_price, market_price, unrealized_pnl</strong> (<code>Decimal | None</code>)</li>
 <li><strong>side</strong> (<code>OrderSide | None</code>) — KIS 현물 잔고는 항상 <code>None</code></li>
@@ -4273,7 +4273,7 @@
 <p><code>OpenOrder</code> 핵심 필드:</p>
 <ul>
 <li><strong>order_ref</strong> (<code>ProviderOrderRef</code>)</li>
-<li><strong>instrument</strong> (<code>InstrumentRef</code>)</li>
+<li><strong>symbol</strong> (<code>str</code>)</li>
 <li><strong>side</strong> (<code>OrderSide</code>), <strong>order_type</strong> (<code>OrderType</code>)</li>
 <li><strong>quantity, remaining_quantity</strong> (<code>Decimal | None</code>)</li>
 <li><strong>limit_price</strong> (<code>Decimal | None</code>)</li>
@@ -4311,7 +4311,7 @@
 <ul>
 <li><strong>order_ref</strong> (<code>ProviderOrderRef</code>)</li>
 <li><strong>correlation_key</strong> (<code>OrderCorrelationKey</code>)</li>
-<li><strong>instrument</strong> (<code>InstrumentRef</code>)</li>
+<li><strong>symbol</strong> (<code>str</code>)</li>
 <li><strong>side</strong> (<code>OrderSide</code>), <strong>order_type</strong> (<code>OrderType</code>)</li>
 <li><strong>quantity</strong> (<code>Decimal</code>)</li>
 <li><strong>limit_price, average_fill_price</strong> (<code>Decimal | None</code>)</li>
@@ -4366,14 +4366,14 @@
 <h3 id="tradeevent">TradeEvent<a class="headerlink" href="#tradeevent" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>occurred_at</strong> (<code>datetime</code>)</li>
-<li><strong>instrument</strong> (<code>InstrumentRef</code>)</li>
+<li><strong>symbol</strong> (<code>str</code>)</li>
 <li><strong>price, quantity</strong> (<code>Decimal</code>)</li>
 <li><strong>side</strong> (<code>TradeSide | None</code>)</li>
 </ul>
 <h3 id="orderbookevent">OrderBookEvent<a class="headerlink" href="#orderbookevent" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>occurred_at</strong> (<code>datetime</code>)</li>
-<li><strong>instrument</strong> (<code>InstrumentRef</code>)</li>
+<li><strong>symbol</strong> (<code>str</code>)</li>
 <li><strong>asks, bids</strong> (<code>tuple[OrderBookLevel, ...]</code>)</li>
 <li><strong>total_ask_quantity, total_bid_quantity</strong> (<code>Decimal | None</code>)</li>
 </ul>
@@ -4387,7 +4387,7 @@
 <ul>
 <li><strong>order_ref</strong> (<code>ProviderOrderRef</code>)</li>
 <li><strong>correlation_key</strong> (<code>OrderCorrelationKey</code>)</li>
-<li><strong>instrument</strong> (<code>InstrumentRef</code>)</li>
+<li><strong>symbol</strong> (<code>str</code>)</li>
 <li><strong>side</strong> (<code>OrderSide</code>), <strong>order_type</strong> (<code>OrderType</code>)</li>
 <li><strong>occurred_at</strong> (<code>datetime</code>)</li>
 <li><strong>account</strong> (<code>AccountSummary | None</code>)</li>
@@ -4407,7 +4407,7 @@
 <p><code>OrderUpdateEvent</code>:</p>
 <ul>
 <li><strong>order_ref</strong> (<code>ProviderOrderRef</code>)</li>
-<li><strong>instrument</strong> (<code>InstrumentRef</code>)</li>
+<li><strong>symbol</strong> (<code>str</code>)</li>
 <li><strong>state</strong> (<code>OrderLifecycleState</code>)</li>
 <li><strong>occurred_at</strong> (<code>datetime</code>)</li>
 <li><strong>message</strong> (<code>str | None</code>)</li>
@@ -4424,7 +4424,7 @@
 <p><code>FillEvent</code>:</p>
 <ul>
 <li><strong>report</strong> (<code>ExecutionReport</code>)</li>
-<li><strong>instrument</strong> (<code>InstrumentRef</code>)</li>
+<li><strong>symbol</strong> (<code>str</code>)</li>
 </ul>
 <h2 id="enums-summary">Enums (summary)<a class="headerlink" href="#enums-summary" title="Permanent link">&para;</a></h2>
 <ul>

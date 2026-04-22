@@ -2395,8 +2395,8 @@
 <td><code>ExecutionReport</code></td>
 </tr>
 <tr>
-<td><code>instrument</code></td>
-<td><code>InstrumentRef</code></td>
+<td><code>symbol</code></td>
+<td><code>str</code></td>
 </tr>
 </tbody>
 </table>
@@ -2454,7 +2454,7 @@
 <a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
 <a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>        <span class="k">async</span> <span class="k">for</span> <span class="n">fill</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">stream_fill_updates</span><span class="p">():</span>
 <a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>            <span class="n">r</span> <span class="o">=</span> <span class="n">fill</span><span class="o">.</span><span class="n">report</span>
-<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;FILL&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">.</span><span class="n">instrument</span><span class="o">.</span><span class="n">symbol</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">order_ref</span><span class="o">.</span><span class="n">order_id</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">price</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">quantity</span><span class="p">)</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;FILL&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">.</span><span class="n">symbol</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">order_ref</span><span class="o">.</span><span class="n">order_id</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">price</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">quantity</span><span class="p">)</span>
 <a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
 <a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>            <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
 <a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>                <span class="k">break</span>
@@ -2468,21 +2468,20 @@
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">kxt</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">ExecutionReport</span><span class="p">,</span>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">FillEvent</span><span class="p">,</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">InstrumentRef</span><span class="p">,</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">ProviderOrderRef</span><span class="p">,</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">)</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="n">KST</span> <span class="o">=</span> <span class="n">timezone</span><span class="p">(</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">9</span><span class="p">))</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="n">FillEvent</span><span class="p">(</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="n">report</span><span class="o">=</span><span class="n">ExecutionReport</span><span class="p">(</span>
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>        <span class="n">execution_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        <span class="n">order_ref</span><span class="o">=</span><span class="n">ProviderOrderRef</span><span class="p">(</span><span class="n">provider</span><span class="o">=</span><span class="s2">&quot;kis&quot;</span><span class="p">,</span> <span class="n">order_id</span><span class="o">=</span><span class="s2">&quot;0000000123&quot;</span><span class="p">,</span> <span class="n">account_id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">),</span>
-<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>        <span class="n">occurred_at</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">KST</span><span class="p">),</span>
-<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>        <span class="n">price</span><span class="o">=</span><span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;69950&quot;</span><span class="p">),</span>
-<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>        <span class="n">quantity</span><span class="o">=</span><span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;10&quot;</span><span class="p">),</span>
-<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="p">),</span>
-<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>    <span class="n">instrument</span><span class="o">=</span><span class="n">InstrumentRef</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="s2">&quot;005930&quot;</span><span class="p">),</span>
-<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="p">)</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">ProviderOrderRef</span><span class="p">,</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">)</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="n">KST</span> <span class="o">=</span> <span class="n">timezone</span><span class="p">(</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">9</span><span class="p">))</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="n">FillEvent</span><span class="p">(</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">report</span><span class="o">=</span><span class="n">ExecutionReport</span><span class="p">(</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>        <span class="n">execution_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>        <span class="n">order_ref</span><span class="o">=</span><span class="n">ProviderOrderRef</span><span class="p">(</span><span class="n">provider</span><span class="o">=</span><span class="s2">&quot;kis&quot;</span><span class="p">,</span> <span class="n">order_id</span><span class="o">=</span><span class="s2">&quot;0000000123&quot;</span><span class="p">,</span> <span class="n">account_id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">),</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        <span class="n">occurred_at</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">KST</span><span class="p">),</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>        <span class="n">price</span><span class="o">=</span><span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;69950&quot;</span><span class="p">),</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>        <span class="n">quantity</span><span class="o">=</span><span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;10&quot;</span><span class="p">),</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    <span class="p">),</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="n">symbol</span><span class="o">=</span><span class="s2">&quot;005930&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="p">)</span>
 </code></pre></div>
 <h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
 <ul>
