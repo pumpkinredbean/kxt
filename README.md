@@ -19,7 +19,7 @@
 ## Key features
 
 - **비동기 전용** — `async`/`await` 기반, 이벤트 루프 친화적
-- **브로커 중립 DTO** — `InstrumentRef`, `Bar`, `OrderBookSnapshot` 등 정규화된 응답 타입 (입력은 종목 코드 문자열)
+- **브로커 중립 DTO** — `Trade`, `Bar`, `OrderBookSnapshot` 등 정규화된 응답 타입 (입력은 종목 코드 문자열)
 - **시세·주문·스트림** — `get_bars`, `get_quote`, `submit_order`, `stream_trades` 등 flat 메서드
 - **얇은 CLI** — 동일한 코드 경로를 `kxt bars`, `kxt quote` 같은 명령으로 호출
 

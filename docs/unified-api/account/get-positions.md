@@ -45,7 +45,7 @@ async def get_positions(
 
 | 필드 | 타입 | 설명 |
 |---|---|---|
-| `instrument` | `InstrumentRef` | 종목 |
+| `symbol` | `str` | 종목 코드 |
 | `quantity` | `Decimal` | 보유 수량 |
 | `average_price` | `Decimal \| None` | 평균 단가 |
 | `market_price` | `Decimal \| None` | 시가 평가 |
@@ -69,7 +69,7 @@ async def main() -> None:
     ) as client:
         response = await client.get_positions()
         for p in response.positions:
-            print(p.instrument.symbol, p.quantity, p.unrealized_pnl)
+            print(p.symbol, p.quantity, p.unrealized_pnl)
 
 
 asyncio.run(main())
@@ -79,19 +79,19 @@ asyncio.run(main())
 
 ```python
 from decimal import Decimal
-from kxt import InstrumentRef, Position, PositionsResponse
+from kxt import Position, PositionsResponse
 
 PositionsResponse(
     positions=(
         Position(
-            instrument=InstrumentRef(symbol="005930", name="삼성전자"),
+            symbol="005930",
             quantity=Decimal("100"),
             average_price=Decimal("70000"),
             market_price=Decimal("71000"),
             unrealized_pnl=Decimal("100000"),
         ),
         Position(
-            instrument=InstrumentRef(symbol="000660", name="SK하이닉스"),
+            symbol="000660",
             quantity=Decimal("20"),
             average_price=Decimal("180000"),
             market_price=Decimal("182000"),

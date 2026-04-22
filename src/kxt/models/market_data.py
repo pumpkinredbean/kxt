@@ -27,7 +27,7 @@ class InstrumentRef:
 class Trade:
     """Individual execution fact without transport/runtime baggage."""
 
-    instrument: InstrumentRef
+    symbol: str
     occurred_at: datetime
     price: Decimal
     quantity: Decimal
@@ -42,7 +42,7 @@ class Trade:
 class QuoteSnapshot:
     """Normalized last-price snapshot from the provider quote endpoint."""
 
-    instrument: InstrumentRef
+    symbol: str
     occurred_at: datetime
     last: Decimal
     open: Decimal | None = None
@@ -59,7 +59,7 @@ class QuoteSnapshot:
 class IntradayBar:
     """Intraday OHLCV bar independent from provider field names."""
 
-    instrument: InstrumentRef
+    symbol: str
     opened_at: datetime
     interval_minutes: int
     open: Decimal
@@ -74,7 +74,7 @@ class IntradayBar:
 class MarketBar:
     """Unified K-line OHLCV bar across minute/day/week/month/year families."""
 
-    instrument: InstrumentRef
+    symbol: str
     opened_at: datetime
     timeframe: BarTimeframe
     interval_minutes: int | None
@@ -98,7 +98,7 @@ class QuoteLevel:
 class OrderBookSnapshot:
     """Snapshot order book state."""
 
-    instrument: InstrumentRef
+    symbol: str
     occurred_at: datetime
     asks: tuple[QuoteLevel, ...] = ()
     bids: tuple[QuoteLevel, ...] = ()
@@ -110,7 +110,7 @@ class OrderBookSnapshot:
 class ProgramTrade:
     """Program-trade flow separated from ordinary execution prints."""
 
-    instrument: InstrumentRef
+    symbol: str
     occurred_at: datetime
     sell_quantity: Decimal
     buy_quantity: Decimal

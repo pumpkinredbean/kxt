@@ -77,7 +77,7 @@ async def main() -> None:
             fill_filter="filled",
         )
         for r in response.records[:10]:
-            print(r.order_date, r.instrument.symbol, r.side, r.filled_quantity, r.average_fill_price)
+            print(r.order_date, r.symbol, r.side, r.filled_quantity, r.average_fill_price)
         if response.cursor is not None:
             print("more pages available:", response.cursor)
 
@@ -91,7 +91,6 @@ asyncio.run(main())
 from datetime import date, datetime, timezone, timedelta
 from decimal import Decimal
 from kxt import (
-    InstrumentRef,
     OrderCorrelationKey,
     OrderHistoryRecord,
     OrderHistoryResponse,
@@ -111,7 +110,7 @@ OrderHistoryResponse(
         OrderHistoryRecord(
             order_ref=ref,
             correlation_key=OrderCorrelationKey(order_ref=ref, origin_org_no="01234"),
-            instrument=InstrumentRef(symbol="005930"),
+            symbol="005930",
             side=OrderSide.BUY,
             order_type=OrderType.LIMIT,
             quantity=Decimal("10"),
@@ -135,7 +134,7 @@ OrderHistoryResponse(
 ## Notes
 
 - **KIS 조회 한계**: 본 엔드포인트는 일반적으로 **최근 3개월** 이내 범위를 권장합니다.
-- **종목 필터**는 `instrument.symbol`이 KIS의 `PDNO`로 그대로 전달됩니다.
+- **종목 필터**는 `symbol`이 KIS의 `PDNO`로 그대로 전달됩니다.
 - **`fill_filter`** 매핑: `all` → `00`, `filled` → `01`, `unfilled` → `02`.
 - **페이지네이션**: `cursor`가 `None`이 아닐 때만 추가 페이지가 존재합니다. 첫 페이지 결과를 보존한 채 새 `cursor`를 넘겨 반복 호출하세요.
 

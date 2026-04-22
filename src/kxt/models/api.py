@@ -12,15 +12,12 @@ from kxt.errors import KXTValidationError
 from .enums import (
     BarTimeframe,
     MarketPhase,
-    MarketScope,
-    MarketSegment,
     OrderLifecycleState,
     OrderSide,
     OrderType,
     RankingKind,
     SessionType,
     TradeSide,
-    Venue,
 )
 from .market_data import InstrumentRef, MarketBar, OrderBookSnapshot, ProgramTrade, QuoteLevel, QuoteSnapshot, Trade
 
@@ -91,14 +88,6 @@ def resolve_bar_timeframe(value: BarTimeframe | str) -> tuple[str, BarTimeframe,
     return normalized, timeframe, 1
 
 @dataclass(frozen=True, slots=True)
-class SingleInstrumentContext:
-    symbol: str
-    scope: MarketScope | None
-    venue: Venue | None
-    market_segment: MarketSegment | None
-
-
-@dataclass(frozen=True, slots=True)
 class Bar:
     opened_at: datetime
     timeframe: str
@@ -121,7 +110,7 @@ class TradePrint:
 @dataclass(frozen=True, slots=True)
 class TradeEvent:
     occurred_at: datetime
-    instrument: InstrumentRef
+    symbol: str
     price: Decimal
     quantity: Decimal
     side: TradeSide | None = None
@@ -133,7 +122,7 @@ OrderBookLevel = QuoteLevel
 @dataclass(frozen=True, slots=True)
 class OrderBookEvent:
     occurred_at: datetime
-    instrument: InstrumentRef
+    symbol: str
     asks: tuple[OrderBookLevel, ...] = ()
     bids: tuple[OrderBookLevel, ...] = ()
     total_ask_quantity: Decimal | None = None
@@ -262,9 +251,6 @@ class TradeStreamRequest:
 @dataclass(frozen=True, slots=True)
 class TradeStreamStatusEvent:
     symbol: str
-    scope: MarketScope | None
-    venue: Venue | None
-    market_segment: MarketSegment | None
     connected: bool
     occurred_at: datetime
     message: str | None = None
@@ -294,9 +280,6 @@ class OrderBookStreamRequest:
 @dataclass(frozen=True, slots=True)
 class OrderBookStreamStatusEvent:
     symbol: str
-    scope: MarketScope | None
-    venue: Venue | None
-    market_segment: MarketSegment | None
     connected: bool
     occurred_at: datetime
     message: str | None = None
@@ -321,7 +304,8 @@ class MarketStatusStreamRequest:
 
 
 @dataclass(frozen=True, slots=True)
-class MarketStatusEvent(SingleInstrumentContext):
+class MarketStatusEvent:
+    symbol: str
     phase: MarketPhase
     occurred_at: datetime
     session_context: SessionContext | None = None
@@ -333,7 +317,7 @@ class SessionTransitionEvent:
     occurred_at: datetime
     from_session: SessionType
     to_session: SessionType
-    instrument: InstrumentRef | None = None
+    symbol: str | None = None
     message: str | None = None
 
 
@@ -423,7 +407,7 @@ class RankingsRequest:
 
 @dataclass(frozen=True, slots=True)
 class RankingEntry:
-    instrument: InstrumentRef
+    symbol: str
     rank: int
     value: Decimal | None = None
     quantity: Decimal | None = None
@@ -445,7 +429,7 @@ class MemberFlowRequest:
 
 @dataclass(frozen=True, slots=True)
 class MemberFlowRecord:
-    instrument: InstrumentRef
+    symbol: str
     occurred_at: datetime
     member_code: str
     member_name: str | None = None
@@ -507,7 +491,7 @@ class PositionsRequest:
 
 @dataclass(frozen=True, slots=True)
 class Position:
-    instrument: InstrumentRef
+    symbol: str
     quantity: Decimal
     average_price: Decimal | None = None
     market_price: Decimal | None = None
@@ -551,7 +535,7 @@ class OrderCorrelationKey:
 @dataclass(frozen=True, slots=True)
 class OpenOrder:
     order_ref: ProviderOrderRef
-    instrument: InstrumentRef
+    symbol: str
     side: OrderSide
     order_type: OrderType
     quantity: Decimal
@@ -653,7 +637,7 @@ class OrderUpdatesStreamRequest:
 @dataclass(frozen=True, slots=True)
 class OrderUpdateEvent:
     order_ref: ProviderOrderRef
-    instrument: InstrumentRef
+    symbol: str
     state: OrderLifecycleState
     occurred_at: datetime
     message: str | None = None
@@ -678,7 +662,7 @@ class ExecutionReport:
 @dataclass(frozen=True, slots=True)
 class FillEvent:
     report: ExecutionReport
-    instrument: InstrumentRef
+    symbol: str
 
 
 # --- Account / Trading / Notification DTOs (raw-field-backed per plan) ---
@@ -692,7 +676,7 @@ class PositionDayActivity:
 
 @dataclass(frozen=True, slots=True)
 class PositionLot:
-    instrument: InstrumentRef
+    symbol: str
     quantity: Decimal
     orderable_quantity: Decimal | None = None
     average_price: Decimal | None = None
@@ -785,7 +769,7 @@ class OrderHistoryRequest:
 class OrderHistoryRecord:
     order_ref: ProviderOrderRef
     correlation_key: OrderCorrelationKey
-    instrument: InstrumentRef
+    symbol: str
     side: OrderSide
     order_type: OrderType
     quantity: Decimal
@@ -828,7 +812,7 @@ class OrderHistoryResponse:
 class OrderAcceptedEvent:
     order_ref: ProviderOrderRef
     correlation_key: OrderCorrelationKey
-    instrument: InstrumentRef
+    symbol: str
     side: OrderSide
     order_type: OrderType
     occurred_at: datetime
@@ -841,7 +825,7 @@ class OrderAcceptedEvent:
 class OrderAmendAckEvent:
     order_ref: ProviderOrderRef
     correlation_key: OrderCorrelationKey
-    instrument: InstrumentRef
+    symbol: str
     side: OrderSide
     order_type: OrderType
     occurred_at: datetime
@@ -854,7 +838,7 @@ class OrderAmendAckEvent:
 class OrderCancelAckEvent:
     order_ref: ProviderOrderRef
     correlation_key: OrderCorrelationKey
-    instrument: InstrumentRef
+    symbol: str
     side: OrderSide
     order_type: OrderType
     occurred_at: datetime
@@ -866,7 +850,7 @@ class OrderCancelAckEvent:
 class OrderRejectedEvent:
     order_ref: ProviderOrderRef
     correlation_key: OrderCorrelationKey
-    instrument: InstrumentRef
+    symbol: str
     side: OrderSide
     order_type: OrderType
     occurred_at: datetime
@@ -887,7 +871,7 @@ OrderLifecycleEvent = (
 class FillNotificationEvent:
     order_ref: ProviderOrderRef
     correlation_key: OrderCorrelationKey
-    instrument: InstrumentRef
+    symbol: str
     side: OrderSide
     order_type: OrderType
     occurred_at: datetime

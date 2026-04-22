@@ -429,7 +429,7 @@ class KISClient(MarketDataClient):
         )
         return tuple(
             IntradayBar(
-                instrument=bar.instrument,
+                symbol=bar.symbol,
                 opened_at=bar.opened_at,
                 interval_minutes=bar.interval_minutes or interval_minutes,
                 open=bar.open,
@@ -735,7 +735,7 @@ class KISClient(MarketDataClient):
         overview = await self.get_account_overview(account=resolved)
         positions = tuple(
             Position(
-                instrument=lot.instrument,
+                symbol=lot.symbol,
                 quantity=lot.quantity,
                 average_price=lot.average_price,
                 market_price=lot.market_price,
@@ -828,7 +828,7 @@ class KISClient(MarketDataClient):
         orders = parse_open_orders(payload, account_id=resolved.account_id)
         if instrument_ref is not None:
             sym = instrument_ref.symbol
-            orders = tuple(order for order in orders if order.instrument.symbol == sym)
+            orders = tuple(order for order in orders if order.symbol == sym)
         return OpenOrdersResponse(orders=orders)
 
     async def get_order_history(
@@ -1235,7 +1235,7 @@ class KISClient(MarketDataClient):
             state = _lifecycle_event_state(event)
             yield OrderUpdateEvent(
                 order_ref=event.order_ref,
-                instrument=event.instrument,
+                symbol=event.symbol,
                 state=state,
                 occurred_at=event.occurred_at,
                 message=None,
@@ -1273,7 +1273,7 @@ class KISClient(MarketDataClient):
                 price=event.price,
                 quantity=event.quantity,
             )
-            yield FillEvent(report=report, instrument=event.instrument)
+            yield FillEvent(report=report, symbol=event.symbol)
 
     # ---- internal helpers for account/trading ----
 
@@ -1712,7 +1712,7 @@ def _aggregate_market_bars(bars: tuple[MarketBar, ...], *, interval_minutes: int
                 aggregated.append(current)
             current_key = bucket_key
             current = MarketBar(
-                instrument=bar.instrument,
+                symbol=bar.symbol,
                 opened_at=bucket_opened_at,
                 timeframe=BarTimeframe.MINUTE,
                 interval_minutes=interval_minutes,
@@ -1726,7 +1726,7 @@ def _aggregate_market_bars(bars: tuple[MarketBar, ...], *, interval_minutes: int
             continue
         assert current is not None
         current = MarketBar(
-            instrument=current.instrument,
+            symbol=current.symbol,
             opened_at=current.opened_at,
             timeframe=current.timeframe,
             interval_minutes=current.interval_minutes,
@@ -1807,7 +1807,7 @@ def _trade_print_from_trade(trade: Trade) -> TradePrint:
 def _trade_event_from_trade(trade: Trade) -> TradeEvent:
     return TradeEvent(
         occurred_at=trade.occurred_at,
-        instrument=trade.instrument,
+        symbol=trade.symbol,
         price=trade.price,
         quantity=trade.quantity,
         side=trade.side,
@@ -1827,7 +1827,7 @@ def _orderbook_response_from_snapshot(snapshot: OrderBookSnapshot) -> OrderBookR
 def _orderbook_event_from_snapshot(snapshot: OrderBookSnapshot) -> OrderBookEvent:
     return OrderBookEvent(
         occurred_at=snapshot.occurred_at,
-        instrument=snapshot.instrument,
+        symbol=snapshot.symbol,
         asks=snapshot.asks,
         bids=snapshot.bids,
         total_ask_quantity=snapshot.total_ask_quantity,

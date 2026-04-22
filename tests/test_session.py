@@ -129,8 +129,8 @@ async def test_session_demux_routes_per_symbol():
         ev_a = await asyncio.wait_for(_first(sub_a), timeout=2.0)
         ev_b = await asyncio.wait_for(_first(sub_b), timeout=2.0)
 
-        assert getattr(ev_a, "instrument").symbol == "005930"
-        assert getattr(ev_b, "instrument").symbol == "034020"
+        assert getattr(ev_a, "symbol") == "005930"
+        assert getattr(ev_b, "symbol") == "034020"
     finally:
         await _shutdown(server, session)
 

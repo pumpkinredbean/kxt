@@ -34,7 +34,7 @@ from kxt.models.api import (
     TradePrint,
 )
 from kxt.models.enums import OrderLifecycleState, OrderSide, OrderType
-from kxt.models.market_data import InstrumentRef, QuoteLevel
+from kxt.models.market_data import QuoteLevel
 from kxt.models.api import Bar
 
 
@@ -274,7 +274,7 @@ def test_render_output_investor_flow_plain_text():
 
 def test_render_output_positions_masks_not_applicable():
     pos = PositionLot(
-        instrument=InstrumentRef(symbol="005930"),
+        symbol="005930",
         quantity=Decimal("10"),
         average_price=Decimal("70000"),
         market_price=Decimal("71000"),
@@ -302,7 +302,7 @@ def test_render_output_positions_masks_not_applicable():
 def test_render_output_open_orders_masks_account():
     order = OpenOrder(
         order_ref=ProviderOrderRef(provider="kis", order_id="ORDER1", account_id="11112222"),
-        instrument=InstrumentRef(symbol="005930"),
+        symbol="005930",
         side=OrderSide.BUY,
         order_type=OrderType.LIMIT,
         quantity=Decimal("1"),

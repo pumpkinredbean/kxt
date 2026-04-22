@@ -39,7 +39,6 @@ from kxt.models import (
     QuoteSnapshot,
     Trade,
     TradeSide,
-    Venue,
 )
 
 from .exceptions import KISAPIError
@@ -181,7 +180,7 @@ def parse_intraday_bars(
     if interval_minutes == 1:
         return tuple(
             IntradayBar(
-                instrument=item["instrument"],
+                symbol=item["symbol"],
                 opened_at=item["opened_at"],
                 interval_minutes=1,
                 open=item["open"],
@@ -243,12 +242,7 @@ def parse_trade_event(raw_message: str, *, instrument: InstrumentRef) -> Trade |
 
     symbol = str(fields.get("MKSC_SHRN_ISCD") or instrument.symbol)
     return Trade(
-        instrument=InstrumentRef(
-            symbol=symbol,
-            venue=instrument.venue or Venue.KRX,
-            market_segment=instrument.market_segment,
-            instrument_id=symbol,
-        ),
+        symbol=symbol,
         occurred_at=occurred_at,
         price=price,
         quantity=quantity,
@@ -278,7 +272,7 @@ def parse_recent_trades(payload: dict[str, object], *, instrument: InstrumentRef
         bid_price = _to_decimal(row.get("bidp") or row.get("BIDP"))
         trades.append(
             Trade(
-                instrument=instrument,
+                symbol=instrument.symbol,
                 occurred_at=occurred_at,
                 price=price,
                 quantity=quantity,
@@ -299,7 +293,7 @@ def parse_quote_snapshot(payload: dict[str, object], *, instrument: InstrumentRe
     occurred_at = _parse_market_datetime_from_fields(output) or datetime.now(UTC)
     last = _required_decimal(output, "stck_prpr")
     return QuoteSnapshot(
-        instrument=instrument,
+        symbol=instrument.symbol,
         occurred_at=occurred_at,
         last=last,
         open=_to_decimal(output.get("stck_oprc")),
@@ -409,16 +403,7 @@ def _parse_orderbook_fields(fields: dict[str, object], *, instrument: Instrument
     asks = _parse_quote_levels(fields, price_prefix="askp", quantity_prefix="askp_rsqn")
     bids = _parse_quote_levels(fields, price_prefix="bidp", quantity_prefix="bidp_rsqn")
     return OrderBookSnapshot(
-        instrument=InstrumentRef(
-            symbol=str(fields.get("mksc_shrn_iscd") or fields.get("MKSC_SHRN_ISCD") or instrument.symbol),
-            venue=instrument.venue or Venue.KRX,
-            market_segment=instrument.market_segment,
-            instrument_id=instrument.instrument_id or instrument.symbol,
-            name=instrument.name,
-            isin=instrument.isin,
-            asset_class=instrument.asset_class,
-            instrument_type=instrument.instrument_type,
-        ),
+        symbol=str(fields.get("mksc_shrn_iscd") or fields.get("MKSC_SHRN_ISCD") or instrument.symbol),
         occurred_at=occurred_at,
         asks=asks,
         bids=bids,
@@ -522,7 +507,7 @@ def _normalize_minute_rows(
         if close is None:
             continue
         normalized_row = {
-            "instrument": instrument,
+            "symbol": instrument.symbol,
             "opened_at": _parse_market_datetime(str(row.get("stck_bsop_date") or "") or default_trade_date.strftime("%Y%m%d"), time_text),
             "open": open_price or close,
             "high": max(high or close, close),
@@ -573,7 +558,7 @@ def _aggregate_bars(rows: Iterable[dict[str, object]], interval_minutes: int) ->
 
 def _bucket_to_bar(bucket: dict[str, object], interval_minutes: int) -> IntradayBar:
     return IntradayBar(
-        instrument=bucket["instrument"],
+        symbol=bucket["symbol"],
         opened_at=bucket["opened_at"],
         interval_minutes=interval_minutes,
         open=bucket["open"],
@@ -587,7 +572,7 @@ def _bucket_to_bar(bucket: dict[str, object], interval_minutes: int) -> Intraday
 
 def _minute_row_to_market_bar(row: dict[str, object]) -> MarketBar:
     return MarketBar(
-        instrument=row["instrument"],
+        symbol=row["symbol"],
         opened_at=row["opened_at"],
         timeframe=BarTimeframe.MINUTE,
         interval_minutes=1,
@@ -602,7 +587,7 @@ def _minute_row_to_market_bar(row: dict[str, object]) -> MarketBar:
 
 def _intraday_to_market_bar(bar: IntradayBar) -> MarketBar:
     return MarketBar(
-        instrument=bar.instrument,
+        symbol=bar.symbol,
         opened_at=bar.opened_at,
         timeframe=BarTimeframe.MINUTE,
         interval_minutes=bar.interval_minutes,
@@ -625,7 +610,7 @@ def _parse_period_bar(row: dict[str, object], *, instrument: InstrumentRef, time
     low = _to_decimal(row.get("stck_lwpr")) or close
     volume = _to_decimal(row.get("acml_vol")) or Decimal("0")
     return MarketBar(
-        instrument=instrument,
+        symbol=instrument.symbol,
         opened_at=trade_date,
         timeframe=timeframe,
         interval_minutes=None,
@@ -826,12 +811,7 @@ def parse_account_overview(
             quantity = _to_decimal(row.get("hldg_qty")) or Decimal("0")
             positions.append(
                 PositionLot(
-                    instrument=InstrumentRef(
-                        symbol=symbol,
-                        venue=Venue.KRX,
-                        name=str(row.get("prdt_name") or "") or None,
-                        instrument_id=symbol,
-                    ),
+                    symbol=symbol,
                     quantity=quantity,
                     orderable_quantity=_to_decimal(row.get("ord_psbl_qty")),
                     average_price=_to_decimal(row.get("pchs_avg_pric")),
@@ -945,12 +925,7 @@ def parse_open_orders(
         orders.append(
             OpenOrder(
                 order_ref=order_ref,
-                instrument=InstrumentRef(
-                    symbol=symbol,
-                    venue=Venue.KRX,
-                    name=str(row.get("prdt_name") or "") or None,
-                    instrument_id=symbol,
-                ),
+                symbol=symbol,
                 side=_kis_side_to_order_side(row.get("sll_buy_dvsn_cd")),
                 order_type=_kis_code_to_order_type(row.get("ord_dvsn_cd")),
                 quantity=quantity,
@@ -1013,12 +988,7 @@ def parse_order_history(
                 OrderHistoryRecord(
                     order_ref=order_ref,
                     correlation_key=OrderCorrelationKey(order_ref=order_ref, branch_no=branch_no),
-                    instrument=InstrumentRef(
-                        symbol=symbol,
-                        venue=Venue.KRX,
-                        name=str(row.get("prdt_name") or "") or None,
-                        instrument_id=symbol,
-                    ),
+                    symbol=symbol,
                     side=_kis_side_to_order_side(row.get("sll_buy_dvsn_cd")),
                     order_type=_kis_code_to_order_type(row.get("ord_dvsn_cd")),
                     quantity=quantity,
@@ -1145,12 +1115,6 @@ def parse_notification_event(
     correlation = OrderCorrelationKey(order_ref=order_ref, branch_no=branch_no)
 
     symbol = str(fields.get("STCK_SHRN_ISCD") or "").strip()
-    instrument = InstrumentRef(
-        symbol=symbol or "",
-        venue=Venue.KRX,
-        name=str(fields.get("CNTG_ISNM") or "") or None,
-        instrument_id=symbol or None,
-    )
     side = _kis_side_to_order_side(fields.get("SELN_BYOV_CLS"))
     order_type = _kis_code_to_order_type(fields.get("ODER_KIND"))
     occurred_at = _parse_market_datetime(_today_str(), str(fields.get("STCK_CNTG_HOUR") or "").strip()) or datetime.now(UTC)
@@ -1162,7 +1126,7 @@ def parse_notification_event(
         return FillNotificationEvent(
             order_ref=order_ref,
             correlation_key=correlation,
-            instrument=instrument,
+            symbol=symbol,
             side=side,
             order_type=order_type,
             occurred_at=occurred_at,
@@ -1183,7 +1147,7 @@ def parse_notification_event(
         return OrderRejectedEvent(
             order_ref=order_ref,
             correlation_key=correlation,
-            instrument=instrument,
+            symbol=symbol,
             side=side,
             order_type=order_type,
             occurred_at=occurred_at,
@@ -1195,7 +1159,7 @@ def parse_notification_event(
         return OrderAmendAckEvent(
             order_ref=order_ref,
             correlation_key=correlation,
-            instrument=instrument,
+            symbol=symbol,
             side=side,
             order_type=order_type,
             occurred_at=occurred_at,
@@ -1207,7 +1171,7 @@ def parse_notification_event(
         return OrderCancelAckEvent(
             order_ref=order_ref,
             correlation_key=correlation,
-            instrument=instrument,
+            symbol=symbol,
             side=side,
             order_type=order_type,
             occurred_at=occurred_at,
@@ -1217,7 +1181,7 @@ def parse_notification_event(
     return OrderAcceptedEvent(
         order_ref=order_ref,
         correlation_key=correlation,
-        instrument=instrument,
+        symbol=symbol,
         side=side,
         order_type=order_type,
         occurred_at=occurred_at,

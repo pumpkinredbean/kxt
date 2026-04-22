@@ -404,7 +404,7 @@ def _render_account_overview(resp: AccountOverviewResponse) -> str:
         ]
         rows = [
             [
-                _fmt_scalar(p.instrument.symbol),
+                _fmt_scalar(p.symbol),
                 _fmt_scalar(p.quantity),
                 _fmt_scalar(p.average_price),
                 _fmt_scalar(p.market_price),
@@ -423,7 +423,7 @@ def _render_account_overview(resp: AccountOverviewResponse) -> str:
                 lines.extend(
                     _render_kv_block(
                         [
-                            ("symbol", p.instrument.symbol),
+                            ("symbol", p.symbol),
                             ("qty", p.quantity),
                             ("avg_price", p.average_price),
                             ("market_price", p.market_price),
@@ -446,7 +446,7 @@ def _render_positions(resp: PositionsResponse) -> str:
     headers = ["symbol", "qty", "avg_price", "market_price", "unrealized_pnl", "side"]
     rows = [
         [
-            _fmt_scalar(p.instrument.symbol),
+            _fmt_scalar(p.symbol),
             _fmt_scalar(p.quantity),
             _fmt_scalar(p.average_price),
             _fmt_scalar(p.market_price),
@@ -463,7 +463,7 @@ def _render_positions(resp: PositionsResponse) -> str:
         lines.extend(
             _render_kv_block(
                 [
-                    ("symbol", p.instrument.symbol),
+                    ("symbol", p.symbol),
                     ("qty", p.quantity),
                     ("avg_price", p.average_price),
                     ("market_price", p.market_price),
@@ -494,7 +494,7 @@ def _render_open_orders(resp: OpenOrdersResponse) -> str:
                 [
                     ("order_id", o.order_ref.order_id),
                     ("account", _mask_account(o.order_ref.account_id)),
-                    ("symbol", o.instrument.symbol),
+                    ("symbol", o.symbol),
                     ("side", o.side),
                     ("order_type", o.order_type),
                     ("state", o.state),
@@ -522,7 +522,7 @@ def _render_order_history(resp: OrderHistoryResponse) -> str:
                 [
                     ("order_id", r.order_ref.order_id),
                     ("account", _mask_account(r.order_ref.account_id)),
-                    ("symbol", r.instrument.symbol),
+                    ("symbol", r.symbol),
                     ("side", r.side),
                     ("order_type", r.order_type),
                     ("state", r.state),

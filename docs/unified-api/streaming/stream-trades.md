@@ -38,7 +38,7 @@ def stream_trades(
 | 필드 | 타입 | 설명 |
 |---|---|---|
 | `occurred_at` | `datetime` | 체결 시각 (KST) |
-| `instrument` | `InstrumentRef` | 종목 |
+| `symbol` | `str` | 종목 코드 |
 | `price` | `Decimal` | 체결가 |
 | `quantity` | `Decimal` | 체결 수량 |
 | `side` | `TradeSide \| None` | 체결 측 (가용 시) |
@@ -72,12 +72,12 @@ asyncio.run(main())
 ```python
 from datetime import datetime, timezone, timedelta
 from decimal import Decimal
-from kxt import InstrumentRef, TradeEvent, TradeSide
+from kxt import TradeEvent, TradeSide
 
 KST = timezone(timedelta(hours=9))
 TradeEvent(
     occurred_at=datetime(2025, 4, 14, 11, 30, 12, tzinfo=KST),
-    instrument=InstrumentRef(symbol="005930"),
+    symbol="005930",
     price=Decimal("71000"),
     quantity=Decimal("3"),
     side=TradeSide.BUY,

@@ -37,7 +37,7 @@ def stream_orderbook(
 | 필드 | 타입 | 설명 |
 |---|---|---|
 | `occurred_at` | `datetime` | 이벤트 시각 (KST) |
-| `instrument` | `InstrumentRef` | 종목 |
+| `symbol` | `str` | 종목 코드 |
 | `asks` | `tuple[OrderBookLevel, ...]` | 매도 호가 (가격 오름차순) |
 | `bids` | `tuple[OrderBookLevel, ...]` | 매수 호가 (가격 내림차순) |
 | `total_ask_quantity` | `Decimal \| None` | 총 매도 잔량 |
@@ -76,12 +76,12 @@ asyncio.run(main())
 ```python
 from datetime import datetime, timezone, timedelta
 from decimal import Decimal
-from kxt import InstrumentRef, OrderBookEvent, QuoteLevel
+from kxt import OrderBookEvent, QuoteLevel
 
 KST = timezone(timedelta(hours=9))
 OrderBookEvent(
     occurred_at=datetime(2025, 4, 14, 11, 30, 12, tzinfo=KST),
-    instrument=InstrumentRef(symbol="005930"),
+    symbol="005930",
     asks=(
         QuoteLevel(price=Decimal("71100"), quantity=Decimal("1200")),
         QuoteLevel(price=Decimal("71200"), quantity=Decimal("3500")),

@@ -40,7 +40,7 @@ async def stream_fill_updates(
 | 필드 | 타입 |
 |---|---|
 | `report` | `ExecutionReport` |
-| `instrument` | `InstrumentRef` |
+| `symbol` | `str` |
 
 `ExecutionReport` 필드:
 
@@ -71,7 +71,7 @@ async def main() -> None:
         count = 0
         async for fill in client.stream_fill_updates():
             r = fill.report
-            print("FILL", fill.instrument.symbol, r.order_ref.order_id, r.price, r.quantity)
+            print("FILL", fill.symbol, r.order_ref.order_id, r.price, r.quantity)
             count += 1
             if count >= 5:
                 break
@@ -88,7 +88,6 @@ from decimal import Decimal
 from kxt import (
     ExecutionReport,
     FillEvent,
-    InstrumentRef,
     ProviderOrderRef,
 )
 
@@ -101,7 +100,7 @@ FillEvent(
         price=Decimal("69950"),
         quantity=Decimal("10"),
     ),
-    instrument=InstrumentRef(symbol="005930"),
+    symbol="005930",
 )
 ```
 

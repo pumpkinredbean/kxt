@@ -54,5 +54,4 @@ python -m twine check dist/*
 
 ## Reporting issues
 
-- 버그: <https://github.com/pumpkinredbean/kxt/issues>
-- 보안 이슈는 공개 이슈가 아닌 비공개 채널로 보고해주세요.
+- 깃헙 이슈를 통해 제보해주세요.

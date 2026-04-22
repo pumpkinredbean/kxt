@@ -42,7 +42,7 @@ async def stream_order_updates(
 | 필드 | 타입 | 설명 |
 |---|---|---|
 | `order_ref` | `ProviderOrderRef` | 주문 식별 |
-| `instrument` | `InstrumentRef` | 종목 |
+| `symbol` | `str` | 종목 코드 |
 | `state` | `OrderLifecycleState` | 정규화 상태 (`ACKNOWLEDGED`, `CANCELED`, `REJECTED` 등) |
 | `occurred_at` | `datetime` | 이벤트 시각 (KST) |
 | `message` | `str \| None` | 부가 메시지 |
@@ -81,7 +81,6 @@ asyncio.run(main())
 ```python
 from datetime import datetime, timezone, timedelta
 from kxt import (
-    InstrumentRef,
     OrderLifecycleState,
     OrderUpdateEvent,
     ProviderOrderRef,
@@ -90,7 +89,7 @@ from kxt import (
 KST = timezone(timedelta(hours=9))
 OrderUpdateEvent(
     order_ref=ProviderOrderRef(provider="kis", order_id="0000000123", account_id="12345678"),
-    instrument=InstrumentRef(symbol="005930"),
+    symbol="005930",
     state=OrderLifecycleState.ACKNOWLEDGED,
     occurred_at=datetime(2025, 4, 14, 9, 30, tzinfo=KST),
 )

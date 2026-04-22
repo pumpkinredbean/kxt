@@ -51,7 +51,7 @@ async def test_stream_trades_wrapper_yields_events_and_closes_sub():
         await asyncio.wait_for(consumer, timeout=3.0)
 
         assert len(events) == 1
-        assert getattr(events[0], "instrument").symbol == "005930"
+        assert getattr(events[0], "symbol") == "005930"
 
         ok = await wait_until(lambda: server.unsubscribe_count >= 1, timeout=2.0)
         assert ok, (

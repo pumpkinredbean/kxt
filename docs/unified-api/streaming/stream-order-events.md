@@ -49,7 +49,7 @@ async def stream_order_events(
 |---|---|
 | `order_ref` | `ProviderOrderRef` |
 | `correlation_key` | `OrderCorrelationKey` |
-| `instrument` | `InstrumentRef` |
+| `symbol` | `str` |
 | `side` | `OrderSide` |
 | `order_type` | `OrderType` |
 | `occurred_at` | `datetime` |
@@ -105,7 +105,6 @@ from datetime import datetime, timezone, timedelta
 from decimal import Decimal
 from kxt import (
     FillNotificationEvent,
-    InstrumentRef,
     OrderCorrelationKey,
     OrderSide,
     OrderType,
@@ -117,7 +116,7 @@ ref = ProviderOrderRef(provider="kis", order_id="0000000123", account_id="123456
 FillNotificationEvent(
     order_ref=ref,
     correlation_key=OrderCorrelationKey(order_ref=ref, origin_org_no="01234"),
-    instrument=InstrumentRef(symbol="005930"),
+    symbol="005930",
     side=OrderSide.BUY,
     order_type=OrderType.LIMIT,
     occurred_at=datetime(2025, 4, 14, 9, 30, 5, tzinfo=KST),

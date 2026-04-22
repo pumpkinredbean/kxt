@@ -48,7 +48,7 @@ async def get_open_orders(
 | 필드 | 타입 | 설명 |
 |---|---|---|
 | `order_ref` | `ProviderOrderRef` | KIS 주문 식별 |
-| `instrument` | `InstrumentRef` | 종목 |
+| `symbol` | `str` | 종목 코드 |
 | `side` | `OrderSide` | 매수/매도 |
 | `order_type` | `OrderType` | 주문 유형 |
 | `quantity` | `Decimal` | 원 주문 수량 |
@@ -76,7 +76,7 @@ async def main() -> None:
         for order in response.orders:
             print(
                 order.order_ref.order_id,
-                order.instrument.symbol,
+                order.symbol,
                 order.side,
                 order.remaining_quantity,
                 order.limit_price,
@@ -92,7 +92,6 @@ asyncio.run(main())
 from datetime import datetime, timezone, timedelta
 from decimal import Decimal
 from kxt import (
-    InstrumentRef,
     OpenOrder,
     OpenOrdersResponse,
     OrderCorrelationKey,
@@ -109,7 +108,7 @@ OpenOrdersResponse(
     orders=(
         OpenOrder(
             order_ref=order_ref,
-            instrument=InstrumentRef(symbol="005930"),
+            symbol="005930",
             side=OrderSide.BUY,
             order_type=OrderType.LIMIT,
             quantity=Decimal("10"),
@@ -125,7 +124,7 @@ OpenOrdersResponse(
 
 ## Notes
 
-- **종목 필터는 클라이언트 측**입니다. KIS 응답을 모두 받은 뒤 `instrument.symbol`이 일치하는 항목만 남깁니다. 트래픽이 줄지는 않습니다.
+- **종목 필터는 클라이언트 측**입니다. KIS 응답을 모두 받은 뒤 `symbol`이 일치하는 항목만 남깁니다. 트래픽이 줄지는 않습니다.
 - **`correlation_key`를 보존**하세요. 정정·취소 호출 시 `OpenOrder`를 그대로 `cancel_order(...)` / `modify_order(...)`에 넘기면 됩니다.
 - **장 마감 후**: 일중 정상 처리된 미체결은 자동 취소되어 빈 목록이 반환될 수 있습니다.
 

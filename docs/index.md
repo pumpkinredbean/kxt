@@ -7,7 +7,7 @@
 ## Key features
 
 - **비동기 전용** — `async`/`await` 기반. 이벤트 루프 친화적이며 블로킹 I/O를 끌어들이지 않습니다.
-- **브로커 중립 DTO** — KIS 필드명을 `InstrumentRef`, `MarketBar`, `OrderBookSnapshot` 같은 통일된 데이터클래스로 정규화합니다.
+- **브로커 중립 DTO** — KIS 필드명을 `Trade`, `MarketBar`, `OrderBookSnapshot` 같은 통일된 데이터클래스로 정규화합니다.
 - **라이브러리 우선** — 네트워크 부작용 없는 import, 백그라운드 스레드 없음, 설정 파일 강요 없음.
 - **얇은 CLI** — `kxt quote`, `kxt bars` 같은 명령으로 동일한 코드 경로를 그대로 호출할 수 있습니다.
 

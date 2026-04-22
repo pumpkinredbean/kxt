@@ -55,7 +55,7 @@
 
 내부 브로커 중립 표현. 레거시 `fetch_bars` 경로에서 튜플로 반환됩니다. 신규 코드는 `Bar`를 사용하세요.
 
-- **instrument** (`InstrumentRef`)
+- **symbol** (`str`)
 - **opened_at** (`datetime`)
 - **timeframe** (`BarTimeframe`)
 - **interval_minutes** (`int | None`)
@@ -97,7 +97,7 @@
 
 ### OrderBookSnapshot
 
-- **instrument** (`InstrumentRef`)
+- **symbol** (`str`)
 - **occurred_at** (`datetime`)
 - **asks** (`tuple[QuoteLevel, ...]`)
 - **bids** (`tuple[QuoteLevel, ...]`)
@@ -112,7 +112,7 @@
 
 `Trade` — 인스트루먼트 포함 체결 팩트.
 
-- **instrument** (`InstrumentRef`)
+- **symbol** (`str`)
 - **occurred_at** (`datetime`)
 - **price / quantity** (`Decimal`)
 - **side** (`TradeSide | None`)
@@ -250,7 +250,7 @@
 
 <a id="positionlot"></a>
 
-- **instrument** (`InstrumentRef`)
+- **symbol** (`str`)
 - **quantity** (`Decimal`)
 - **orderable_quantity, average_price, cost_basis** (`Decimal | None`)
 - **market_price, market_value** (`Decimal | None`)
@@ -277,7 +277,7 @@
 
 `Position`:
 
-- **instrument** (`InstrumentRef`)
+- **symbol** (`str`)
 - **quantity** (`Decimal`)
 - **average_price, market_price, unrealized_pnl** (`Decimal | None`)
 - **side** (`OrderSide | None`) — KIS 현물 잔고는 항상 `None`
@@ -308,7 +308,7 @@
 `OpenOrder` 핵심 필드:
 
 - **order_ref** (`ProviderOrderRef`)
-- **instrument** (`InstrumentRef`)
+- **symbol** (`str`)
 - **side** (`OrderSide`), **order_type** (`OrderType`)
 - **quantity, remaining_quantity** (`Decimal | None`)
 - **limit_price** (`Decimal | None`)
@@ -349,7 +349,7 @@
 
 - **order_ref** (`ProviderOrderRef`)
 - **correlation_key** (`OrderCorrelationKey`)
-- **instrument** (`InstrumentRef`)
+- **symbol** (`str`)
 - **side** (`OrderSide`), **order_type** (`OrderType`)
 - **quantity** (`Decimal`)
 - **limit_price, average_fill_price** (`Decimal | None`)
@@ -409,14 +409,14 @@
 ### TradeEvent
 
 - **occurred_at** (`datetime`)
-- **instrument** (`InstrumentRef`)
+- **symbol** (`str`)
 - **price, quantity** (`Decimal`)
 - **side** (`TradeSide | None`)
 
 ### OrderBookEvent
 
 - **occurred_at** (`datetime`)
-- **instrument** (`InstrumentRef`)
+- **symbol** (`str`)
 - **asks, bids** (`tuple[OrderBookLevel, ...]`)
 - **total_ask_quantity, total_bid_quantity** (`Decimal | None`)
 
@@ -431,7 +431,7 @@
 
 - **order_ref** (`ProviderOrderRef`)
 - **correlation_key** (`OrderCorrelationKey`)
-- **instrument** (`InstrumentRef`)
+- **symbol** (`str`)
 - **side** (`OrderSide`), **order_type** (`OrderType`)
 - **occurred_at** (`datetime`)
 - **account** (`AccountSummary | None`)
@@ -453,7 +453,7 @@
 `OrderUpdateEvent`:
 
 - **order_ref** (`ProviderOrderRef`)
-- **instrument** (`InstrumentRef`)
+- **symbol** (`str`)
 - **state** (`OrderLifecycleState`)
 - **occurred_at** (`datetime`)
 - **message** (`str | None`)
@@ -471,7 +471,7 @@
 `FillEvent`:
 
 - **report** (`ExecutionReport`)
-- **instrument** (`InstrumentRef`)
+- **symbol** (`str`)
 
 ## Enums (summary)
 

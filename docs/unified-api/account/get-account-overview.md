@@ -81,7 +81,7 @@ async def main() -> None:
         eq = response.equity
         print(f"NAV={eq.net_asset_value} cash={eq.cash}")
         for lot in response.positions[:5]:
-            print(lot.instrument.symbol, lot.quantity, lot.unrealized_pnl)
+            print(lot.symbol, lot.quantity, lot.unrealized_pnl)
 
 
 asyncio.run(main())
@@ -97,7 +97,6 @@ from decimal import Decimal
 from kxt import (
     AccountEquitySnapshot,
     AccountOverviewResponse,
-    InstrumentRef,
     PositionLot,
 )
 from kxt.requests import AccountOverviewCursor
@@ -116,7 +115,7 @@ AccountOverviewResponse(
     ),
     positions=(
         PositionLot(
-            instrument=InstrumentRef(symbol="005930", name="삼성전자"),
+            symbol="005930",
             quantity=Decimal("100"),
             average_price=Decimal("70000"),
             market_price=Decimal("71000"),
