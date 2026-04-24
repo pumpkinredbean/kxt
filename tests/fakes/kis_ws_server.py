@@ -25,6 +25,12 @@ import websockets
 from kxt.clients.kis.parsing import (
     KIS_ORDERBOOK_FIELDS,
     KIS_ORDERBOOK_WS_TR_ID,
+    KIS_MARKET_STATUS_FIELDS,
+    KIS_MARKET_STATUS_KRX_WS_TR_ID,
+    KIS_MEMBER_FIELDS,
+    KIS_MEMBER_KRX_WS_TR_ID,
+    KIS_PROGRAM_TRADE_FIELDS,
+    KIS_PROGRAM_TRADE_KRX_WS_TR_ID,
     KIS_TRADE_FIELDS,
     KIS_TRADE_TR_ID,
 )
@@ -118,6 +124,50 @@ class FakeKISWSServer:
         body = "^".join(fields[f] for f in KIS_ORDERBOOK_FIELDS)
         frame = f"0|{KIS_ORDERBOOK_WS_TR_ID}|001|{body}"
         await self._broadcast(frame)
+
+    async def send_program_trade_event(self, symbol: str) -> None:
+        fields = {f: "" for f in KIS_PROGRAM_TRADE_FIELDS}
+        fields.update(
+            {
+                "MKSC_SHRN_ISCD": symbol,
+                "STCK_CNTG_HOUR": "093000",
+                "SELN_CNQN": "10",
+                "SELN_TR_PBMN": "700000",
+                "SHNU_CNQN": "15",
+                "SHNU_TR_PBMN": "1050000",
+                "NTBY_CNQN": "5",
+                "NTBY_TR_PBMN": "350000",
+            }
+        )
+        body = "^".join(fields[f] for f in KIS_PROGRAM_TRADE_FIELDS)
+        await self._broadcast(f"0|{KIS_PROGRAM_TRADE_KRX_WS_TR_ID}|001|{body}")
+
+    async def send_member_flow_event(self, symbol: str) -> None:
+        fields = {f: "" for f in KIS_MEMBER_FIELDS}
+        fields.update(
+            {
+                "MKSC_SHRN_ISCD": symbol,
+                "SELN2_MBCR_NAME1": "SELLER",
+                "BYOV_MBCR_NAME1": "BUYER",
+                "TOTAL_SELN_QTY1": "10",
+                "TOTAL_SHNU_QTY1": "15",
+            }
+        )
+        body = "^".join(fields[f] for f in KIS_MEMBER_FIELDS)
+        await self._broadcast(f"0|{KIS_MEMBER_KRX_WS_TR_ID}|001|{body}")
+
+    async def send_market_status_event(self, symbol: str) -> None:
+        fields = {f: "" for f in KIS_MARKET_STATUS_FIELDS}
+        fields.update(
+            {
+                "MKSC_SHRN_ISCD": symbol,
+                "TRHT_YN": "N",
+                "MKOP_CLS_CODE": "2",
+                "EXCH_CLS_CODE": "KRX",
+            }
+        )
+        body = "^".join(fields[f] for f in KIS_MARKET_STATUS_FIELDS)
+        await self._broadcast(f"0|{KIS_MARKET_STATUS_KRX_WS_TR_ID}|001|{body}")
 
     async def drop(self) -> None:
         """Forcefully close all active client connections."""

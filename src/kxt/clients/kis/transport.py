@@ -57,6 +57,15 @@ class KISToken:
         return cls(access_token=access_token, expires_at=expires_at)
 
 
+@dataclass(frozen=True, slots=True)
+class KISJSONResponse:
+    """Decoded KIS JSON response plus continuation metadata."""
+
+    payload: dict[str, Any]
+    tr_cont: str | None = None
+    headers: dict[str, str] | None = None
+
+
 class KISTransport:
     """Shared async transport state for KIS API calls."""
 
@@ -145,19 +154,31 @@ class KISTransport:
         return approval_key
 
     async def get_json(self, path: str, *, tr_id: str, params: dict[str, Any]) -> dict[str, Any]:
+        return (await self.get_json_response(path, tr_id=tr_id, params=params)).payload
+
+    async def get_json_response(
+        self, path: str, *, tr_id: str, params: dict[str, Any], tr_cont: str = ""
+    ) -> KISJSONResponse:
         token = await self.get_access_token()
+        headers = {
+            "authorization": f"Bearer {token}",
+            "appkey": self._app_key,
+            "appsecret": self._app_secret,
+            "tr_id": tr_id,
+            "custtype": "P",
+        }
+        if tr_cont:
+            headers["tr_cont"] = tr_cont
         response = await self._get(
             path,
             params=params,
-            headers={
-                "authorization": f"Bearer {token}",
-                "appkey": self._app_key,
-                "appsecret": self._app_secret,
-                "tr_id": tr_id,
-                "custtype": "P",
-            },
+            headers=headers,
         )
-        return self._decode_json(response)
+        return KISJSONResponse(
+            payload=self._decode_json(response),
+            tr_cont=response.headers.get("tr_cont"),
+            headers=dict(response.headers),
+        )
 
     async def post_json(
         self,

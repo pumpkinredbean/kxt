@@ -8,7 +8,7 @@
 |---|---|
 | 인증 필요 | 예 (KIS 앱키/시크릿) |
 | 데이터 타입 | 시장 단계 스냅샷 |
-| 스트리밍 | KIS 시장 상태 스트림 미구현 — `stream_market_status` 호출 시 `KXTUnsupportedError` |
+| 스트리밍 | 지원 — `stream_market_status`로 KRX/NXT/통합 scope 구독 |
 | 계좌 컨텍스트 | 불필요 |
 | 시간대 | KST (Asia/Seoul) |
 | Paper trading | 미지원 |
@@ -92,7 +92,7 @@ MarketStatusResponse(
 ## Common pitfalls
 
 - **종목 무관한 정보 가정**: KIS는 종목별 시세 payload에서 단계를 도출하므로, 거래정지 종목을 지정하면 결과가 왜곡될 수 있습니다. 일반 대형주를 사용하세요.
-- **스트림 기대**: `stream_market_status`는 미구현입니다. 폴링으로 사용하세요.
+- **스냅샷과 스트림 차이**: `get_market_status`는 시세 payload에서 파생한 스냅샷이고, `stream_market_status`는 별도 실시간 장운영정보 채널을 구독합니다.
 
 ## See also
 

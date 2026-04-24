@@ -9,8 +9,20 @@ from typing import Any, Awaitable, Callable, Optional
 
 from ..parsing import (
     KIS_ORDERBOOK_WS_TR_ID,
+    KIS_MARKET_STATUS_KRX_WS_TR_ID,
+    KIS_MARKET_STATUS_NXT_WS_TR_ID,
+    KIS_MARKET_STATUS_TOTAL_WS_TR_ID,
+    KIS_MEMBER_KRX_WS_TR_ID,
+    KIS_MEMBER_NXT_WS_TR_ID,
+    KIS_MEMBER_TOTAL_WS_TR_ID,
+    KIS_PROGRAM_TRADE_KRX_WS_TR_ID,
+    KIS_PROGRAM_TRADE_NXT_WS_TR_ID,
+    KIS_PROGRAM_TRADE_TOTAL_WS_TR_ID,
     KIS_TRADE_TR_ID,
+    parse_market_status_event,
+    parse_member_flow_event,
     parse_orderbook_event,
+    parse_program_trade_event,
     parse_trade_event,
 )
 from .registry import SubscriptionRegistry
@@ -96,6 +108,24 @@ class InboundPump:
                     event = parse_trade_event(text, instrument=entry.subscription.instrument)
                 elif tr_id == KIS_ORDERBOOK_WS_TR_ID:
                     event = parse_orderbook_event(text, instrument=entry.subscription.instrument)
+                elif tr_id in {
+                    KIS_PROGRAM_TRADE_KRX_WS_TR_ID,
+                    KIS_PROGRAM_TRADE_NXT_WS_TR_ID,
+                    KIS_PROGRAM_TRADE_TOTAL_WS_TR_ID,
+                }:
+                    event = parse_program_trade_event(text, instrument=entry.subscription.instrument)
+                elif tr_id in {
+                    KIS_MEMBER_KRX_WS_TR_ID,
+                    KIS_MEMBER_NXT_WS_TR_ID,
+                    KIS_MEMBER_TOTAL_WS_TR_ID,
+                }:
+                    event = parse_member_flow_event(text, instrument=entry.subscription.instrument)
+                elif tr_id in {
+                    KIS_MARKET_STATUS_KRX_WS_TR_ID,
+                    KIS_MARKET_STATUS_NXT_WS_TR_ID,
+                    KIS_MARKET_STATUS_TOTAL_WS_TR_ID,
+                }:
+                    event = parse_market_status_event(text, instrument=entry.subscription.instrument)
                 else:
                     self._logger.warning("unknown-tr_id %s", tr_id)
                     continue
@@ -105,4 +135,8 @@ class InboundPump:
 
             if event is None:
                 continue
-            await self._on_event(entry.subscription, event)
+            if isinstance(event, tuple):
+                for item in event:
+                    await self._on_event(entry.subscription, item)
+            else:
+                await self._on_event(entry.subscription, event)

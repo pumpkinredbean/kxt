@@ -1,5 +1,5 @@
 """KIS client exports."""
 
-from .client import KISClient
+from .client import KISClient, KISNativeResponse
 
-__all__ = ["KISClient"]
+__all__ = ["KISClient", "KISNativeResponse"]

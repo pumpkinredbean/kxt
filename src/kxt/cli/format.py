@@ -28,7 +28,10 @@ from kxt.models.api import (
     BarsResponse,
     BuyingPowerResponse,
     CancelOrderResponse,
+    ConditionSearchesResponse,
+    ConditionSearchResultsResponse,
     InvestorFlowResponse,
+    InvestorTrendsResponse,
     ModifyOrderResponse,
     OpenOrdersResponse,
     OrderHistoryResponse,
@@ -37,6 +40,8 @@ from kxt.models.api import (
     ProviderOrderRef,
     QuoteResponse,
     RecentTradesResponse,
+    ProgramTradeResponse,
+    RankingsResponse,
     SubmitOrderResponse,
 )
 
@@ -368,6 +373,78 @@ def _render_investor_flow(resp: InvestorFlowResponse) -> str:
     return "\n".join(lines).rstrip()
 
 
+def _render_rankings(resp: RankingsResponse) -> str:
+    header = f"Rankings: {len(resp.entries)}"
+    if not resp.entries:
+        return header
+    headers = ["rank", "symbol", "name", "price", "change_rate", "quantity", "value", "label"]
+    rows = [
+        [
+            _fmt_scalar(e.rank),
+            _fmt_scalar(e.symbol),
+            _fmt_scalar(e.name),
+            _fmt_scalar(e.price),
+            _fmt_scalar(e.change_rate),
+            _fmt_scalar(e.quantity),
+            _fmt_scalar(e.value),
+            _fmt_scalar(e.label),
+        ]
+        for e in resp.entries
+    ]
+    return "\n".join([header, "", *_render_table(headers, rows)])
+
+
+def _render_program_trade(resp: ProgramTradeResponse) -> str:
+    header = f"Program trades: {len(resp.records)}"
+    if not resp.records:
+        return header
+    headers = ["occurred_at", "symbol", "sell_qty", "buy_qty", "net_qty", "net_notional"]
+    rows = [
+        [
+            _fmt_scalar(r.occurred_at),
+            _fmt_scalar(r.symbol),
+            _fmt_scalar(r.sell_quantity),
+            _fmt_scalar(r.buy_quantity),
+            _fmt_scalar(r.net_buy_quantity),
+            _fmt_scalar(r.net_buy_notional),
+        ]
+        for r in resp.records
+    ]
+    return "\n".join([header, "", *_render_table(headers, rows)])
+
+
+def _render_condition_searches(resp: ConditionSearchesResponse) -> str:
+    header = f"Condition searches: {len(resp.searches)}"
+    if not resp.searches:
+        return header
+    return "\n".join([header, "", *_render_table(["seq", "name"], [[s.seq, _fmt_scalar(s.name)] for s in resp.searches])])
+
+
+def _render_condition_results(resp: ConditionSearchResultsResponse) -> str:
+    header = f"Condition results: {len(resp.results)}"
+    if not resp.results:
+        return header
+    rows = [[r.symbol, _fmt_scalar(r.name), _fmt_scalar(r.price), _fmt_scalar(r.change_rate), _fmt_scalar(r.volume)] for r in resp.results]
+    return "\n".join([header, "", *_render_table(["symbol", "name", "price", "change_rate", "volume"], rows)])
+
+
+def _render_investor_trends(resp: InvestorTrendsResponse) -> str:
+    header = f"Investor trends: {len(resp.records)}"
+    if not resp.records:
+        return header
+    rows = [
+        [
+            _fmt_scalar(r.occurred_at),
+            r.symbol,
+            _fmt_scalar(r.category),
+            _fmt_scalar(r.net_buy_quantity),
+            _fmt_scalar(r.net_buy_notional),
+        ]
+        for r in resp.records
+    ]
+    return "\n".join([header, "", *_render_table(["occurred_at", "symbol", "category", "net_qty", "net_notional"], rows)])
+
+
 # ---------- Account / trading DTOs -------------------------------------------
 
 
@@ -650,6 +727,11 @@ _RENDERERS: dict[type, Callable[[Any], str]] = {
     RecentTradesResponse: _render_recent_trades,
     OrderBookResponse: _render_orderbook,
     InvestorFlowResponse: _render_investor_flow,
+    RankingsResponse: _render_rankings,
+    ProgramTradeResponse: _render_program_trade,
+    ConditionSearchesResponse: _render_condition_searches,
+    ConditionSearchResultsResponse: _render_condition_results,
+    InvestorTrendsResponse: _render_investor_trends,
     AccountOverviewResponse: _render_account_overview,
     PositionsResponse: _render_positions,
     BuyingPowerResponse: _render_buying_power,

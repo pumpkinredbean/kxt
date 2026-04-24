@@ -310,6 +310,8 @@ class MarketStatusEvent:
     occurred_at: datetime
     session_context: SessionContext | None = None
     message: str | None = None
+    halt_reason: str | None = None
+    exchange_code: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -379,6 +381,8 @@ class ProgramTradeRequest:
     start: date | datetime | None = None
     end: date | datetime | None = None
     session: SessionType | None = None
+    mode: str = "by_stock"
+    scope: str = "KRX"
 
 
 @dataclass(frozen=True, slots=True)
@@ -390,6 +394,7 @@ class ProgramTradeResponse:
 class ProgramTradeStreamRequest:
     instrument: InstrumentRef
     session: SessionType | None = None
+    scope: str = "KRX"
 
 
 @dataclass(frozen=True, slots=True)
@@ -403,12 +408,17 @@ class RankingsRequest:
     limit: int = 20
     instrument: InstrumentRef | None = None
     session: SessionType | None = None
+    scope: str = "KRX"
+    market: str = "0000"
 
 
 @dataclass(frozen=True, slots=True)
 class RankingEntry:
     symbol: str
     rank: int
+    name: str | None = None
+    price: Decimal | None = None
+    change_rate: Decimal | None = None
     value: Decimal | None = None
     quantity: Decimal | None = None
     label: str | None = None
@@ -425,13 +435,15 @@ class MemberFlowRequest:
     start: date | datetime | None = None
     end: date | datetime | None = None
     session: SessionType | None = None
+    member_code: str | None = None
+    scope: str = "KRX"
 
 
 @dataclass(frozen=True, slots=True)
 class MemberFlowRecord:
     symbol: str
     occurred_at: datetime
-    member_code: str
+    member_code: str | None = None
     member_name: str | None = None
     buy_quantity: Decimal | None = None
     sell_quantity: Decimal | None = None
@@ -441,6 +453,49 @@ class MemberFlowRecord:
 @dataclass(frozen=True, slots=True)
 class MemberFlowResponse:
     records: tuple[MemberFlowRecord, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class ConditionSearch:
+    seq: str
+    name: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class ConditionSearchesResponse:
+    searches: tuple[ConditionSearch, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class ConditionSearchResult:
+    symbol: str
+    name: str | None = None
+    price: Decimal | None = None
+    change_rate: Decimal | None = None
+    volume: Decimal | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class ConditionSearchResultsResponse:
+    results: tuple[ConditionSearchResult, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class InvestorTrendRecord:
+    symbol: str
+    occurred_at: datetime | None = None
+    category: str | None = None
+    buy_quantity: Decimal | None = None
+    sell_quantity: Decimal | None = None
+    net_buy_quantity: Decimal | None = None
+    buy_notional: Decimal | None = None
+    sell_notional: Decimal | None = None
+    net_buy_notional: Decimal | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class InvestorTrendsResponse:
+    records: tuple[InvestorTrendRecord, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)

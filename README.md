@@ -1,14 +1,14 @@
-# kxt — Korea Exchange Trading SDK for Python
+# kxt — Korean Securities Market Access SDK for Python
 
 [![PyPI](https://img.shields.io/pypi/v/kxt.svg)](https://pypi.org/project/kxt/)
 [![Python](https://img.shields.io/pypi/pyversions/kxt.svg)](https://pypi.org/project/kxt/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-`kxt` is a general-purpose async Python SDK for Korea Exchange (KRX) equities, futures, and options. Documentation is written in Korean and published at <https://pumpkinredbean.github.io/kxt/>.
+`kxt` is an async, library-first Python SDK for Korean securities market access. It provides broker-neutral request and response models with a current KIS-backed implementation for domestic equity data, analytics, streaming, and trading. Documentation is written in Korean and published at <https://pumpkinredbean.github.io/kxt/>.
 
 ---
 
-`kxt`는 한국거래소(KRX) 주식·선물·옵션을 비동기 파이썬으로 다루기 위한 범용 SDK입니다. 브로커 중립 DTO 계층 위에 얹힌 얇은 클라이언트 형태로 제공됩니다.
+`kxt`는 한국 증권시장 접근을 비동기 파이썬으로 다루기 위한 라이브러리 우선 SDK입니다. 브로커 중립 요청·응답 DTO를 중심에 두고, 현재 구현 상태로 KIS 국내주식 시세·분석·스트리밍·주문 클라이언트를 제공합니다.
 
 ## Audience
 

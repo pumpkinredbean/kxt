@@ -5,8 +5,10 @@ from __future__ import annotations
 import json
 from contextlib import suppress
 from collections.abc import AsyncIterator
+from dataclasses import dataclass
 from datetime import UTC, date, datetime, time, timedelta
 from decimal import Decimal
+from typing import Any
 
 from kxt.clients.base import MarketDataClient, MarketNamespace, StreamsNamespace
 from kxt.clients.capabilities import (
@@ -88,17 +90,23 @@ from kxt.models import (
     PositionsResponse,
     ProgramTradeRequest,
     ProgramTradeResponse,
+    ProgramTradeStreamRequest,
+    ProgramTradeRecord,
     ProviderOrderRef,
     ProviderRef,
     QuoteRequest,
     QuoteResponse,
     QuoteSnapshot,
+    RankingKind,
     RankingsRequest,
     RankingsResponse,
     RecentTradesRequest,
     RecentTradesResponse,
     Bar,
     SessionType,
+    ConditionSearchesResponse,
+    ConditionSearchResultsResponse,
+    InvestorTrendsResponse,
     SubmitOrderRequest,
     SubmitOrderResponse,
     Trade,
@@ -121,6 +129,26 @@ from .parsing import (
     KIS_HISTORICAL_MINUTE_TR_ID,
     KIS_INVESTOR_FLOW_PATH,
     KIS_INVESTOR_FLOW_TR_ID,
+    KIS_COMP_PROGRAM_TRADE_DAILY_PATH,
+    KIS_COMP_PROGRAM_TRADE_DAILY_TR_ID,
+    KIS_COMP_PROGRAM_TRADE_TODAY_PATH,
+    KIS_COMP_PROGRAM_TRADE_TODAY_TR_ID,
+    KIS_CREDIT_BALANCE_RANK_PATH,
+    KIS_CREDIT_BALANCE_RANK_TR_ID,
+    KIS_FLUCTUATION_RANK_PATH,
+    KIS_FLUCTUATION_RANK_TR_ID,
+    KIS_FOREIGN_INSTITUTION_TOTAL_PATH,
+    KIS_FOREIGN_INSTITUTION_TOTAL_TR_ID,
+    KIS_INVESTOR_TRADE_BY_STOCK_DAILY_PATH,
+    KIS_INVESTOR_TRADE_BY_STOCK_DAILY_TR_ID,
+    KIS_INVESTOR_TREND_ESTIMATE_PATH,
+    KIS_INVESTOR_TREND_ESTIMATE_TR_ID,
+    KIS_MARKET_CAP_RANK_PATH,
+    KIS_MARKET_CAP_RANK_TR_ID,
+    KIS_MEMBER_PATH,
+    KIS_MEMBER_TR_ID,
+    KIS_MEMBER_DAILY_PATH,
+    KIS_MEMBER_DAILY_TR_ID,
     KIS_OPEN_ORDERS_PATH,
     KIS_OPEN_ORDERS_TR_ID,
     KIS_ORDER_CASH_BUY_TR_ID,
@@ -135,10 +163,28 @@ from .parsing import (
     KIS_ORDERBOOK_WS_TR_ID,
     KIS_PERIOD_BARS_PATH,
     KIS_PERIOD_BARS_TR_ID,
+    KIS_PROGRAM_TRADE_BY_STOCK_DAILY_PATH,
+    KIS_PROGRAM_TRADE_BY_STOCK_DAILY_TR_ID,
+    KIS_PROGRAM_TRADE_BY_STOCK_PATH,
+    KIS_PROGRAM_TRADE_BY_STOCK_TR_ID,
+    KIS_PSEARCH_RESULT_PATH,
+    KIS_PSEARCH_RESULT_TR_ID,
+    KIS_PSEARCH_TITLE_PATH,
+    KIS_PSEARCH_TITLE_TR_ID,
+    KIS_QUOTE_BALANCE_RANK_PATH,
+    KIS_QUOTE_BALANCE_RANK_TR_ID,
     KIS_QUOTE_PATH,
     KIS_QUOTE_TR_ID,
     KIS_RECENT_TRADES_PATH,
     KIS_RECENT_TRADES_TR_ID,
+    KIS_SHORT_SALE_RANK_PATH,
+    KIS_SHORT_SALE_RANK_TR_ID,
+    KIS_TOP_INTEREST_RANK_PATH,
+    KIS_TOP_INTEREST_RANK_TR_ID,
+    KIS_VOLUME_POWER_RANK_PATH,
+    KIS_VOLUME_POWER_RANK_TR_ID,
+    KIS_VOLUME_RANK_PATH,
+    KIS_VOLUME_RANK_TR_ID,
     _kis_code_to_order_type,
     _order_type_to_kis_code,
     notification_subscription_message,
@@ -147,13 +193,19 @@ from .parsing import (
     parse_market_bars,
     parse_market_status,
     parse_investor_flow,
+    parse_condition_searches,
+    parse_condition_search_results,
+    parse_investor_trends,
+    parse_member_flow,
     parse_notification_event,
     parse_open_orders,
     parse_order_ack,
     parse_order_history,
     parse_orderbook_event,
     parse_orderbook_snapshot,
+    parse_program_trades,
     parse_quote_snapshot,
+    parse_rankings,
     parse_recent_trades,
     parse_trade_event,
     websocket_subscription_message,
@@ -161,6 +213,16 @@ from .parsing import (
 from .realtime import KISRealtimeSession, StreamKind
 from .transport import KISTransport, map_websocket_exception
 from .markets import KRXInstrumentMaster
+
+
+@dataclass(frozen=True, slots=True)
+class KISNativeResponse:
+    """Provider-native domestic analysis response for KIS-specific overflow use."""
+
+    api_name: str
+    outputs: tuple[dict[str, Any], ...]
+    pages: int = 1
+    has_more: bool = False
 
 
 class _KISMarketNamespace(MarketNamespace):
@@ -236,7 +298,7 @@ class KISClient(MarketDataClient):
         provider="kis",
         requires_credentials=True,
         supported_venues=(Venue.KRX,),
-        supported_scopes=(MarketScope.KRX, MarketScope.TOTAL),
+        supported_scopes=(MarketScope.KRX, MarketScope.NXT, MarketScope.TOTAL),
         market=MarketCapabilities(
             bars=CapabilitySupport(
                 True,
@@ -290,6 +352,18 @@ class KISClient(MarketDataClient):
                     "Historical/ranged investor-flow fetches are not yet normalized in kxt.",
                 ),
             ),
+            program_trade=CapabilitySupport(
+                True,
+                notes=("Domestic stock program-trade batch analytics are supported for per-stock and market-summary views.",),
+            ),
+            rankings=CapabilitySupport(
+                True,
+                notes=("Domestic stock ranking endpoints are normalized for common ranking kinds; raw KIS filters are available through native.get_domestic_analysis(...).",),
+            ),
+            member_flow=CapabilitySupport(
+                True,
+                notes=("Current member-flow snapshot is backed by KIS inquire-member; realtime member flow is available through stream_member_flow(...).",),
+            ),
         ),
         streams=StreamCapabilities(
             trades=TradeStreamCapability(
@@ -308,8 +382,9 @@ class KISClient(MarketDataClient):
                     "Per-instrument live order book streaming is supported.",
                 ),
             ),
-            program_trades=CapabilitySupport(False, "Program-trade APIs are not in scope for v0.1.0."),
-            market_status=CapabilitySupport(False, "KIS market-status streaming is not yet implemented."),
+            program_trades=CapabilitySupport(True, notes=("Per-instrument realtime program-trade streams are supported for KRX, NXT, and TOTAL scopes.",)),
+            market_status=CapabilitySupport(True, notes=("Per-instrument realtime market-status streams are supported for KRX, NXT, and TOTAL scopes.",)),
+            member_flow=CapabilitySupport(True, notes=("Per-instrument realtime member-flow streams are exposed as stream_member_flow(...).",)),
             order_updates=CapabilitySupport(
                 True,
                 notes=(
@@ -620,14 +695,229 @@ class KISClient(MarketDataClient):
         )
         return parse_investor_flow(payload, instrument=instrument)
 
-    async def get_program_trade(self, request: ProgramTradeRequest) -> ProgramTradeResponse:
-        raise KXTUnsupportedError("KIS program-trade fetch is not yet implemented in kxt")
+    async def get_program_trade(
+        self,
+        request: ProgramTradeRequest | str | InstrumentRef | None = None,
+        /,
+        *,
+        symbol: str | InstrumentRef | None = None,
+        mode: str = "by_stock",
+        start: date | datetime | None = None,
+        end: date | datetime | None = None,
+        scope: str = "KRX",
+    ) -> ProgramTradeResponse:
+        if isinstance(request, ProgramTradeRequest):
+            instrument = request.instrument
+            mode = request.mode
+            start = request.start
+            end = request.end
+            scope = request.scope
+        else:
+            instrument = self._coerce_instrument(symbol if symbol is not None else request or "")
 
-    async def get_rankings(self, request: RankingsRequest) -> RankingsResponse:
-        raise KXTUnsupportedError("KIS rankings fetch is not yet implemented in kxt")
+        normalized = self._normalize_instrument(instrument)
+        endpoint = _program_trade_endpoint(mode)
+        params = _program_trade_params(mode, normalized, start=start, end=end, scope=scope)
+        native = await self.get_domestic_analysis(endpoint[0], params=params)
+        return ProgramTradeResponse(
+            records=parse_program_trades({"output": list(native.outputs)}, instrument=normalized)
+        )
 
-    async def get_member_flow(self, request: MemberFlowRequest) -> MemberFlowResponse:
-        raise KXTUnsupportedError("KIS member-flow fetch is not yet implemented in kxt")
+    async def get_rankings(
+        self,
+        request: RankingsRequest | RankingKind | str | None = None,
+        /,
+        *,
+        kind: RankingKind | str | None = None,
+        limit: int = 20,
+        scope: str = "KRX",
+        market: str = "0000",
+    ) -> RankingsResponse:
+        if isinstance(request, RankingsRequest):
+            kind = request.kind
+            limit = request.limit
+            scope = request.scope
+            market = request.market
+        elif request is not None:
+            kind = request
+        if kind is None:
+            raise KXTValidationError("ranking kind is required")
+        ranking_kind = kind if isinstance(kind, RankingKind) else RankingKind(str(kind).upper())
+        if limit < 1:
+            raise KXTValidationError("limit must be >= 1")
+        api_name, params = _ranking_native_request(ranking_kind, scope=scope, market=market)
+        native = await self.get_domestic_analysis(api_name, params=params)
+        return RankingsResponse(
+            entries=parse_rankings({"output": list(native.outputs)}, kind=ranking_kind, limit=limit)
+        )
+
+    async def get_member_flow(
+        self,
+        request: MemberFlowRequest | str | InstrumentRef,
+        /,
+        *,
+        member_code: str | None = None,
+        start: date | datetime | None = None,
+        end: date | datetime | None = None,
+        scope: str = "KRX",
+    ) -> MemberFlowResponse:
+        if isinstance(request, MemberFlowRequest):
+            instrument = request.instrument
+            member_code = request.member_code
+            start = request.start
+            end = request.end
+            scope = request.scope
+        else:
+            instrument = self._coerce_instrument(request)
+        normalized = self._normalize_instrument(instrument)
+        if start is not None or end is not None or member_code is not None:
+            api_name = "inquire-member-daily"
+            params = {
+                "FID_COND_MRKT_DIV_CODE": _scope_to_kis_code(scope),
+                "FID_INPUT_ISCD": normalized.symbol,
+                "FID_INPUT_ISCD_2": member_code or "",
+                "FID_INPUT_DATE_1": _format_kis_date(start),
+                "FID_INPUT_DATE_2": _format_kis_date(end),
+                "FID_SCTN_CLS_CODE": "",
+            }
+        else:
+            api_name = "inquire-member"
+            params = {
+                "FID_COND_MRKT_DIV_CODE": _scope_to_kis_code(scope),
+                "FID_INPUT_ISCD": normalized.symbol,
+            }
+        native = await self.get_domestic_analysis(api_name, params=params)
+        return MemberFlowResponse(
+            records=parse_member_flow({"output": list(native.outputs)}, instrument=normalized)
+        )
+
+    async def get_condition_searches(self, *, hts_id: str | None = None) -> ConditionSearchesResponse:
+        resolved_hts_id = (hts_id or self._default_hts_id or "").strip()
+        if not resolved_hts_id:
+            raise KXTValidationError("hts_id is required for KIS condition-search APIs")
+        native = await self.get_domestic_analysis(
+            "psearch-title",
+            params={"user_id": resolved_hts_id},
+        )
+        return ConditionSearchesResponse(
+            searches=parse_condition_searches({"output": list(native.outputs)})
+        )
+
+    async def get_condition_search_results(
+        self,
+        seq: str,
+        /,
+        *,
+        hts_id: str | None = None,
+    ) -> ConditionSearchResultsResponse:
+        resolved_hts_id = (hts_id or self._default_hts_id or "").strip()
+        if not resolved_hts_id:
+            raise KXTValidationError("hts_id is required for KIS condition-search APIs")
+        seq_text = str(seq).strip()
+        if not seq_text:
+            raise KXTValidationError("seq is required")
+        native = await self.get_domestic_analysis(
+            "psearch-result",
+            params={"user_id": resolved_hts_id, "seq": seq_text},
+        )
+        return ConditionSearchResultsResponse(
+            results=parse_condition_search_results({"output": list(native.outputs)})
+        )
+
+    async def get_investor_trends(
+        self,
+        symbol: str | InstrumentRef,
+        /,
+        *,
+        trend: str = "daily",
+        as_of: date | datetime | None = None,
+        scope: str = "KRX",
+    ) -> InvestorTrendsResponse:
+        instrument = self._normalize_instrument(self._coerce_instrument(symbol))
+        if trend == "estimate":
+            api_name = "investor-trend-estimate"
+            params = {"MKSC_SHRN_ISCD": instrument.symbol}
+        else:
+            api_name = "investor-trade-by-stock-daily"
+            params = {
+                "FID_COND_MRKT_DIV_CODE": _scope_to_kis_code(scope),
+                "FID_INPUT_ISCD": instrument.symbol,
+                "FID_INPUT_DATE_1": _format_kis_date(as_of),
+                "FID_ORG_ADJ_PRC": "",
+                "FID_ETC_CLS_CODE": "",
+            }
+        native = await self.get_domestic_analysis(api_name, params=params)
+        return InvestorTrendsResponse(
+            records=parse_investor_trends({"output": list(native.outputs)}, instrument=instrument)
+        )
+
+    async def get_foreign_institution_rankings(
+        self,
+        *,
+        market: str = "0000",
+        sort: str = "0",
+        side: str = "0",
+        category: str = "0",
+        limit: int = 20,
+    ) -> RankingsResponse:
+        native = await self.get_domestic_analysis(
+            "foreign-institution-total",
+            params={
+                "FID_COND_MRKT_DIV_CODE": "V",
+                "FID_COND_SCR_DIV_CODE": "16449",
+                "FID_INPUT_ISCD": market,
+                "FID_DIV_CLS_CODE": sort,
+                "FID_RANK_SORT_CLS_CODE": side,
+                "FID_ETC_CLS_CODE": category,
+            },
+        )
+        return RankingsResponse(
+            entries=parse_rankings(
+                {"output": list(native.outputs)},
+                kind=RankingKind.CUSTOM,
+                limit=limit,
+            )
+        )
+
+    async def get_domestic_analysis(
+        self,
+        api_name: str,
+        *,
+        params: dict[str, Any],
+        tr_cont: str = "",
+        max_pages: int = 10,
+    ) -> KISNativeResponse:
+        if max_pages < 1:
+            raise KXTValidationError("max_pages must be >= 1")
+        try:
+            path, tr_id = _DOMESTIC_ANALYSIS_ENDPOINTS[api_name]
+        except KeyError as exc:
+            raise KXTValidationError(f"unsupported KIS domestic analysis API: {api_name}") from exc
+
+        outputs: list[dict[str, Any]] = []
+        next_cont = tr_cont
+        pages = 0
+        has_more = False
+        while pages < max_pages:
+            response = await self._transport.get_json_response(
+                path,
+                tr_id=tr_id,
+                params=params,
+                tr_cont=next_cont,
+            )
+            pages += 1
+            outputs.extend(_extract_native_rows(response.payload))
+            next_cont = response.tr_cont or ""
+            has_more = next_cont in {"M", "F"}
+            if not has_more:
+                break
+            next_cont = "N"
+        return KISNativeResponse(
+            api_name=api_name,
+            outputs=tuple(outputs),
+            pages=pages,
+            has_more=has_more,
+        )
 
     async def get_accounts(self, request: AccountsRequest | None = None) -> AccountsResponse:
         raise KXTUnsupportedError(
@@ -1149,8 +1439,26 @@ class KISClient(MarketDataClient):
         )
         return ModifyOrderResponse(acknowledgement=ack)
 
-    def stream_market_status(self, request: MarketStatusStreamRequest) -> AsyncIterator[MarketStatusEvent]:
-        raise KXTUnsupportedError("KIS market-status streaming is not yet implemented in kxt")
+    async def stream_market_status(
+        self,
+        request: MarketStatusStreamRequest | str | InstrumentRef,
+        /,
+        *,
+        scope: str = "KRX",
+    ) -> AsyncIterator[MarketStatusEvent]:
+        if isinstance(request, MarketStatusStreamRequest):
+            instrument = request.instrument or InstrumentRef(symbol="005930")
+        else:
+            instrument = self._coerce_instrument(request)
+        normalized = self._normalize_instrument(instrument)
+        session = self.realtime
+        sub = await session.subscribe(StreamKind.market_status, normalized, scope=_normalize_scope(scope))
+        try:
+            async for event in sub.events():
+                yield event
+        finally:
+            with suppress(Exception):
+                await sub.aclose()
 
     async def stream_order_events(
         self,
@@ -1416,6 +1724,50 @@ class KISClient(MarketDataClient):
 
         session = self.realtime
         sub = await session.subscribe(StreamKind.order_book, instrument)
+        try:
+            async for event in sub.events():
+                yield event
+        finally:
+            with suppress(Exception):
+                await sub.aclose()
+
+    async def stream_program_trades(
+        self,
+        symbol: str | InstrumentRef | ProgramTradeStreamRequest,
+        /,
+        *,
+        scope: str = "KRX",
+    ) -> AsyncIterator[ProgramTradeRecord]:
+        if isinstance(symbol, ProgramTradeStreamRequest):
+            instrument = symbol.instrument
+            scope = symbol.scope
+        else:
+            instrument = self._coerce_instrument(symbol)
+        normalized = self._normalize_instrument(instrument)
+        session = self.realtime
+        sub = await session.subscribe(StreamKind.program_trade, normalized, scope=_normalize_scope(scope))
+        try:
+            async for event in sub.events():
+                yield event
+        finally:
+            with suppress(Exception):
+                await sub.aclose()
+
+    async def stream_member_flow(
+        self,
+        symbol: str | InstrumentRef | MemberFlowRequest,
+        /,
+        *,
+        scope: str = "KRX",
+    ) -> AsyncIterator[MemberFlowRecord]:
+        if isinstance(symbol, MemberFlowRequest):
+            instrument = symbol.instrument
+            scope = symbol.scope
+        else:
+            instrument = self._coerce_instrument(symbol)
+        normalized = self._normalize_instrument(instrument)
+        session = self.realtime
+        sub = await session.subscribe(StreamKind.member_flow, normalized, scope=_normalize_scope(scope))
         try:
             async for event in sub.events():
                 yield event
@@ -1845,3 +2197,208 @@ def _lifecycle_event_state(event) -> OrderLifecycleState:
     if isinstance(event, OrderRejectedEvent):
         return OrderLifecycleState.REJECTED
     return OrderLifecycleState.UNKNOWN
+
+
+_DOMESTIC_ANALYSIS_ENDPOINTS: dict[str, tuple[str, str]] = {
+    "volume-rank": (KIS_VOLUME_RANK_PATH, KIS_VOLUME_RANK_TR_ID),
+    "fluctuation": (KIS_FLUCTUATION_RANK_PATH, KIS_FLUCTUATION_RANK_TR_ID),
+    "market-cap": (KIS_MARKET_CAP_RANK_PATH, KIS_MARKET_CAP_RANK_TR_ID),
+    "volume-power": (KIS_VOLUME_POWER_RANK_PATH, KIS_VOLUME_POWER_RANK_TR_ID),
+    "top-interest-stock": (KIS_TOP_INTEREST_RANK_PATH, KIS_TOP_INTEREST_RANK_TR_ID),
+    "short-sale": (KIS_SHORT_SALE_RANK_PATH, KIS_SHORT_SALE_RANK_TR_ID),
+    "credit-balance": (KIS_CREDIT_BALANCE_RANK_PATH, KIS_CREDIT_BALANCE_RANK_TR_ID),
+    "quote-balance": (KIS_QUOTE_BALANCE_RANK_PATH, KIS_QUOTE_BALANCE_RANK_TR_ID),
+    "program-trade-by-stock": (KIS_PROGRAM_TRADE_BY_STOCK_PATH, KIS_PROGRAM_TRADE_BY_STOCK_TR_ID),
+    "program-trade-by-stock-daily": (KIS_PROGRAM_TRADE_BY_STOCK_DAILY_PATH, KIS_PROGRAM_TRADE_BY_STOCK_DAILY_TR_ID),
+    "comp-program-trade-today": (KIS_COMP_PROGRAM_TRADE_TODAY_PATH, KIS_COMP_PROGRAM_TRADE_TODAY_TR_ID),
+    "comp-program-trade-daily": (KIS_COMP_PROGRAM_TRADE_DAILY_PATH, KIS_COMP_PROGRAM_TRADE_DAILY_TR_ID),
+    "foreign-institution-total": (KIS_FOREIGN_INSTITUTION_TOTAL_PATH, KIS_FOREIGN_INSTITUTION_TOTAL_TR_ID),
+    "investor-trade-by-stock-daily": (KIS_INVESTOR_TRADE_BY_STOCK_DAILY_PATH, KIS_INVESTOR_TRADE_BY_STOCK_DAILY_TR_ID),
+    "investor-trend-estimate": (KIS_INVESTOR_TREND_ESTIMATE_PATH, KIS_INVESTOR_TREND_ESTIMATE_TR_ID),
+    "psearch-title": (KIS_PSEARCH_TITLE_PATH, KIS_PSEARCH_TITLE_TR_ID),
+    "psearch-result": (KIS_PSEARCH_RESULT_PATH, KIS_PSEARCH_RESULT_TR_ID),
+    "inquire-member": (KIS_MEMBER_PATH, KIS_MEMBER_TR_ID),
+    "inquire-member-daily": (KIS_MEMBER_DAILY_PATH, KIS_MEMBER_DAILY_TR_ID),
+}
+
+
+def _extract_native_rows(payload: dict[str, Any]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for key in ("output", "output1", "output2"):
+        value = payload.get(key)
+        if isinstance(value, dict):
+            rows.append(value)
+        elif isinstance(value, list):
+            rows.extend(item for item in value if isinstance(item, dict))
+    return rows
+
+
+def _normalize_scope(scope: str) -> str:
+    normalized = str(scope or "KRX").strip().upper()
+    aliases = {"J": "KRX", "UN": "TOTAL"}
+    normalized = aliases.get(normalized, normalized)
+    if normalized not in {"KRX", "NXT", "TOTAL"}:
+        raise KXTValidationError("scope must be one of KRX, NXT, TOTAL")
+    return normalized
+
+
+def _scope_to_kis_code(scope: str) -> str:
+    return {"KRX": "J", "NXT": "NX", "TOTAL": "UN"}[_normalize_scope(scope)]
+
+
+def _format_kis_date(value: date | datetime | None) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, datetime):
+        value = value.date()
+    return value.strftime("%Y%m%d")
+
+
+def _ranking_native_request(kind: RankingKind, *, scope: str, market: str) -> tuple[str, dict[str, str]]:
+    kis_scope = _scope_to_kis_code(scope)
+    base_filters = {
+        "FID_INPUT_ISCD": market,
+        "FID_DIV_CLS_CODE": "0",
+        "FID_TRGT_CLS_CODE": "0",
+        "FID_TRGT_EXLS_CLS_CODE": "0",
+        "FID_INPUT_PRICE_1": "",
+        "FID_INPUT_PRICE_2": "",
+        "FID_VOL_CNT": "",
+    }
+    if kind == RankingKind.VOLUME:
+        return "volume-rank", {
+            "FID_COND_MRKT_DIV_CODE": kis_scope,
+            "FID_COND_SCR_DIV_CODE": "20171",
+            **base_filters,
+            "FID_BLNG_CLS_CODE": "0",
+            "FID_INPUT_DATE_1": "",
+        }
+    if kind == RankingKind.VALUE:
+        return "volume-rank", {
+            "FID_COND_MRKT_DIV_CODE": kis_scope,
+            "FID_COND_SCR_DIV_CODE": "20171",
+            **base_filters,
+            "FID_BLNG_CLS_CODE": "3",
+            "FID_INPUT_DATE_1": "",
+        }
+    if kind == RankingKind.FLUCTUATION:
+        return "fluctuation", {
+            "FID_COND_MRKT_DIV_CODE": kis_scope,
+            "FID_COND_SCR_DIV_CODE": "20170",
+            **base_filters,
+            "FID_RANK_SORT_CLS_CODE": "0000",
+            "FID_INPUT_CNT_1": "0",
+            "FID_PRC_CLS_CODE": "0",
+            "FID_RSFL_RATE1": "",
+            "FID_RSFL_RATE2": "",
+        }
+    if kind == RankingKind.MARKET_CAP:
+        return "market-cap", {
+            "FID_COND_MRKT_DIV_CODE": kis_scope,
+            "FID_COND_SCR_DIV_CODE": "20174",
+            **base_filters,
+        }
+    if kind == RankingKind.VOLUME_POWER:
+        return "volume-power", {
+            "FID_COND_MRKT_DIV_CODE": kis_scope,
+            "FID_COND_SCR_DIV_CODE": "20168",
+            **base_filters,
+        }
+    if kind == RankingKind.TOP_INTEREST:
+        return "top-interest-stock", {
+            "FID_INPUT_ISCD_2": "000000",
+            "FID_COND_MRKT_DIV_CODE": kis_scope,
+            "FID_COND_SCR_DIV_CODE": "20180",
+            **base_filters,
+            "FID_INPUT_CNT_1": "1",
+        }
+    if kind == RankingKind.SHORT_SALE:
+        return "short-sale", {
+            "FID_APLY_RANG_VOL": "",
+            "FID_COND_MRKT_DIV_CODE": kis_scope,
+            "FID_COND_SCR_DIV_CODE": "20482",
+            "FID_INPUT_ISCD": market,
+            "FID_PERIOD_DIV_CODE": "D",
+            "FID_INPUT_CNT_1": "0",
+            "FID_TRGT_EXLS_CLS_CODE": "",
+            "FID_TRGT_CLS_CODE": "",
+            "FID_APLY_RANG_PRC_1": "",
+            "FID_APLY_RANG_PRC_2": "",
+        }
+    if kind == RankingKind.CREDIT_BALANCE:
+        return "credit-balance", {
+            "FID_COND_SCR_DIV_CODE": "11701",
+            "FID_INPUT_ISCD": market,
+            "FID_OPTION": "2",
+            "FID_COND_MRKT_DIV_CODE": kis_scope,
+            "FID_RANK_SORT_CLS_CODE": "0",
+        }
+    if kind == RankingKind.QUOTE_BALANCE:
+        return "quote-balance", {
+            "FID_VOL_CNT": "",
+            "FID_COND_MRKT_DIV_CODE": kis_scope,
+            "FID_COND_SCR_DIV_CODE": "20172",
+            "FID_INPUT_ISCD": market,
+            "FID_RANK_SORT_CLS_CODE": "0",
+            "FID_DIV_CLS_CODE": "0",
+            "FID_TRGT_CLS_CODE": "0",
+            "FID_TRGT_EXLS_CLS_CODE": "0",
+            "FID_INPUT_PRICE_1": "",
+            "FID_INPUT_PRICE_2": "",
+        }
+    raise KXTValidationError(f"unsupported ranking kind for KIS: {kind.value}")
+
+
+def _program_trade_endpoint(mode: str) -> tuple[str, str]:
+    normalized = str(mode or "by_stock").strip().replace("_", "-").lower()
+    aliases = {
+        "by-stock": "program-trade-by-stock",
+        "by-stock-daily": "program-trade-by-stock-daily",
+        "market-today": "comp-program-trade-today",
+        "market-daily": "comp-program-trade-daily",
+    }
+    api_name = aliases.get(normalized, normalized)
+    if api_name not in {
+        "program-trade-by-stock",
+        "program-trade-by-stock-daily",
+        "comp-program-trade-today",
+        "comp-program-trade-daily",
+    }:
+        raise KXTValidationError("unsupported program-trade mode")
+    return api_name, _DOMESTIC_ANALYSIS_ENDPOINTS[api_name][0]
+
+
+def _program_trade_params(
+    mode: str,
+    instrument: InstrumentRef,
+    *,
+    start: date | datetime | None,
+    end: date | datetime | None,
+    scope: str,
+) -> dict[str, str]:
+    api_name, _ = _program_trade_endpoint(mode)
+    kis_scope = _scope_to_kis_code(scope)
+    if api_name == "program-trade-by-stock":
+        return {"FID_COND_MRKT_DIV_CODE": kis_scope, "FID_INPUT_ISCD": instrument.symbol}
+    if api_name == "program-trade-by-stock-daily":
+        return {
+            "FID_COND_MRKT_DIV_CODE": kis_scope,
+            "FID_INPUT_ISCD": instrument.symbol,
+            "FID_INPUT_DATE_1": _format_kis_date(start),
+        }
+    market_code = "K" if instrument.market_segment in (None, MarketSegment.KOSPI) else "Q"
+    if api_name == "comp-program-trade-daily":
+        return {
+            "FID_COND_MRKT_DIV_CODE": kis_scope,
+            "FID_MRKT_CLS_CODE": market_code,
+            "FID_INPUT_DATE_1": _format_kis_date(start),
+            "FID_INPUT_DATE_2": _format_kis_date(end),
+        }
+    return {
+        "FID_COND_MRKT_DIV_CODE": kis_scope,
+        "FID_MRKT_CLS_CODE": market_code,
+        "FID_SCTN_CLS_CODE": "",
+        "FID_INPUT_ISCD": instrument.symbol,
+        "FID_COND_MRKT_DIV_CODE1": "",
+        "FID_INPUT_HOUR_1": "",
+    }

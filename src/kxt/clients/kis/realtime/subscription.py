@@ -22,6 +22,9 @@ class StreamKind(str, Enum):
 
     trades = "trades"
     order_book = "order_book"
+    program_trade = "program_trade"
+    member_flow = "member_flow"
+    market_status = "market_status"
 
 
 # Sentinels used in the subscription queue to signal shutdown / failure.

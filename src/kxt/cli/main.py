@@ -17,6 +17,7 @@ from kxt import (
     MarketSegment,
     OrderSide,
     OrderType,
+    RankingKind,
 )
 from kxt.cli.format import render_output
 from kxt.errors import KXTAuthenticationError, KXTError, KXTValidationError
@@ -44,14 +45,14 @@ def _provider_help(*, include_default: bool = True) -> str:
 
 def _auth_help_text() -> str:
     return (
-        f"Authentication stays environment-variable based. For KIS, set {KIS_APP_KEY_ENV} and "
-        f"{KIS_APP_SECRET_ENV}. The CLI intentionally does not accept secrets via flags."
+        "Authentication stays environment-variable based. Configure provider credentials in the "
+        "environment. The CLI intentionally does not accept secrets via flags."
     )
 
 
 def _scope_help_text() -> str:
     return (
-        "Current implemented CLI scope is provider-neutral in grammar but KIS-only in provider support, "
+        "Current implemented CLI scope is provider-neutral in grammar and currently limited in provider support, "
         "with domestic-equity market data in practice today."
     )
 
@@ -64,12 +65,12 @@ def build_parser() -> argparse.ArgumentParser:
             "Use this CLI to inspect capabilities, verify auth setup, and fetch normalized market-data and "
             "account snapshots. Output defaults to structured plain text that is readable by both humans and "
             "LLM-based tools; pass the global `--json` flag for raw JSON. Command grammar stays "
-            "provider-neutral via --provider even though only KIS is implemented today."
+            "provider-neutral via --provider across the currently implemented adapters."
         ),
         epilog=(
-            f"Provider support: {_supported_providers_text()}\n"
-            f"{_scope_help_text()}\n"
-            f"{_auth_help_text()}\n\n"
+            "Provider support: use --provider to select from the currently implemented adapters.\n"
+            "Current CLI scope is provider-neutral in grammar, with domestic-equity market data in practice today.\n"
+            "Authentication stays environment-variable based; secrets are never accepted via flags.\n\n"
             "Global flags:\n"
             "  --json    Emit raw JSON instead of the default structured plain text.\n"
             "  --debug   Show Python tracebacks for unexpected internal errors.\n\n"
@@ -82,6 +83,8 @@ def build_parser() -> argparse.ArgumentParser:
             "  kxt recent-trades 005930 --provider kis --limit 5\n"
             "  kxt orderbook 005930 --provider kis\n"
             "  kxt investor-flow 005930 --provider kis\n"
+            "  kxt rankings VOLUME --provider kis --limit 10\n"
+            "  kxt program-trade 005930 --provider kis\n"
             "  kxt --json quote 005930 --provider kis\n\n"
             "Run `kxt <command> --help` for command-specific examples and constraints."
         ),
@@ -280,6 +283,81 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional domestic-equity market segment hint",
     )
     investor_flow_parser.set_defaults(handler=_handle_investor_flow)
+
+    rankings_parser = subparsers.add_parser(
+        "rankings",
+        help="Fetch normalized ranking analytics",
+        description="Fetch ranking analytics through the selected provider using normalized ranking kinds.",
+        epilog=(
+            "Examples:\n"
+            "  kxt rankings VOLUME\n"
+            "  kxt rankings MARKET_CAP --limit 10 --scope KRX"
+        ),
+        formatter_class=_HelpFormatter,
+    )
+    rankings_parser.add_argument("kind", choices=tuple(k.value for k in RankingKind))
+    rankings_parser.add_argument("--provider", choices=SUPPORTED_PROVIDERS, default="kis", help=_provider_help())
+    rankings_parser.add_argument("--limit", type=int, default=20)
+    rankings_parser.add_argument("--scope", choices=("KRX", "NXT", "TOTAL"), default="KRX")
+    rankings_parser.add_argument("--market", default="0000", help="Provider market bucket code")
+    rankings_parser.set_defaults(handler=_handle_rankings)
+
+    program_trade_parser = subparsers.add_parser(
+        "program-trade",
+        help="Fetch normalized program-trade analytics",
+        description="Fetch program-trade analytics for one symbol or a supported market-summary mode.",
+        epilog=(
+            "Examples:\n"
+            "  kxt program-trade 005930\n"
+            "  kxt program-trade 005930 --mode by-stock-daily --start 2025-04-01 --end 2025-04-14"
+        ),
+        formatter_class=_HelpFormatter,
+    )
+    program_trade_parser.add_argument("symbol", help="Instrument symbol, for example 005930")
+    program_trade_parser.add_argument("--provider", choices=SUPPORTED_PROVIDERS, default="kis", help=_provider_help())
+    program_trade_parser.add_argument(
+        "--mode",
+        choices=("by-stock", "by-stock-daily", "market-today", "market-daily"),
+        default="by-stock",
+    )
+    program_trade_parser.add_argument("--start", help="Start date/datetime in ISO-8601 format")
+    program_trade_parser.add_argument("--end", help="End date/datetime in ISO-8601 format")
+    program_trade_parser.add_argument("--scope", choices=("KRX", "NXT", "TOTAL"), default="KRX")
+    program_trade_parser.set_defaults(handler=_handle_program_trade)
+
+    condition_parser = subparsers.add_parser(
+        "condition-search",
+        help="Fetch provider-saved condition searches or results",
+        description="List provider-saved condition searches, or fetch results for a saved condition sequence.",
+        epilog=(
+            "Examples:\n"
+            "  kxt condition-search\n"
+            "  kxt condition-search --seq 001"
+        ),
+        formatter_class=_HelpFormatter,
+    )
+    condition_parser.add_argument("--provider", choices=SUPPORTED_PROVIDERS, default="kis", help=_provider_help())
+    condition_parser.add_argument("--seq", help="Condition sequence. Omit to list saved conditions.")
+    condition_parser.add_argument("--hts-id", help="Provider user id. Falls back to the provider-specific environment configuration.")
+    condition_parser.set_defaults(handler=_handle_condition_search)
+
+    investor_trends_parser = subparsers.add_parser(
+        "investor-trends",
+        help="Fetch normalized investor trend analytics",
+        description="Fetch investor trend analytics for one symbol.",
+        epilog=(
+            "Examples:\n"
+            "  kxt investor-trends 005930\n"
+            "  kxt investor-trends 005930 --trend estimate --scope KRX"
+        ),
+        formatter_class=_HelpFormatter,
+    )
+    investor_trends_parser.add_argument("symbol", help="Instrument symbol, for example 005930")
+    investor_trends_parser.add_argument("--provider", choices=SUPPORTED_PROVIDERS, default="kis", help=_provider_help())
+    investor_trends_parser.add_argument("--trend", choices=("daily", "estimate"), default="daily")
+    investor_trends_parser.add_argument("--as-of", help="Reference date/datetime in ISO-8601 format")
+    investor_trends_parser.add_argument("--scope", choices=("KRX", "NXT", "TOTAL"), default="KRX")
+    investor_trends_parser.set_defaults(handler=_handle_investor_trends)
 
     # ---- account / trading ----
 
@@ -526,6 +604,58 @@ async def _handle_investor_flow(args: argparse.Namespace) -> int:
     return 0
 
 
+async def _handle_rankings(args: argparse.Namespace) -> int:
+    _require_supported_provider(args.provider)
+    async with _build_kis_client() as client:
+        rankings = await client.get_rankings(
+            RankingKind(args.kind),
+            limit=args.limit,
+            scope=args.scope,
+            market=args.market,
+        )
+    _emit(args, rankings)
+    return 0
+
+
+async def _handle_program_trade(args: argparse.Namespace) -> int:
+    _require_supported_provider(args.provider)
+    async with _build_kis_client() as client:
+        response = await client.get_program_trade(
+            args.symbol,
+            mode=args.mode,
+            start=_parse_temporal_arg(args.start, field_name="start"),
+            end=_parse_temporal_arg(args.end, field_name="end"),
+            scope=args.scope,
+        )
+    _emit(args, response)
+    return 0
+
+
+async def _handle_condition_search(args: argparse.Namespace) -> int:
+    _require_supported_provider(args.provider)
+    hts_id = (args.hts_id or os.getenv(KIS_HTS_ID_ENV, "")).strip() or None
+    async with _build_kis_client() as client:
+        if args.seq:
+            response = await client.get_condition_search_results(args.seq, hts_id=hts_id)
+        else:
+            response = await client.get_condition_searches(hts_id=hts_id)
+    _emit(args, response)
+    return 0
+
+
+async def _handle_investor_trends(args: argparse.Namespace) -> int:
+    _require_supported_provider(args.provider)
+    async with _build_kis_client() as client:
+        response = await client.get_investor_trends(
+            args.symbol,
+            trend=args.trend,
+            as_of=_parse_temporal_arg(args.as_of, field_name="as-of"),
+            scope=args.scope,
+        )
+    _emit(args, response)
+    return 0
+
+
 def _instrument_from_args(args: argparse.Namespace) -> InstrumentRef:
     market_segment = MarketSegment(args.market_segment) if args.market_segment else None
     return InstrumentRef(symbol=args.symbol, market_segment=market_segment)
@@ -575,10 +705,6 @@ def _parse_temporal_arg(value: str | None, *, field_name: str) -> date | datetim
         return date.fromisoformat(value)
     except ValueError as exc:
         raise KXTValidationError(f"{field_name} must be a valid ISO-8601 date or datetime") from exc
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
 
 
 # ---- account / trading CLI helpers ---------------------------------------------
@@ -748,3 +874,7 @@ async def _handle_modify_order(args: argparse.Namespace) -> int:
         )
     _emit(args, response)
     return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

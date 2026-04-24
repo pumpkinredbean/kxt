@@ -44,6 +44,21 @@ kxt investor-flow 005930 --provider kis
 
 `recent-trades`는 당일 국내주식 체결만 지원합니다. `investor-flow`는 장 마감 이후 공개되는 정규장 집계입니다.
 
+## Analytics
+
+```bash
+kxt rankings VOLUME --provider kis --limit 10
+kxt rankings MARKET_CAP --provider kis --scope KRX
+kxt program-trade 005930 --provider kis
+kxt program-trade 005930 --provider kis --mode by-stock-daily --start 2025-04-01 --end 2025-04-14
+kxt investor-trends 005930 --provider kis
+kxt investor-trends 005930 --provider kis --trend estimate
+kxt condition-search --provider kis
+kxt condition-search --provider kis --seq 001
+```
+
+`rankings`, `program-trade`, `investor-trends`, `condition-search`는 현재 구현된 분석 CLI입니다. `--scope`가 있는 명령은 `KRX`, `NXT`, `TOTAL` 중 하나를 받습니다. 조건검색 결과 조회에는 프로바이더 사용자 ID가 필요할 수 있습니다.
+
 ## Account & orders
 
 계좌번호(CANO)와 상품코드가 필요합니다. `KIS_ACCOUNT_NO`, `KIS_ACCOUNT_PRODUCT_CODE` 환경변수로도 넣을 수 있고, 플래그가 우선합니다.

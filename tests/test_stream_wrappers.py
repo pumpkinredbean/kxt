@@ -64,3 +64,55 @@ async def test_stream_trades_wrapper_yields_events_and_closes_sub():
         except Exception:
             pass
         await server.__aexit__(None, None, None)
+
+
+async def test_stream_program_trades_member_flow_and_market_status():
+    server = FakeKISWSServer()
+    url = await server.__aenter__()
+    client = KISClient(app_key="x", app_secret="y")
+    try:
+        fake_transport = make_fake_transport(url)
+        await client._transport.aclose()
+        client._transport = fake_transport
+        session = client.realtime
+        await session.start()
+        ok = await wait_until(lambda: session.state == RealtimeState.HEALTHY, timeout=3.0)
+        assert ok
+
+        program_events = []
+        member_events = []
+        status_events = []
+
+        async def _program():
+            async for ev in client.stream_program_trades("005930"):
+                program_events.append(ev)
+                break
+
+        async def _member():
+            async for ev in client.stream_member_flow("005930"):
+                member_events.append(ev)
+                break
+
+        async def _status():
+            async for ev in client.stream_market_status("005930"):
+                status_events.append(ev)
+                break
+
+        tasks = [asyncio.create_task(coro()) for coro in (_program, _member, _status)]
+        ok = await wait_until(lambda: server.subscribe_count >= 3, timeout=3.0)
+        assert ok
+
+        await server.send_program_trade_event("005930")
+        await server.send_member_flow_event("005930")
+        await server.send_market_status_event("005930")
+        await asyncio.wait_for(asyncio.gather(*tasks), timeout=3.0)
+
+        assert program_events[0].symbol == "005930"
+        assert member_events[0].symbol == "005930"
+        assert status_events[0].symbol == "005930"
+    finally:
+        try:
+            await client.aclose()
+        except Exception:
+            pass
+        await server.__aexit__(None, None, None)

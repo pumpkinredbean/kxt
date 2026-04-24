@@ -10,16 +10,39 @@ from dataclasses import dataclass, field, replace
 from typing import Any, Awaitable, Callable, Optional
 
 from ..exceptions import KISApprovalError, KISRealtimeError, KISSubscriptionError
-from ..parsing import KIS_ORDERBOOK_WS_TR_ID, KIS_TRADE_TR_ID
+from ..parsing import (
+    KIS_MARKET_STATUS_KRX_WS_TR_ID,
+    KIS_MARKET_STATUS_NXT_WS_TR_ID,
+    KIS_MARKET_STATUS_TOTAL_WS_TR_ID,
+    KIS_MEMBER_KRX_WS_TR_ID,
+    KIS_MEMBER_NXT_WS_TR_ID,
+    KIS_MEMBER_TOTAL_WS_TR_ID,
+    KIS_ORDERBOOK_WS_TR_ID,
+    KIS_PROGRAM_TRADE_KRX_WS_TR_ID,
+    KIS_PROGRAM_TRADE_NXT_WS_TR_ID,
+    KIS_PROGRAM_TRADE_TOTAL_WS_TR_ID,
+    KIS_TRADE_TR_ID,
+)
 from .inbound import InboundPump
 from .outbound import OutboundCommand, OutboundPump
 from .reconnect import BackoffPolicy, RealtimeState, env_backoff_overrides
 from .registry import SubscriptionRegistry
 from .subscription import _SHUTDOWN, StreamKind, Subscription
 
-_TR_ID_MAP: dict[StreamKind, str] = {
-    StreamKind.trades: KIS_TRADE_TR_ID,
-    StreamKind.order_book: KIS_ORDERBOOK_WS_TR_ID,
+_TR_ID_MAP: dict[tuple[StreamKind, str], str] = {
+    (StreamKind.trades, "KRX"): KIS_TRADE_TR_ID,
+    (StreamKind.trades, "TOTAL"): KIS_TRADE_TR_ID,
+    (StreamKind.order_book, "KRX"): KIS_ORDERBOOK_WS_TR_ID,
+    (StreamKind.order_book, "TOTAL"): KIS_ORDERBOOK_WS_TR_ID,
+    (StreamKind.program_trade, "KRX"): KIS_PROGRAM_TRADE_KRX_WS_TR_ID,
+    (StreamKind.program_trade, "NXT"): KIS_PROGRAM_TRADE_NXT_WS_TR_ID,
+    (StreamKind.program_trade, "TOTAL"): KIS_PROGRAM_TRADE_TOTAL_WS_TR_ID,
+    (StreamKind.member_flow, "KRX"): KIS_MEMBER_KRX_WS_TR_ID,
+    (StreamKind.member_flow, "NXT"): KIS_MEMBER_NXT_WS_TR_ID,
+    (StreamKind.member_flow, "TOTAL"): KIS_MEMBER_TOTAL_WS_TR_ID,
+    (StreamKind.market_status, "KRX"): KIS_MARKET_STATUS_KRX_WS_TR_ID,
+    (StreamKind.market_status, "NXT"): KIS_MARKET_STATUS_NXT_WS_TR_ID,
+    (StreamKind.market_status, "TOTAL"): KIS_MARKET_STATUS_TOTAL_WS_TR_ID,
 }
 
 
@@ -99,13 +122,14 @@ class KISRealtimeSession:
         self._started = True
         self._supervisor_task = asyncio.create_task(self._supervise())
 
-    async def subscribe(self, stream_kind: StreamKind, instrument: Any) -> Subscription:
+    async def subscribe(self, stream_kind: StreamKind, instrument: Any, *, scope: str = "KRX") -> Subscription:
         if self._closed:
             raise KISRealtimeError("session closed")
         if not self._started:
             await self.start()
 
-        tr_id = _TR_ID_MAP[stream_kind]
+        scope_key = str(scope or "KRX").upper()
+        tr_id = _TR_ID_MAP[(stream_kind, scope_key)]
         tr_key = str(getattr(instrument, "symbol", "") or "")
 
         existing = self._registry.get(tr_id, tr_key)

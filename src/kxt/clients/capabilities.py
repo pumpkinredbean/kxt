@@ -63,7 +63,7 @@ class StreamCapabilities:
     order_book: CapabilitySupport = CapabilitySupport(False)
     program_trades: CapabilitySupport = CapabilitySupport(False)
     market_status: CapabilitySupport = CapabilitySupport(False)
-    investor_flow: CapabilitySupport = CapabilitySupport(False)
+    member_flow: CapabilitySupport = CapabilitySupport(False)
     order_updates: CapabilitySupport = CapabilitySupport(False)
     fill_updates: CapabilitySupport = CapabilitySupport(False)
 

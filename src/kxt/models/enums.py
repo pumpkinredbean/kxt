@@ -24,6 +24,7 @@ class MarketScope(StrEnum):
 
     TOTAL = "TOTAL"
     KRX = "KRX"
+    NXT = "NXT"
 
 
 class AssetClass(StrEnum):
@@ -105,6 +106,13 @@ class RankingKind(StrEnum):
     VOLUME = "VOLUME"
     VALUE = "VALUE"
     MOMENTUM = "MOMENTUM"
+    FLUCTUATION = "FLUCTUATION"
+    MARKET_CAP = "MARKET_CAP"
+    VOLUME_POWER = "VOLUME_POWER"
+    TOP_INTEREST = "TOP_INTEREST"
+    SHORT_SALE = "SHORT_SALE"
+    CREDIT_BALANCE = "CREDIT_BALANCE"
+    QUOTE_BALANCE = "QUOTE_BALANCE"
     CUSTOM = "CUSTOM"
 
 
