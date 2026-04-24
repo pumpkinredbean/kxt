@@ -1842,6 +1842,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#analytics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Analytics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#account-orders" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2217,6 +2228,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#analytics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Analytics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#account-orders" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2314,53 +2336,64 @@
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>kxt<span class="w"> </span>investor-flow<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis
 </code></pre></div>
 <p><code>recent-trades</code>는 당일 국내주식 체결만 지원합니다. <code>investor-flow</code>는 장 마감 이후 공개되는 정규장 집계입니다.</p>
+<h2 id="analytics">Analytics<a class="headerlink" href="#analytics" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>kxt<span class="w"> </span>rankings<span class="w"> </span>VOLUME<span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>kxt<span class="w"> </span>rankings<span class="w"> </span>MARKET_CAP<span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--scope<span class="w"> </span>KRX
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>kxt<span class="w"> </span>program-trade<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>kxt<span class="w"> </span>program-trade<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--mode<span class="w"> </span>by-stock-daily<span class="w"> </span>--start<span class="w"> </span><span class="m">2025</span>-04-01<span class="w"> </span>--end<span class="w"> </span><span class="m">2025</span>-04-14
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>kxt<span class="w"> </span>investor-trends<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>kxt<span class="w"> </span>investor-trends<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--trend<span class="w"> </span>estimate
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>kxt<span class="w"> </span>condition-search<span class="w"> </span>--provider<span class="w"> </span>kis
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>kxt<span class="w"> </span>condition-search<span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--seq<span class="w"> </span><span class="m">001</span>
+</code></pre></div>
+<p><code>rankings</code>, <code>program-trade</code>, <code>investor-trends</code>, <code>condition-search</code>는 현재 구현된 분석 CLI입니다. <code>--scope</code>가 있는 명령은 <code>KRX</code>, <code>NXT</code>, <code>TOTAL</code> 중 하나를 받습니다. 조건검색 결과 조회에는 프로바이더 사용자 ID가 필요할 수 있습니다.</p>
 <h2 id="account-orders">Account &amp; orders<a class="headerlink" href="#account-orders" title="Permanent link">&para;</a></h2>
 <p>계좌번호(CANO)와 상품코드가 필요합니다. <code>KIS_ACCOUNT_NO</code>, <code>KIS_ACCOUNT_PRODUCT_CODE</code> 환경변수로도 넣을 수 있고, 플래그가 우선합니다.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>kxt<span class="w"> </span>balance<span class="w">         </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>kxt<span class="w"> </span>positions<span class="w">       </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>kxt<span class="w"> </span>buying-power<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--price<span class="w"> </span><span class="m">70000</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">                    </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>kxt<span class="w"> </span>open-orders<span class="w">     </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>kxt<span class="w"> </span>order-history<span class="w">   </span>--start<span class="w"> </span><span class="m">2025</span>-01-01<span class="w"> </span>--end<span class="w"> </span><span class="m">2025</span>-01-31<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">                    </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>kxt<span class="w"> </span>balance<span class="w">         </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>kxt<span class="w"> </span>positions<span class="w">       </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>kxt<span class="w"> </span>buying-power<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--price<span class="w"> </span><span class="m">70000</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">                    </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>kxt<span class="w"> </span>open-orders<span class="w">     </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>kxt<span class="w"> </span>order-history<span class="w">   </span>--start<span class="w"> </span><span class="m">2025</span>-01-01<span class="w"> </span>--end<span class="w"> </span><span class="m">2025</span>-01-31<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">                    </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
 </code></pre></div>
 <p>plain-text 출력에서 계좌번호는 마지막 4자리만 노출됩니다(예: <code>****6789</code>). 전체 계좌번호가 필요하다면 <code>--json</code>을 사용하세요.</p>
 <h2 id="orders">Orders<a class="headerlink" href="#orders" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>kxt<span class="w"> </span>place-order<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--side<span class="w"> </span>BUY<span class="w"> </span>--order-type<span class="w"> </span>LIMIT<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span>--quantity<span class="w"> </span><span class="m">1</span><span class="w"> </span>--limit-price<span class="w"> </span><span class="m">70000</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>kxt<span class="w"> </span>cancel-order<span class="w"> </span>--order-id<span class="w"> </span><span class="m">0000000123</span><span class="w"> </span>--origin-org-no<span class="w"> </span><span class="m">01234</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>kxt<span class="w"> </span>modify-order<span class="w"> </span>--order-id<span class="w"> </span><span class="m">0000000123</span><span class="w"> </span>--origin-org-no<span class="w"> </span><span class="m">01234</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">  </span>--quantity<span class="w"> </span><span class="m">1</span><span class="w"> </span>--limit-price<span class="w"> </span><span class="m">70500</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">  </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>kxt<span class="w"> </span>place-order<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--side<span class="w"> </span>BUY<span class="w"> </span>--order-type<span class="w"> </span>LIMIT<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>--quantity<span class="w"> </span><span class="m">1</span><span class="w"> </span>--limit-price<span class="w"> </span><span class="m">70000</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>kxt<span class="w"> </span>cancel-order<span class="w"> </span>--order-id<span class="w"> </span><span class="m">0000000123</span><span class="w"> </span>--origin-org-no<span class="w"> </span><span class="m">01234</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>kxt<span class="w"> </span>modify-order<span class="w"> </span>--order-id<span class="w"> </span><span class="m">0000000123</span><span class="w"> </span>--origin-org-no<span class="w"> </span><span class="m">01234</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">  </span>--quantity<span class="w"> </span><span class="m">1</span><span class="w"> </span>--limit-price<span class="w"> </span><span class="m">70500</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">  </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
 </code></pre></div>
 <h2 id="output-format">Output format<a class="headerlink" href="#output-format" title="Permanent link">&para;</a></h2>
 <p>기본(plain-text) <code>kxt quote 005930</code> 예:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>occurred_at    : 2025-04-14T00:00:00+00:00
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>last           : 71000
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>open           : 70900
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>high           : 71400
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>low            : 70500
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>previous_close : 70900
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>change         : 100
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>change_rate    : 0.14
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>volume         : 10203040
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>occurred_at    : 2025-04-14T00:00:00+00:00
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>last           : 71000
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>open           : 70900
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>high           : 71400
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>low            : 70500
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>previous_close : 70900
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>change         : 100
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>change_rate    : 0.14
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>volume         : 10203040
 </code></pre></div>
 <p>JSON 모드 (<code>kxt --json quote 005930</code>):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;occurred_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-04-14T00:00:00+00:00&quot;</span><span class="p">,</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">&quot;last&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;71000&quot;</span><span class="p">,</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="nt">&quot;open&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;70900&quot;</span><span class="p">,</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="nt">&quot;high&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;71400&quot;</span><span class="p">,</span>
-<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span><span class="nt">&quot;low&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;70500&quot;</span><span class="p">,</span>
-<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span><span class="nt">&quot;previous_close&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;70900&quot;</span><span class="p">,</span>
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">  </span><span class="nt">&quot;change&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;100&quot;</span><span class="p">,</span>
-<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">  </span><span class="nt">&quot;change_rate&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.14&quot;</span><span class="p">,</span>
-<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">  </span><span class="nt">&quot;volume&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10203040&quot;</span>
-<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">&quot;occurred_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-04-14T00:00:00+00:00&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span><span class="nt">&quot;last&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;71000&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span><span class="nt">&quot;open&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;70900&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">  </span><span class="nt">&quot;high&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;71400&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">  </span><span class="nt">&quot;low&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;70500&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">  </span><span class="nt">&quot;previous_close&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;70900&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">  </span><span class="nt">&quot;change&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;100&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">  </span><span class="nt">&quot;change_rate&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.14&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">  </span><span class="nt">&quot;volume&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10203040&quot;</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="p">}</span>
 </code></pre></div>
 <h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
 <ul>

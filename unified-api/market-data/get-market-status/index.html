@@ -2347,7 +2347,7 @@
 </tr>
 <tr>
 <td>스트리밍</td>
-<td>KIS 시장 상태 스트림 미구현 — <code>stream_market_status</code> 호출 시 <code>KXTUnsupportedError</code></td>
+<td>지원 — <code>stream_market_status</code>로 KRX/NXT/통합 scope 구독</td>
 </tr>
 <tr>
 <td>계좌 컨텍스트</td>
@@ -2448,7 +2448,7 @@
 <h2 id="common-pitfalls">Common pitfalls<a class="headerlink" href="#common-pitfalls" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>종목 무관한 정보 가정</strong>: KIS는 종목별 시세 payload에서 단계를 도출하므로, 거래정지 종목을 지정하면 결과가 왜곡될 수 있습니다. 일반 대형주를 사용하세요.</li>
-<li><strong>스트림 기대</strong>: <code>stream_market_status</code>는 미구현입니다. 폴링으로 사용하세요.</li>
+<li><strong>스냅샷과 스트림 차이</strong>: <code>get_market_status</code>는 시세 payload에서 파생한 스냅샷이고, <code>stream_market_status</code>는 별도 실시간 장운영정보 채널을 구독합니다.</li>
 </ul>
 <h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
 <ul>

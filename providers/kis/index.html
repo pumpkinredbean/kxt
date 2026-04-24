@@ -2312,6 +2312,42 @@
 <td>정규장 집계, 장 마감 이후 공개</td>
 </tr>
 <tr>
+<td>Batch analytics</td>
+<td><code>get_rankings</code></td>
+<td style="text-align: center;">✅</td>
+<td>거래량·거래대금·등락률·시가총액·체결강도·관심종목·공매도·신용잔고·호가잔량</td>
+</tr>
+<tr>
+<td>Batch analytics</td>
+<td><code>get_program_trade</code></td>
+<td style="text-align: center;">✅</td>
+<td>종목별 체결/일별, 시장 종합 시간/일별</td>
+</tr>
+<tr>
+<td>Batch analytics</td>
+<td><code>get_condition_searches</code></td>
+<td style="text-align: center;">✅</td>
+<td>HTS 서버저장 조건검색 목록, HTS ID 필요</td>
+</tr>
+<tr>
+<td>Batch analytics</td>
+<td><code>get_condition_search_results</code></td>
+<td style="text-align: center;">✅</td>
+<td>조건검색 결과, 조건당 KIS 제한 적용</td>
+</tr>
+<tr>
+<td>Batch analytics</td>
+<td><code>get_investor_trends</code></td>
+<td style="text-align: center;">✅</td>
+<td>종목별 투자자매매동향 일별·외국인/기관 추정</td>
+</tr>
+<tr>
+<td>Batch analytics</td>
+<td><code>get_foreign_institution_rankings</code></td>
+<td style="text-align: center;">✅</td>
+<td>외국인/기관 매매종목 가집계</td>
+</tr>
+<tr>
 <td>Streams</td>
 <td><code>stream_trades</code></td>
 <td style="text-align: center;">✅</td>
@@ -2322,6 +2358,24 @@
 <td><code>stream_orderbook</code></td>
 <td style="text-align: center;">✅</td>
 <td>실시간 호가 (WSS)</td>
+</tr>
+<tr>
+<td>Streams</td>
+<td><code>stream_program_trades</code></td>
+<td style="text-align: center;">✅</td>
+<td>KRX/NXT/통합 scope</td>
+</tr>
+<tr>
+<td>Streams</td>
+<td><code>stream_member_flow</code></td>
+<td style="text-align: center;">✅</td>
+<td>KRX/NXT/통합 scope</td>
+</tr>
+<tr>
+<td>Streams</td>
+<td><code>stream_market_status</code></td>
+<td style="text-align: center;">✅</td>
+<td>KRX/NXT/통합 scope</td>
 </tr>
 <tr>
 <td>Streams</td>
@@ -2397,24 +2451,6 @@
 </tr>
 <tr>
 <td>Unsupported</td>
-<td>프로그램 매매</td>
-<td style="text-align: center;">❌</td>
-<td>미연결</td>
-</tr>
-<tr>
-<td>Unsupported</td>
-<td>랭킹·회원사 플로</td>
-<td style="text-align: center;">❌</td>
-<td>미연결</td>
-</tr>
-<tr>
-<td>Unsupported</td>
-<td>시장 상태 스트림</td>
-<td style="text-align: center;">❌</td>
-<td>미연결</td>
-</tr>
-<tr>
-<td>Unsupported</td>
 <td>해외주식·파생</td>
 <td style="text-align: center;">❌</td>
 <td>이번 슬라이스 범위 외</td>
@@ -2459,6 +2495,54 @@
 <td><code>FHKST01010900</code></td>
 </tr>
 <tr>
+<td>거래량 순위</td>
+<td><code>FHPST01710000</code></td>
+</tr>
+<tr>
+<td>등락률 순위</td>
+<td><code>FHPST01700000</code></td>
+</tr>
+<tr>
+<td>시가총액 순위</td>
+<td><code>FHPST01740000</code></td>
+</tr>
+<tr>
+<td>체결강도 순위</td>
+<td><code>FHPST01680000</code></td>
+</tr>
+<tr>
+<td>공매도 순위</td>
+<td><code>FHPST04820000</code></td>
+</tr>
+<tr>
+<td>신용잔고 순위</td>
+<td><code>FHKST17010000</code></td>
+</tr>
+<tr>
+<td>프로그램매매 종목</td>
+<td><code>FHPPG04650101</code></td>
+</tr>
+<tr>
+<td>프로그램매매 종목 일별</td>
+<td><code>FHPPG04650201</code></td>
+</tr>
+<tr>
+<td>프로그램매매 종합 시간</td>
+<td><code>FHPPG04600101</code></td>
+</tr>
+<tr>
+<td>프로그램매매 종합 일별</td>
+<td><code>FHPPG04600001</code></td>
+</tr>
+<tr>
+<td>조건검색 목록</td>
+<td><code>HHKST03900300</code></td>
+</tr>
+<tr>
+<td>조건검색 결과</td>
+<td><code>HHKST03900400</code></td>
+</tr>
+<tr>
 <td>잔고</td>
 <td><code>TTTC8434R</code></td>
 </tr>
@@ -2495,6 +2579,18 @@
 <td><code>H0STASP0</code></td>
 </tr>
 <tr>
+<td>실시간 프로그램매매 (WS)</td>
+<td><code>H0STPGM0</code> / <code>H0NXPGM0</code> / <code>H0UNPGM0</code></td>
+</tr>
+<tr>
+<td>실시간 회원사 (WS)</td>
+<td><code>H0STMBC0</code> / <code>H0NXMBC0</code> / <code>H0UNMBC0</code></td>
+</tr>
+<tr>
+<td>실시간 장운영정보 (WS)</td>
+<td><code>H0STMKO0</code> / <code>H0NXMKO0</code> / <code>H0UNMKO0</code></td>
+</tr>
+<tr>
 <td>체결 통보 (WS)</td>
 <td><code>H0STCNI0</code></td>
 </tr>
@@ -2506,7 +2602,9 @@
 <ul>
 <li>국내주식(장내·코스닥) 중심. 해외·파생은 후속 슬라이스.</li>
 <li><code>get_investor_flow</code>는 장 마감 이후 공개되는 정규장 집계입니다. 실시간이 아닙니다.</li>
-<li>시장 상태는 시세 payload의 상태 필드에서 파생합니다. 별도 상태 엔드포인트를 호출하지 않습니다.</li>
+<li><code>get_market_status</code>는 시세 payload의 상태 필드에서 파생합니다.</li>
+<li><code>stream_market_status</code>는 KIS 장운영정보 WebSocket 채널을 구독합니다.</li>
+<li>KIS HTS 화면 코드와 <code>FID_*</code> 필터를 직접 제어해야 하는 분석 API는 <code>client.native.get_domestic_analysis(...)</code>로 raw output을 조회할 수 있습니다.</li>
 </ul>
 <h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
 <ul>
