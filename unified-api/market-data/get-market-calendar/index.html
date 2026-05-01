@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://pumpkinredbean.github.io/kxt/unified-api/streaming/stream-fill-updates/">
+        <link rel="canonical" href="https://pumpkinredbean.github.io/kxt/unified-api/market-data/get-market-calendar/">
       
       
-        <link rel="prev" href="../stream-order-updates/">
+        <link rel="prev" href="../get-market-status/">
       
       
-        <link rel="next" href="../../../providers/kis/">
+        <link rel="next" href="../get-investor-flow/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>stream_fill_updates - kxt</title>
+        <title>get_market_calendar - kxt</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#stream_fill_updates" class="md-skip">
+        <a href="#get_market_calendar" class="md-skip">
           콘텐츠로 이동
         </a>
       
@@ -114,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              stream_fill_updates
+              get_market_calendar
             
           </span>
         </div>
@@ -783,6 +783,8 @@
                 
   
   
+    
+  
   
   
     
@@ -814,11 +816,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" checked>
         
           
           <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="">
@@ -839,7 +841,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -857,7 +859,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../market-data/get-bars/" class="md-nav__link">
+      <a href="../get-bars/" class="md-nav__link">
         
   
   
@@ -885,7 +887,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../market-data/get-quote/" class="md-nav__link">
+      <a href="../get-quote/" class="md-nav__link">
         
   
   
@@ -913,7 +915,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../market-data/get-orderbook/" class="md-nav__link">
+      <a href="../get-orderbook/" class="md-nav__link">
         
   
   
@@ -941,7 +943,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../market-data/get-recent-trades/" class="md-nav__link">
+      <a href="../get-recent-trades/" class="md-nav__link">
         
   
   
@@ -969,7 +971,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../market-data/get-market-status/" class="md-nav__link">
+      <a href="../get-market-status/" class="md-nav__link">
         
   
   
@@ -994,10 +996,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../market-data/get-market-calendar/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    get_market_calendar
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1013,6 +1042,70 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#signature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Signature
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Returns
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1025,7 +1118,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../market-data/get-investor-flow/" class="md-nav__link">
+      <a href="../get-investor-flow/" class="md-nav__link">
         
   
   
@@ -1458,8 +1551,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1487,11 +1578,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
         
           
           <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="">
@@ -1512,7 +1603,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1530,7 +1621,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../stream-trades/" class="md-nav__link">
+      <a href="../../streaming/stream-trades/" class="md-nav__link">
         
   
   
@@ -1558,7 +1649,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../stream-orderbook/" class="md-nav__link">
+      <a href="../../streaming/stream-orderbook/" class="md-nav__link">
         
   
   
@@ -1586,7 +1677,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../stream-order-events/" class="md-nav__link">
+      <a href="../../streaming/stream-order-events/" class="md-nav__link">
         
   
   
@@ -1614,7 +1705,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../stream-order-updates/" class="md-nav__link">
+      <a href="../../streaming/stream-order-updates/" class="md-nav__link">
         
   
   
@@ -1639,37 +1730,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    stream_fill_updates
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../streaming/stream-fill-updates/" class="md-nav__link">
         
   
   
@@ -1685,136 +1749,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="목차">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      목차
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#at-a-glance" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        At a glance
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#signature" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Signature
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Parameters
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#returns" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Returns
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sample-event" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Sample event
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#notes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Notes
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kis-specifics" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        KIS specifics
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#common-pitfalls" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Common pitfalls
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        See also
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2222,32 +2156,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#at-a-glance" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        At a glance
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#signature" class="md-nav__link">
     <span class="md-ellipsis">
       
         Signature
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Parameters
       
     </span>
   </a>
@@ -2277,54 +2189,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sample-event" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Sample event
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#notes" class="md-nav__link">
     <span class="md-ellipsis">
       
         Notes
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kis-specifics" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        KIS specifics
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#common-pitfalls" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Common pitfalls
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        See also
       
     </span>
   </a>
@@ -2348,7 +2216,7 @@
 
 
   
-    <a href="https://github.com/pumpkinredbean/kxt/edit/main/docs/unified-api/streaming/stream-fill-updates.md" title="이 페이지를 편집" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/pumpkinredbean/kxt/edit/main/docs/unified-api/market-data/get-market-calendar.md" title="이 페이지를 편집" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -2356,81 +2224,24 @@
   
 
 
-<h1 id="stream_fill_updates">stream_fill_updates<a class="headerlink" href="#stream_fill_updates" title="Permanent link">&para;</a></h1>
-<p><a href="../stream-order-events/"><code>stream_order_events</code></a>의 체결 전용 별칭입니다. 라이프사이클 이벤트는 걸러내고 체결만 <code>FillEvent</code>로 yields합니다. 체결과 라이프사이클을 같이 받으려면 통합 메서드를 직접 사용하세요.</p>
-<h2 id="at-a-glance">At a glance<a class="headerlink" href="#at-a-glance" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>항목</th>
-<th>값</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>인증 필요</td>
-<td>예 (KIS 앱키/시크릿 + HTS ID)</td>
-</tr>
-<tr>
-<td>데이터 타입</td>
-<td>체결 이벤트 (<code>FillEvent</code>)</td>
-</tr>
-<tr>
-<td>스트리밍</td>
-<td>WebSocket (<code>stream_order_events</code>와 채널 공유)</td>
-</tr>
-<tr>
-<td>계좌 컨텍스트</td>
-<td>권장</td>
-</tr>
-<tr>
-<td>시간대</td>
-<td>KST (Asia/Seoul)</td>
-</tr>
-<tr>
-<td>Paper trading</td>
-<td>미지원</td>
-</tr>
-</tbody>
-</table>
+<h1 id="get_market_calendar">get_market_calendar<a class="headerlink" href="#get_market_calendar" title="Permanent link">&para;</a></h1>
+<p>KIS 국내시장 휴장일/거래일 캘린더를 조회합니다. 다운스트림 앱은 이 결과로 <strong>시장 휴장일</strong>, <strong>개장일이지만 봉 데이터가 없는 상황</strong>, <strong>프로바이더 오류</strong>를 구분할 수 있습니다.</p>
 <h2 id="signature">Signature<a class="headerlink" href="#signature" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stream_fill_updates</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">request</span><span class="p">:</span> <span class="n">FillUpdatesStreamRequest</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="o">/</span><span class="p">,</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_market_calendar</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">start</span><span class="p">:</span> <span class="n">date</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">end</span><span class="p">:</span> <span class="n">date</span><span class="p">,</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="o">*</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">hts_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">account_no</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">account_product_code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">account</span><span class="p">:</span> <span class="n">AccountSummary</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">FillEvent</span><span class="p">]:</span> <span class="o">...</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;KRX&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MarketCalendarResponse</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">is_market_open</span><span class="p">(</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">target_date</span><span class="p">:</span> <span class="n">date</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="o">*</span><span class="p">,</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">market</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;KRX&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MarketCalendarDay</span><span class="p">:</span> <span class="o">...</span>
 </code></pre></div>
-<h2 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>hts_id</strong> (<code>str | None</code>) — HTS 사용자 ID. 미지정 시 <code>KISClient(hts_id=...)</code> 기본값 사용. 둘 다 비면 <code>KXTUnsupportedError</code>.</li>
-<li><strong>account_no</strong> / <strong>account_product_code</strong> (<code>str | None</code>) — 생략 시 클라이언트 기본 계좌.</li>
-<li><strong>account</strong> (<code>AccountSummary | None</code>) — power-user alias.</li>
-</ul>
 <h2 id="returns">Returns<a class="headerlink" href="#returns" title="Permanent link">&para;</a></h2>
-<p><code>AsyncIterator[FillEvent]</code>:</p>
-<table>
-<thead>
-<tr>
-<th>필드</th>
-<th>타입</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>report</code></td>
-<td><code>ExecutionReport</code></td>
-</tr>
-<tr>
-<td><code>symbol</code></td>
-<td><code>str</code></td>
-</tr>
-</tbody>
-</table>
-<p><code>ExecutionReport</code> 필드:</p>
+<p><code>MarketCalendarResponse</code>:</p>
 <table>
 <thead>
 <tr>
@@ -2441,99 +2252,82 @@
 </thead>
 <tbody>
 <tr>
-<td><code>execution_id</code></td>
-<td><code>str \| None</code></td>
-<td>체결 식별 (현재 별칭에서는 <code>None</code>)</td>
+<td><code>market</code></td>
+<td><code>str</code></td>
+<td>현재 KIS 구현은 <code>"KRX"</code></td>
 </tr>
 <tr>
-<td><code>order_ref</code></td>
-<td><code>ProviderOrderRef</code></td>
-<td>원주문 식별</td>
+<td><code>start</code> / <code>end</code></td>
+<td><code>date</code></td>
+<td>요청 범위</td>
 </tr>
 <tr>
-<td><code>occurred_at</code></td>
-<td><code>datetime</code></td>
-<td>체결 시각 (KST)</td>
+<td><code>days</code></td>
+<td><code>tuple[MarketCalendarDay, ...]</code></td>
+<td>날짜 오름차순 캘린더 행</td>
+</tr>
+</tbody>
+</table>
+<p><code>MarketCalendarDay</code>:</p>
+<table>
+<thead>
+<tr>
+<th>필드</th>
+<th>KIS 필드</th>
+<th>타입</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>date</code></td>
+<td><code>bass_dt</code></td>
+<td><code>date</code></td>
 </tr>
 <tr>
-<td><code>price</code></td>
-<td><code>Decimal</code></td>
-<td>체결가</td>
+<td><code>business_day</code></td>
+<td><code>bzdy_yn</code></td>
+<td><code>bool | None</code></td>
 </tr>
 <tr>
-<td><code>quantity</code></td>
-<td><code>Decimal</code></td>
-<td>체결 수량</td>
+<td><code>trading_day</code></td>
+<td><code>tr_day_yn</code></td>
+<td><code>bool | None</code></td>
+</tr>
+<tr>
+<td><code>open_day</code> / <code>is_open</code></td>
+<td><code>opnd_yn</code></td>
+<td><code>bool | None</code></td>
+</tr>
+<tr>
+<td><code>settlement_day</code></td>
+<td><code>sttl_day_yn</code></td>
+<td><code>bool | None</code></td>
+</tr>
+<tr>
+<td><code>raw</code></td>
+<td>원본 행</td>
+<td><code>dict[str, object] | None</code></td>
 </tr>
 </tbody>
 </table>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">kxt</span><span class="w"> </span><span class="kn">import</span> <span class="n">KISClient</span>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">KISClient</span><span class="p">(</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="n">app_key</span><span class="o">=</span><span class="s2">&quot;&lt;APP_KEY&gt;&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="n">app_secret</span><span class="o">=</span><span class="s2">&quot;&lt;APP_SECRET&gt;&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        <span class="n">account_no</span><span class="o">=</span><span class="s2">&quot;&lt;CANO&gt;&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>        <span class="n">account_product_code</span><span class="o">=</span><span class="s2">&quot;&lt;ACNT_PRDT_CD&gt;&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>        <span class="n">hts_id</span><span class="o">=</span><span class="s2">&quot;&lt;HTS_ID&gt;&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    <span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
-<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>        <span class="k">async</span> <span class="k">for</span> <span class="n">fill</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">stream_fill_updates</span><span class="p">():</span>
-<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>            <span class="n">r</span> <span class="o">=</span> <span class="n">fill</span><span class="o">.</span><span class="n">report</span>
-<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;FILL&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">.</span><span class="n">symbol</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">order_ref</span><span class="o">.</span><span class="n">order_id</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">price</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">quantity</span><span class="p">)</span>
-<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
-<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>            <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
-<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>                <span class="k">break</span>
-<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>
-<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>
-<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
-</code></pre></div>
-<h2 id="sample-event">Sample event<a class="headerlink" href="#sample-event" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span><span class="p">,</span> <span class="n">timedelta</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">decimal</span><span class="w"> </span><span class="kn">import</span> <span class="n">Decimal</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">kxt</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">ExecutionReport</span><span class="p">,</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">FillEvent</span><span class="p">,</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">ProviderOrderRef</span><span class="p">,</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">)</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="n">KST</span> <span class="o">=</span> <span class="n">timezone</span><span class="p">(</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">9</span><span class="p">))</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="n">FillEvent</span><span class="p">(</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">report</span><span class="o">=</span><span class="n">ExecutionReport</span><span class="p">(</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>        <span class="n">execution_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>        <span class="n">order_ref</span><span class="o">=</span><span class="n">ProviderOrderRef</span><span class="p">(</span><span class="n">provider</span><span class="o">=</span><span class="s2">&quot;kis&quot;</span><span class="p">,</span> <span class="n">order_id</span><span class="o">=</span><span class="s2">&quot;0000000123&quot;</span><span class="p">,</span> <span class="n">account_id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">),</span>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        <span class="n">occurred_at</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">KST</span><span class="p">),</span>
-<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>        <span class="n">price</span><span class="o">=</span><span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;69950&quot;</span><span class="p">),</span>
-<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>        <span class="n">quantity</span><span class="o">=</span><span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;10&quot;</span><span class="p">),</span>
-<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    <span class="p">),</span>
-<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="n">symbol</span><span class="o">=</span><span class="s2">&quot;005930&quot;</span><span class="p">,</span>
-<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="p">)</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">async</span> <span class="k">with</span> <span class="n">KISClient</span><span class="p">(</span><span class="n">app_key</span><span class="o">=</span><span class="s2">&quot;&lt;APP_KEY&gt;&quot;</span><span class="p">,</span> <span class="n">app_secret</span><span class="o">=</span><span class="s2">&quot;&lt;APP_SECRET&gt;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">calendar</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get_market_calendar</span><span class="p">(</span><span class="n">date</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">date</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">today</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">is_market_open</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">())</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="k">if</span> <span class="n">today</span><span class="o">.</span><span class="n">is_open</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;KRX closed&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><code>execution_id</code>는 항상 <code>None</code></strong>입니다. 체결 고유 식별이 필요하면 <code>(order_ref.order_id, occurred_at, price, quantity)</code> 조합으로 dedup하세요.</li>
-<li><strong>부분 체결도 별도 이벤트</strong>로 도착합니다. 누적 처리는 호출자 책임입니다.</li>
-<li><strong>라이프사이클은 yields하지 않습니다.</strong></li>
-</ul>
-<h2 id="kis-specifics">KIS specifics<a class="headerlink" href="#kis-specifics" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>WebSocket TR_ID</strong>: <code>H0STCNI0</code>.</li>
-</ul>
-<h2 id="common-pitfalls">Common pitfalls<a class="headerlink" href="#common-pitfalls" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong><code>execution_id</code> 의존</strong>: <code>None</code>입니다.</li>
-<li><strong>라이프사이클까지 받으려는 시도</strong>: <code>stream_order_events</code>를 사용하세요.</li>
-</ul>
-<h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../stream-order-events/">stream_order_events</a></li>
-<li><a href="../stream-order-updates/">stream_order_updates</a></li>
-<li><a href="../../trading/submit-order/">submit_order</a></li>
-<li><a href="../../../reference/schemas/">Schemas</a></li>
+<li><code>get_market_calendar()</code>는 KIS <code>chk-holiday</code> 엔드포인트(<code>CTCA0903R</code>)를 사용합니다.</li>
+<li><code>is_market_open()</code>은 불리언이 아니라 <code>MarketCalendarDay</code>를 반환합니다. 행이 없으면 해당 날짜와 <code>None</code> 상태를 담아 반환해 미확인 상태를 보존합니다.</li>
+<li>프로바이더 실패는 예외로 전파됩니다. 실패를 <code>False</code>로 바꾸지 않습니다.</li>
+<li>캘린더는 <code>get_market_status()</code>와 다릅니다. <code>get_market_status()</code>는 현재 시세 payload에서 시장 단계를 파생하고, 캘린더는 날짜별 휴장/개장 여부를 조회합니다.</li>
+<li><code>get_bars()</code>의 빈 응답은 휴장을 의미하지 않습니다. 다운스트림은 필요한 기간의 캘린더를 자체 캐시에 저장한 뒤, 개장일인데 봉이 비어 있는 경우를 별도 데이터 공백으로 처리하세요.</li>
 </ul>
 
 

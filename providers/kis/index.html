@@ -795,6 +795,8 @@
       
         
       
+        
+      
     
     
     
@@ -967,6 +969,34 @@
     
   
     get_market_status
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../unified-api/market-data/get-market-calendar/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    get_market_calendar
   
 
     
@@ -2307,6 +2337,12 @@
 </tr>
 <tr>
 <td>Market data</td>
+<td><code>get_market_calendar</code> / <code>is_market_open</code></td>
+<td style="text-align: center;">✅</td>
+<td>국내시장 휴장일/거래일 캘린더</td>
+</tr>
+<tr>
+<td>Market data</td>
 <td><code>get_investor_flow</code></td>
 <td style="text-align: center;">✅</td>
 <td>정규장 집계, 장 마감 이후 공개</td>
@@ -2491,6 +2527,10 @@
 <td><code>FHPST01060000</code></td>
 </tr>
 <tr>
+<td>휴장일 조회</td>
+<td><code>CTCA0903R</code></td>
+</tr>
+<tr>
 <td>투자자 플로</td>
 <td><code>FHKST01010900</code></td>
 </tr>
@@ -2603,6 +2643,8 @@
 <li>국내주식(장내·코스닥) 중심. 해외·파생은 후속 슬라이스.</li>
 <li><code>get_investor_flow</code>는 장 마감 이후 공개되는 정규장 집계입니다. 실시간이 아닙니다.</li>
 <li><code>get_market_status</code>는 시세 payload의 상태 필드에서 파생합니다.</li>
+<li><code>get_market_calendar</code>는 KIS <code>chk-holiday</code>를 사용하며, <code>get_market_status</code>나 빈 <code>get_bars</code> 응답과 의미가 다릅니다.</li>
+<li>다운스트림 애플리케이션은 필요한 날짜 범위의 캘린더를 자체 캐시에 저장해 휴장일과 데이터 공백을 구분하는 것이 좋습니다.</li>
 <li><code>stream_market_status</code>는 KIS 장운영정보 WebSocket 채널을 구독합니다.</li>
 <li>KIS HTS 화면 코드와 <code>FID_*</code> 필터를 직접 제어해야 하는 분석 API는 <code>client.native.get_domestic_analysis(...)</code>로 raw output을 조회할 수 있습니다.</li>
 </ul>
