@@ -82,6 +82,7 @@ nav:
           - get_orderbook: unified-api/market-data/get-orderbook.md
           - get_recent_trades: unified-api/market-data/get-recent-trades.md
           - get_market_status: unified-api/market-data/get-market-status.md
+          - get_market_calendar: unified-api/market-data/get-market-calendar.md
           - get_investor_flow: unified-api/market-data/get-investor-flow.md
       - Account:
           - get_account_overview: unified-api/account/get-account-overview.md

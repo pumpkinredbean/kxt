@@ -109,6 +109,8 @@ from kxt.models import (
     InvestorTrendsResponse,
     SubmitOrderRequest,
     SubmitOrderResponse,
+    MarketCalendarDay,
+    MarketCalendarResponse,
     Trade,
     TradeEvent,
     TradePrint,
@@ -145,6 +147,8 @@ from .parsing import (
     KIS_INVESTOR_TREND_ESTIMATE_TR_ID,
     KIS_MARKET_CAP_RANK_PATH,
     KIS_MARKET_CAP_RANK_TR_ID,
+    KIS_MARKET_CALENDAR_PATH,
+    KIS_MARKET_CALENDAR_TR_ID,
     KIS_MEMBER_PATH,
     KIS_MEMBER_TR_ID,
     KIS_MEMBER_DAILY_PATH,
@@ -191,6 +195,7 @@ from .parsing import (
     parse_account_overview,
     parse_buying_power,
     parse_market_bars,
+    parse_market_calendar,
     parse_market_status,
     parse_investor_flow,
     parse_condition_searches,
@@ -342,6 +347,13 @@ class KISClient(MarketDataClient):
                 notes=(
                     "Market status is derived from KIS quote payload state fields when present.",
                     "Current implementation is limited to the same domestic-equity quote slice as get_quote(...).",
+                ),
+            ),
+            market_calendar=CapabilitySupport(
+                True,
+                notes=(
+                    "Domestic market calendar is backed by KIS chk-holiday.",
+                    "Use it to distinguish closed days from open days with no bars; provider failures propagate as exceptions.",
                 ),
             ),
             investor_flow=CapabilitySupport(
@@ -673,6 +685,55 @@ class KISClient(MarketDataClient):
         )
         response = parse_market_status(payload, instrument=instrument)
         return response
+
+    async def get_market_calendar(
+        self, start: date, end: date, *, market: str = "KRX"
+    ) -> MarketCalendarResponse:
+        normalized_market = _normalize_calendar_market(market)
+        if start > end:
+            raise KXTValidationError("start must be <= end")
+
+        rows: list[dict[str, Any]] = []
+        params = {
+            "BASS_DT": start.strftime("%Y%m%d"),
+            "CTX_AREA_FK": "",
+            "CTX_AREA_NK": "",
+        }
+        next_cont = ""
+        seen_cursors: set[tuple[str, str]] = set()
+        max_pages = 20
+        for _ in range(max_pages):
+            response = await self._transport.get_json_response(
+                KIS_MARKET_CALENDAR_PATH,
+                tr_id=KIS_MARKET_CALENDAR_TR_ID,
+                params=params,
+                tr_cont=next_cont,
+            )
+            rows.extend(_extract_native_rows(response.payload))
+            fk = _payload_text(response.payload, "ctx_area_fk", "CTX_AREA_FK")
+            nk = _payload_text(response.payload, "ctx_area_nk", "CTX_AREA_NK")
+            has_more = (response.tr_cont or "") in {"M", "F"} and (fk or nk)
+            if not has_more:
+                break
+            cursor = (fk, nk)
+            if cursor in seen_cursors:
+                break
+            seen_cursors.add(cursor)
+            params = {**params, "CTX_AREA_FK": fk, "CTX_AREA_NK": nk}
+            next_cont = "N"
+
+        return parse_market_calendar(
+            {"output": rows},
+            market=normalized_market,
+            start=start,
+            end=end,
+        )
+
+    async def is_market_open(self, target_date: date, *, market: str = "KRX") -> MarketCalendarDay:
+        response = await self.get_market_calendar(target_date, target_date, market=market)
+        if response.days:
+            return response.days[0]
+        return MarketCalendarDay(date=target_date, raw=None)
 
     async def get_investor_flow(self, symbol: str | InstrumentRef | InvestorFlowRequest, /) -> InvestorFlowResponse:
         if isinstance(symbol, InvestorFlowRequest):
@@ -2231,6 +2292,21 @@ def _extract_native_rows(payload: dict[str, Any]) -> list[dict[str, Any]]:
         elif isinstance(value, list):
             rows.extend(item for item in value if isinstance(item, dict))
     return rows
+
+
+def _payload_text(payload: dict[str, Any], *keys: str) -> str:
+    for key in keys:
+        value = payload.get(key)
+        if value not in (None, ""):
+            return str(value).strip()
+    return ""
+
+
+def _normalize_calendar_market(market: str) -> str:
+    normalized = str(market or "KRX").strip().upper()
+    if normalized != "KRX":
+        raise KXTUnsupportedError("KIS market calendar currently supports KRX only")
+    return normalized
 
 
 def _normalize_scope(scope: str) -> str:

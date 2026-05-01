@@ -45,6 +45,7 @@ async with KISClient(app_key="<APP_KEY>", app_secret="<APP_SECRET>") as client:
 | `get_orderbook` | 호가창 스냅샷 | [get_orderbook](market-data/get-orderbook.md) |
 | `get_recent_trades` | 당일 체결 프린트 | [get_recent_trades](market-data/get-recent-trades.md) |
 | `get_market_status` | 시장 상태(개장/단일가) | [get_market_status](market-data/get-market-status.md) |
+| `get_market_calendar` | 날짜별 휴장/개장 캘린더 | [get_market_calendar](market-data/get-market-calendar.md) |
 | `get_investor_flow` | 투자자별 매매 동향 | [get_investor_flow](market-data/get-investor-flow.md) |
 
 ## Streaming

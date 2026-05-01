@@ -22,6 +22,8 @@ from kxt.models import (
     MarketBar,
     MarketStatusRequest,
     MarketStatusResponse,
+    MarketCalendarDay,
+    MarketCalendarResponse,
     InvestorFlowRequest,
     InvestorFlowResponse,
     OrderBookEvent,
@@ -163,6 +165,18 @@ class MarketDataClient(ABC):
         self, symbol: str | InstrumentRef | MarketStatusRequest | None = None
     ) -> MarketStatusResponse:
         """Fetch normalized market status when the provider supports it."""
+
+        raise NotImplementedError
+
+    async def get_market_calendar(
+        self, start: date, end: date, *, market: str = "KRX"
+    ) -> MarketCalendarResponse:
+        """Fetch market calendar days for a date range when supported."""
+
+        raise NotImplementedError
+
+    async def is_market_open(self, target_date: date, *, market: str = "KRX") -> MarketCalendarDay:
+        """Fetch one market calendar day when supported."""
 
         raise NotImplementedError
 

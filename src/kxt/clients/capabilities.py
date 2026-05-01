@@ -49,6 +49,7 @@ class MarketCapabilities:
     quote: CapabilitySupport = CapabilitySupport(False)
     order_book: CapabilitySupport = CapabilitySupport(False)
     market_status: CapabilitySupport = CapabilitySupport(False)
+    market_calendar: CapabilitySupport = CapabilitySupport(False)
     investor_flow: CapabilitySupport = CapabilitySupport(False)
     program_trade: CapabilitySupport = CapabilitySupport(False)
     rankings: CapabilitySupport = CapabilitySupport(False)
@@ -117,6 +118,12 @@ class ClientCapabilities:
         """Compatibility alias for the normalized market capability."""
 
         return self.market.order_book
+
+    @property
+    def market_calendar(self) -> CapabilitySupport:
+        """Compatibility alias for the normalized market capability."""
+
+        return self.market.market_calendar
 
     @property
     def program_trade_stream(self) -> CapabilitySupport:

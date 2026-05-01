@@ -20,6 +20,8 @@ from kxt.models import (
     InvestorFlowBucket,
     InvestorFlowResponse,
     InvestorTrendRecord,
+    MarketCalendarDay,
+    MarketCalendarResponse,
     MarketBar,
     MarketPhase,
     MarketStatusResponse,
@@ -61,6 +63,8 @@ KIS_RECENT_TRADES_PATH = "/uapi/domestic-stock/v1/quotations/inquire-time-itemco
 KIS_RECENT_TRADES_TR_ID = "FHPST01060000"
 KIS_QUOTE_PATH = "/uapi/domestic-stock/v1/quotations/inquire-price"
 KIS_QUOTE_TR_ID = "FHKST01010100"
+KIS_MARKET_CALENDAR_PATH = "/uapi/domestic-stock/v1/quotations/chk-holiday"
+KIS_MARKET_CALENDAR_TR_ID = "CTCA0903R"
 KIS_ORDERBOOK_PATH = "/uapi/domestic-stock/v1/quotations/inquire-asking-price-exp-ccn"
 KIS_ORDERBOOK_TR_ID = "FHKST01010200"
 KIS_INVESTOR_FLOW_PATH = "/uapi/domestic-stock/v1/quotations/inquire-investor"
@@ -424,6 +428,26 @@ def parse_market_status(payload: dict[str, object], *, instrument: InstrumentRef
     )
 
 
+def parse_market_calendar(
+    payload: dict[str, object],
+    *,
+    market: str,
+    start: date,
+    end: date,
+) -> MarketCalendarResponse:
+    days: list[MarketCalendarDay] = []
+    for row in _payload_rows(payload):
+        day = _parse_market_calendar_day(row)
+        if day is not None and start <= day.date <= end:
+            days.append(day)
+    return MarketCalendarResponse(
+        market=market,
+        start=start,
+        end=end,
+        days=tuple(sorted(days, key=lambda item: item.date)),
+    )
+
+
 def parse_orderbook_snapshot(payload: dict[str, object], *, instrument: InstrumentRef) -> OrderBookSnapshot:
     output = payload.get("output1") if isinstance(payload.get("output1"), dict) else payload.get("output")
     if not isinstance(output, dict):
@@ -682,6 +706,29 @@ def _payload_rows(payload: dict[str, object]) -> tuple[dict[str, object], ...]:
         elif isinstance(value, list):
             rows.extend(item for item in value if isinstance(item, dict))
     return tuple(rows)
+
+
+def _parse_market_calendar_day(row: dict[str, object]) -> MarketCalendarDay | None:
+    date_text = str(_first(row, "bass_dt", "BASS_DT") or "").strip()
+    if len(date_text) != 8 or not date_text.isdigit():
+        return None
+    return MarketCalendarDay(
+        date=datetime.strptime(date_text, "%Y%m%d").date(),
+        business_day=_yn_to_bool(_first(row, "bzdy_yn", "BZDY_YN")),
+        trading_day=_yn_to_bool(_first(row, "tr_day_yn", "TR_DAY_YN")),
+        open_day=_yn_to_bool(_first(row, "opnd_yn", "OPND_YN")),
+        settlement_day=_yn_to_bool(_first(row, "sttl_day_yn", "STTL_DAY_YN")),
+        raw=dict(row),
+    )
+
+
+def _yn_to_bool(value: object) -> bool | None:
+    text = str(value or "").strip().upper()
+    if text == "Y":
+        return True
+    if text == "N":
+        return False
+    return None
 
 
 def _first(row: dict[str, object], *keys: str) -> object | None:

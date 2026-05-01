@@ -160,6 +160,30 @@ class SessionWindow:
 
 
 @dataclass(frozen=True, slots=True)
+class MarketCalendarDay:
+    date: date
+    business_day: bool | None = None
+    trading_day: bool | None = None
+    open_day: bool | None = None
+    settlement_day: bool | None = None
+    raw: dict[str, object] | None = None
+
+    @property
+    def is_open(self) -> bool | None:
+        """Whether the provider explicitly marks this date as open."""
+
+        return self.open_day
+
+
+@dataclass(frozen=True, slots=True)
+class MarketCalendarResponse:
+    market: str
+    start: date
+    end: date
+    days: tuple[MarketCalendarDay, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
 class QuoteRequest:
     instrument: InstrumentRef
     session: SessionType | None = None

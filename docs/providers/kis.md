@@ -28,6 +28,7 @@ Korea Investment & Securities(한국투자증권) OpenAPI 어댑터입니다. �
 | Market data | `get_orderbook` | ✅ | 호가창 스냅샷 |
 | Market data | `get_recent_trades` | ✅ | 당일 국내주식 체결만 |
 | Market data | `get_market_status` | ✅ | 시세 payload 상태 필드에서 파생 |
+| Market data | `get_market_calendar` / `is_market_open` | ✅ | 국내시장 휴장일/거래일 캘린더 |
 | Market data | `get_investor_flow` | ✅ | 정규장 집계, 장 마감 이후 공개 |
 | Batch analytics | `get_rankings` | ✅ | 거래량·거래대금·등락률·시가총액·체결강도·관심종목·공매도·신용잔고·호가잔량 |
 | Batch analytics | `get_program_trade` | ✅ | 종목별 체결/일별, 시장 종합 시간/일별 |
@@ -64,6 +65,7 @@ Korea Investment & Securities(한국투자증권) OpenAPI 어댑터입니다. �
 | 당일 분봉 | `FHKST03010200` |
 | 과거 분봉 | `FHKST03010230` |
 | 당일 체결 | `FHPST01060000` |
+| 휴장일 조회 | `CTCA0903R` |
 | 투자자 플로 | `FHKST01010900` |
 | 거래량 순위 | `FHPST01710000` |
 | 등락률 순위 | `FHPST01700000` |
@@ -100,6 +102,8 @@ KIS OpenAPI의 공식 한도를 따릅니다. [Rate limits](../getting-started/r
 - 국내주식(장내·코스닥) 중심. 해외·파생은 후속 슬라이스.
 - `get_investor_flow`는 장 마감 이후 공개되는 정규장 집계입니다. 실시간이 아닙니다.
 - `get_market_status`는 시세 payload의 상태 필드에서 파생합니다.
+- `get_market_calendar`는 KIS `chk-holiday`를 사용하며, `get_market_status`나 빈 `get_bars` 응답과 의미가 다릅니다.
+- 다운스트림 애플리케이션은 필요한 날짜 범위의 캘린더를 자체 캐시에 저장해 휴장일과 데이터 공백을 구분하는 것이 좋습니다.
 - `stream_market_status`는 KIS 장운영정보 WebSocket 채널을 구독합니다.
 - KIS HTS 화면 코드와 `FID_*` 필터를 직접 제어해야 하는 분석 API는 `client.native.get_domestic_analysis(...)`로 raw output을 조회할 수 있습니다.
 

@@ -133,7 +133,7 @@
 
 ::: kxt.models.api
     options:
-      members: [Bar, BarsRequest, BarsResponse, BarCursor, QuoteRequest, QuoteResponse]
+      members: [Bar, BarsRequest, BarsResponse, BarCursor, QuoteRequest, QuoteResponse, MarketCalendarDay, MarketCalendarResponse]
       show_root_heading: false
       heading_level: 3
 
@@ -179,6 +179,23 @@
 
 - **phase** (`MarketPhase`) — `PREOPEN`, `OPEN`, `AUCTION`, `AFTER_HOURS`, `CLOSED`, `HALTED`, `UNKNOWN`
 - **occurred_at** (`datetime`)
+
+### MarketCalendarDay / MarketCalendarResponse
+
+`MarketCalendarDay`:
+
+- **date** (`date`) — KIS `bass_dt`.
+- **business_day** (`bool | None`) — KIS `bzdy_yn`.
+- **trading_day** (`bool | None`) — KIS `tr_day_yn`.
+- **open_day** (`bool | None`) — KIS `opnd_yn`; `is_open` property와 동일.
+- **settlement_day** (`bool | None`) — KIS `sttl_day_yn`.
+- **raw** (`dict[str, object] | None`) — 원본 provider 행.
+
+`MarketCalendarResponse`:
+
+- **market** (`str`)
+- **start / end** (`date`)
+- **days** (`tuple[MarketCalendarDay, ...]`)
 
 ### InvestorFlowRequest / InvestorFlowResponse / InvestorFlowBucket
 

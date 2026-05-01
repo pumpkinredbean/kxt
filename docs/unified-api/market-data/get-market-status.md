@@ -79,6 +79,7 @@ MarketStatusResponse(
 ## Notes
 
 - **시세 payload에서 파생**합니다. 별도 시장-상태 전용 엔드포인트를 호출하지 않습니다. 따라서 시세 조회와 동일한 자격증명·rate-limit 버킷을 공유합니다.
+- **휴장일 캘린더가 아닙니다.** 과거/미래 날짜의 개장 여부는 [`get_market_calendar`](get-market-calendar.md)를 사용하세요.
 - **phase 매핑**은 KIS 응답의 시장운영구분 필드를 정규화한 것이며, 매핑이 모호한 경우 `MarketPhase.UNKNOWN`이 반환됩니다.
 - **타임존은 KST**입니다.
 
@@ -93,9 +94,11 @@ MarketStatusResponse(
 
 - **종목 무관한 정보 가정**: KIS는 종목별 시세 payload에서 단계를 도출하므로, 거래정지 종목을 지정하면 결과가 왜곡될 수 있습니다. 일반 대형주를 사용하세요.
 - **스냅샷과 스트림 차이**: `get_market_status`는 시세 payload에서 파생한 스냅샷이고, `stream_market_status`는 별도 실시간 장운영정보 채널을 구독합니다.
+- **빈 봉 응답과 혼동 금지**: `get_bars()`가 빈 튜플을 반환해도 KXT는 휴장으로 추론하지 않습니다. 캘린더와 함께 판정하세요.
 
 ## See also
 
 - [get_quote](get-quote.md) — 같은 payload에서 가격 정보를 가져옵니다.
+- [get_market_calendar](get-market-calendar.md) — 날짜별 휴장/개장 여부를 조회합니다.
 - [Schemas](../../reference/schemas.md)
 - [KIS provider](../../providers/kis.md)
