@@ -49,6 +49,7 @@ kxt investor-flow 005930 --provider kis
 ```bash
 kxt rankings VOLUME --provider kis --limit 10
 kxt rankings MARKET_CAP --provider kis --scope KRX
+kxt rankings EXPECTED_EXECUTION --provider kis --limit 10
 kxt program-trade 005930 --provider kis
 kxt program-trade 005930 --provider kis --mode by-stock-daily --start 2025-04-01 --end 2025-04-14
 kxt investor-trends 005930 --provider kis

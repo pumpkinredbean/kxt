@@ -30,7 +30,7 @@ Korea Investment & Securities(한국투자증권) OpenAPI 어댑터입니다. �
 | Market data | `get_market_status` | ✅ | 시세 payload 상태 필드에서 파생 |
 | Market data | `get_market_calendar` / `is_market_open` | ✅ | 국내시장 휴장일/거래일 캘린더 |
 | Market data | `get_investor_flow` | ✅ | 정규장 집계, 장 마감 이후 공개 |
-| Batch analytics | `get_rankings` | ✅ | 거래량·거래대금·등락률·시가총액·체결강도·관심종목·공매도·신용잔고·호가잔량 |
+| Batch analytics | `get_rankings` | ✅ | 거래량·거래대금·등락률·시가총액·체결강도·관심종목·공매도·신용잔고·호가잔량·예상체결순위 |
 | Batch analytics | `get_program_trade` | ✅ | 종목별 체결/일별, 시장 종합 시간/일별 |
 | Batch analytics | `get_condition_searches` | ✅ | HTS 서버저장 조건검색 목록, HTS ID 필요 |
 | Batch analytics | `get_condition_search_results` | ✅ | 조건검색 결과, 조건당 KIS 제한 적용 |
@@ -73,6 +73,7 @@ Korea Investment & Securities(한국투자증권) OpenAPI 어댑터입니다. �
 | 체결강도 순위 | `FHPST01680000` |
 | 공매도 순위 | `FHPST04820000` |
 | 신용잔고 순위 | `FHKST17010000` |
+| 예상체결 상승/하락상위 | `FHPST01820000` |
 | 프로그램매매 종목 | `FHPPG04650101` |
 | 프로그램매매 종목 일별 | `FHPPG04650201` |
 | 프로그램매매 종합 시간 | `FHPPG04600101` |
@@ -105,6 +106,7 @@ KIS OpenAPI의 공식 한도를 따릅니다. [Rate limits](../getting-started/r
 - `get_market_calendar`는 KIS `chk-holiday`를 사용하며, `get_market_status`나 빈 `get_bars` 응답과 의미가 다릅니다.
 - 다운스트림 애플리케이션은 필요한 날짜 범위의 캘린더를 자체 캐시에 저장해 휴장일과 데이터 공백을 구분하는 것이 좋습니다.
 - `stream_market_status`는 KIS 장운영정보 WebSocket 채널을 구독합니다.
+- `get_rankings(RankingKind.EXPECTED_EXECUTION)`은 KIS 예상체결 상승/하락상위 REST API를 사용하며, 현재 `kxt`에서는 장전예상·KRX scope만 정규화합니다. NXT/통합 scope와 종목 단위 실시간 예상체결 WebSocket은 별도 스트림 기능으로 다뤄야 합니다.
 - KIS HTS 화면 코드와 `FID_*` 필터를 직접 제어해야 하는 분석 API는 `client.native.get_domestic_analysis(...)`로 raw output을 조회할 수 있습니다.
 
 ## See also

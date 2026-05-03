@@ -48,6 +48,17 @@ async with KISClient(app_key="<APP_KEY>", app_secret="<APP_SECRET>") as client:
 | `get_market_calendar` | 날짜별 휴장/개장 캘린더 | [get_market_calendar](market-data/get-market-calendar.md) |
 | `get_investor_flow` | 투자자별 매매 동향 | [get_investor_flow](market-data/get-investor-flow.md) |
 
+## Public — Analytics
+
+시장 단위 순위와 집계형 분석 데이터를 다룹니다. 프로바이더별 화면/필터 차이가 크므로 공통 DTO는 핵심 필드만 정규화하고, 세부 필터는 provider 문서의 지원 범위를 따릅니다.
+
+| 메서드 | 설명 |
+|---|---|
+| `get_rankings` | 거래량·거래대금·등락률·시가총액·예상체결순위 등 market ranking |
+| `get_program_trade` | 프로그램매매 종목별/시장 종합 집계 |
+| `get_investor_trends` | 종목별 투자자 매매동향 및 외국인/기관 추정 |
+| `get_condition_searches` / `get_condition_search_results` | 프로바이더 저장 조건검색 목록과 결과 |
+
 ## Streaming
 
 WebSocket 기반 실시간 이터레이터입니다.

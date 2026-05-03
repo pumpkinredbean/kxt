@@ -8,8 +8,10 @@ import pytest
 
 from datetime import date
 
-from kxt import InstrumentRef, KISClient, RankingKind, StreamKind, Venue
+from kxt import InstrumentRef, KISClient, KXTUnsupportedError, RankingKind, StreamKind, Venue
 from kxt.clients.kis.parsing import (
+    KIS_EXPECTED_EXECUTION_RANK_PATH,
+    KIS_EXPECTED_EXECUTION_RANK_TR_ID,
     KIS_MARKET_CALENDAR_PATH,
     KIS_MARKET_CALENDAR_TR_ID,
     KIS_MARKET_STATUS_KRX_WS_TR_ID,
@@ -43,6 +45,32 @@ def test_parse_rankings_common_fields():
     assert entries[0].rank == 1
     assert entries[0].price == Decimal("70000")
     assert entries[0].change_rate == Decimal("1.23")
+
+
+def test_parse_rankings_expected_execution_fields():
+    payload = {
+        "output": [
+            {
+                "stck_shrn_iscd": "005930",
+                "hts_kor_isnm": "삼성전자",
+                "stck_prpr": "70100",
+                "prdy_ctrt": "1.44",
+                "cntg_vol": "1200",
+                "antc_tr_pbmn": "84120000",
+            }
+        ]
+    }
+
+    entries = parse_rankings(payload, kind=RankingKind.EXPECTED_EXECUTION, limit=1)
+
+    assert entries[0].symbol == "005930"
+    assert entries[0].rank == 1
+    assert entries[0].name == "삼성전자"
+    assert entries[0].price == Decimal("70100")
+    assert entries[0].change_rate == Decimal("1.44")
+    assert entries[0].quantity == Decimal("1200")
+    assert entries[0].value == Decimal("84120000")
+    assert entries[0].label == "EXPECTED_EXECUTION"
 
 
 def test_parse_market_calendar_filters_and_sorts_rows():
@@ -142,6 +170,57 @@ async def test_get_rankings_value_uses_trade_value_sort(monkeypatch):
 
     assert seen["tr_id"] == "FHPST01710000"
     assert seen["params"]["FID_BLNG_CLS_CODE"] == "3"
+
+
+async def test_get_rankings_expected_execution_uses_kis_endpoint(monkeypatch):
+    client = KISClient(app_key="x", app_secret="y")
+    seen = {}
+
+    async def fake_get_json_response(path, *, tr_id, params, tr_cont=""):
+        seen.update(path=path, tr_id=tr_id, params=params, tr_cont=tr_cont)
+
+        class Resp:
+            payload = {
+                "output": [
+                    {
+                        "stck_shrn_iscd": "005930",
+                        "hts_kor_isnm": "삼성전자",
+                        "stck_prpr": "70100",
+                        "cntg_vol": "1200",
+                    }
+                ]
+            }
+            tr_cont = ""
+            headers = {}
+
+        return Resp()
+
+    monkeypatch.setattr(client._transport, "get_json_response", fake_get_json_response)
+    try:
+        response = await client.get_rankings(RankingKind.EXPECTED_EXECUTION, limit=1)
+    finally:
+        await client.aclose()
+
+    assert seen["path"] == KIS_EXPECTED_EXECUTION_RANK_PATH
+    assert seen["tr_id"] == KIS_EXPECTED_EXECUTION_RANK_TR_ID
+    assert seen["params"]["FID_COND_SCR_DIV_CODE"] == "20182"
+    assert seen["params"]["FID_COND_MRKT_DIV_CODE"] == "J"
+    assert seen["params"]["FID_MKOP_CLS_CODE"] == "0"
+    assert response.entries[0].symbol == "005930"
+
+
+async def test_get_rankings_expected_execution_rejects_non_krx_scope(monkeypatch):
+    client = KISClient(app_key="x", app_secret="y")
+
+    async def fake_get_json_response(path, *, tr_id, params, tr_cont=""):
+        raise AssertionError("expected-execution scope validation should run before transport")
+
+    monkeypatch.setattr(client._transport, "get_json_response", fake_get_json_response)
+    try:
+        with pytest.raises(KXTUnsupportedError, match="KRX scope only"):
+            await client.get_rankings(RankingKind.EXPECTED_EXECUTION, scope="NXT")
+    finally:
+        await client.aclose()
 
 
 async def test_get_market_calendar_uses_kis_holiday_endpoint(monkeypatch):

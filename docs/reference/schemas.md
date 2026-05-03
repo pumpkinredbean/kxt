@@ -133,7 +133,7 @@
 
 ::: kxt.models.api
     options:
-      members: [Bar, BarsRequest, BarsResponse, BarCursor, QuoteRequest, QuoteResponse, MarketCalendarDay, MarketCalendarResponse]
+      members: [Bar, BarsRequest, BarsResponse, BarCursor, QuoteRequest, QuoteResponse, MarketCalendarDay, MarketCalendarResponse, RankingsRequest, RankingEntry, RankingsResponse]
       show_root_heading: false
       heading_level: 3
 
@@ -214,6 +214,31 @@
 
 - **buy_quantity / sell_quantity / net_buy_quantity** (`Decimal | None`)
 - **buy_notional / sell_notional / net_buy_notional** (`Decimal | None`)
+
+## Analytics DTOs
+
+### RankingsRequest / RankingEntry / RankingsResponse
+
+`RankingsRequest`:
+
+- **kind** (`RankingKind`, required) — `VOLUME`, `VALUE`, `MARKET_CAP`, `EXPECTED_EXECUTION` 등.
+- **limit** (`int`, 기본 20)
+- **instrument** (`InstrumentRef | None`) — 현재 KIS ranking 구현은 시장 단위 요청 중심이라 미사용.
+- **session** (`SessionType | None`)
+- **scope** (`str`, 기본 `"KRX"`) — KIS 예상체결순위는 현재 KRX scope만 지원.
+- **market** (`str`, 기본 `"0000"`) — KIS 시장 bucket 코드.
+
+`RankingEntry`:
+
+- **symbol** (`str`)
+- **rank** (`int`)
+- **name** (`str | None`)
+- **price / change_rate / value / quantity** (`Decimal | None`)
+- **label** (`str | None`) — ranking kind label.
+
+`RankingsResponse`:
+
+- **entries** (`tuple[RankingEntry, ...]`)
 
 ## Account and trading DTOs
 

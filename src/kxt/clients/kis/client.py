@@ -137,6 +137,8 @@ from .parsing import (
     KIS_COMP_PROGRAM_TRADE_TODAY_TR_ID,
     KIS_CREDIT_BALANCE_RANK_PATH,
     KIS_CREDIT_BALANCE_RANK_TR_ID,
+    KIS_EXPECTED_EXECUTION_RANK_PATH,
+    KIS_EXPECTED_EXECUTION_RANK_TR_ID,
     KIS_FLUCTUATION_RANK_PATH,
     KIS_FLUCTUATION_RANK_TR_ID,
     KIS_FOREIGN_INSTITUTION_TOTAL_PATH,
@@ -2269,6 +2271,7 @@ _DOMESTIC_ANALYSIS_ENDPOINTS: dict[str, tuple[str, str]] = {
     "short-sale": (KIS_SHORT_SALE_RANK_PATH, KIS_SHORT_SALE_RANK_TR_ID),
     "credit-balance": (KIS_CREDIT_BALANCE_RANK_PATH, KIS_CREDIT_BALANCE_RANK_TR_ID),
     "quote-balance": (KIS_QUOTE_BALANCE_RANK_PATH, KIS_QUOTE_BALANCE_RANK_TR_ID),
+    "exp-trans-updown": (KIS_EXPECTED_EXECUTION_RANK_PATH, KIS_EXPECTED_EXECUTION_RANK_TR_ID),
     "program-trade-by-stock": (KIS_PROGRAM_TRADE_BY_STOCK_PATH, KIS_PROGRAM_TRADE_BY_STOCK_TR_ID),
     "program-trade-by-stock-daily": (KIS_PROGRAM_TRADE_BY_STOCK_DAILY_PATH, KIS_PROGRAM_TRADE_BY_STOCK_DAILY_TR_ID),
     "comp-program-trade-today": (KIS_COMP_PROGRAM_TRADE_TODAY_PATH, KIS_COMP_PROGRAM_TRADE_TODAY_TR_ID),
@@ -2331,6 +2334,21 @@ def _format_kis_date(value: date | datetime | None) -> str:
 
 
 def _ranking_native_request(kind: RankingKind, *, scope: str, market: str) -> tuple[str, dict[str, str]]:
+    if kind == RankingKind.EXPECTED_EXECUTION:
+        if _normalize_scope(scope) != "KRX":
+            raise KXTUnsupportedError("KIS expected-execution rankings currently support KRX scope only")
+        return "exp-trans-updown", {
+            "FID_RANK_SORT_CLS_CODE": "0",
+            "FID_COND_MRKT_DIV_CODE": "J",
+            "FID_COND_SCR_DIV_CODE": "20182",
+            "FID_INPUT_ISCD": market,
+            "FID_DIV_CLS_CODE": "0",
+            "FID_APLY_RANG_PRC_1": "",
+            "FID_VOL_CNT": "",
+            "FID_PBMN": "",
+            "FID_BLNG_CLS_CODE": "0",
+            "FID_MKOP_CLS_CODE": "0",
+        }
     kis_scope = _scope_to_kis_code(scope)
     base_filters = {
         "FID_INPUT_ISCD": market,

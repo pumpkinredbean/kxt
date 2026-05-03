@@ -85,6 +85,8 @@ KIS_CREDIT_BALANCE_RANK_PATH = "/uapi/domestic-stock/v1/ranking/credit-balance"
 KIS_CREDIT_BALANCE_RANK_TR_ID = "FHKST17010000"
 KIS_QUOTE_BALANCE_RANK_PATH = "/uapi/domestic-stock/v1/ranking/quote-balance"
 KIS_QUOTE_BALANCE_RANK_TR_ID = "FHPST01720000"
+KIS_EXPECTED_EXECUTION_RANK_PATH = "/uapi/domestic-stock/v1/ranking/exp-trans-updown"
+KIS_EXPECTED_EXECUTION_RANK_TR_ID = "FHPST01820000"
 KIS_PROGRAM_TRADE_BY_STOCK_PATH = "/uapi/domestic-stock/v1/quotations/program-trade-by-stock"
 KIS_PROGRAM_TRADE_BY_STOCK_TR_ID = "FHPPG04650101"
 KIS_PROGRAM_TRADE_BY_STOCK_DAILY_PATH = "/uapi/domestic-stock/v1/quotations/program-trade-by-stock-daily"
@@ -525,6 +527,8 @@ def parse_rankings(
             row,
             "acml_vol",
             "ACML_VOL",
+            "cntg_vol",
+            "CNTG_VOL",
             "vol",
             "VOL",
             "seln_qty",
@@ -536,6 +540,8 @@ def parse_rankings(
             row,
             "acml_tr_pbmn",
             "ACML_TR_PBMN",
+            "antc_tr_pbmn",
+            "ANTC_TR_PBMN",
             "tr_pbmn",
             "TR_PBMN",
             "stck_avls",

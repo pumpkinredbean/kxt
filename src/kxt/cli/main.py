@@ -291,7 +291,8 @@ def build_parser() -> argparse.ArgumentParser:
         epilog=(
             "Examples:\n"
             "  kxt rankings VOLUME\n"
-            "  kxt rankings MARKET_CAP --limit 10 --scope KRX"
+            "  kxt rankings MARKET_CAP --limit 10 --scope KRX\n"
+            "  kxt rankings EXPECTED_EXECUTION --limit 10"
         ),
         formatter_class=_HelpFormatter,
     )
