@@ -172,6 +172,30 @@ async def test_get_rankings_value_uses_trade_value_sort(monkeypatch):
     assert seen["params"]["FID_BLNG_CLS_CODE"] == "3"
 
 
+async def test_get_rankings_fluctuation_uses_live_accepted_sort_code(monkeypatch):
+    client = KISClient(app_key="x", app_secret="y")
+    seen = {}
+
+    async def fake_get_json_response(path, *, tr_id, params, tr_cont=""):
+        seen.update(path=path, tr_id=tr_id, params=params, tr_cont=tr_cont)
+
+        class Resp:
+            payload = {"output": []}
+            tr_cont = ""
+            headers = {}
+
+        return Resp()
+
+    monkeypatch.setattr(client._transport, "get_json_response", fake_get_json_response)
+    try:
+        await client.get_rankings(RankingKind.FLUCTUATION, limit=1)
+    finally:
+        await client.aclose()
+
+    assert seen["tr_id"] == "FHPST01700000"
+    assert seen["params"]["FID_RANK_SORT_CLS_CODE"] == "0"
+
+
 async def test_get_rankings_expected_execution_uses_kis_endpoint(monkeypatch):
     client = KISClient(app_key="x", app_secret="y")
     seen = {}

@@ -2380,7 +2380,7 @@ def _ranking_native_request(kind: RankingKind, *, scope: str, market: str) -> tu
             "FID_COND_MRKT_DIV_CODE": kis_scope,
             "FID_COND_SCR_DIV_CODE": "20170",
             **base_filters,
-            "FID_RANK_SORT_CLS_CODE": "0000",
+            "FID_RANK_SORT_CLS_CODE": "0",
             "FID_INPUT_CNT_1": "0",
             "FID_PRC_CLS_CODE": "0",
             "FID_RSFL_RATE1": "",
