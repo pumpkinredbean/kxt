@@ -2351,7 +2351,7 @@
 <td>Batch analytics</td>
 <td><code>get_rankings</code></td>
 <td style="text-align: center;">✅</td>
-<td>거래량·거래대금·등락률·시가총액·체결강도·관심종목·공매도·신용잔고·호가잔량</td>
+<td>거래량·거래대금·등락률·시가총액·체결강도·관심종목·공매도·신용잔고·호가잔량·예상체결순위</td>
 </tr>
 <tr>
 <td>Batch analytics</td>
@@ -2559,6 +2559,10 @@
 <td><code>FHKST17010000</code></td>
 </tr>
 <tr>
+<td>예상체결 상승/하락상위</td>
+<td><code>FHPST01820000</code></td>
+</tr>
+<tr>
 <td>프로그램매매 종목</td>
 <td><code>FHPPG04650101</code></td>
 </tr>
@@ -2646,6 +2650,7 @@
 <li><code>get_market_calendar</code>는 KIS <code>chk-holiday</code>를 사용하며, <code>get_market_status</code>나 빈 <code>get_bars</code> 응답과 의미가 다릅니다.</li>
 <li>다운스트림 애플리케이션은 필요한 날짜 범위의 캘린더를 자체 캐시에 저장해 휴장일과 데이터 공백을 구분하는 것이 좋습니다.</li>
 <li><code>stream_market_status</code>는 KIS 장운영정보 WebSocket 채널을 구독합니다.</li>
+<li><code>get_rankings(RankingKind.EXPECTED_EXECUTION)</code>은 KIS 예상체결 상승/하락상위 REST API를 사용하며, 현재 <code>kxt</code>에서는 장전예상·KRX scope만 정규화합니다. NXT/통합 scope와 종목 단위 실시간 예상체결 WebSocket은 별도 스트림 기능으로 다뤄야 합니다.</li>
 <li>KIS HTS 화면 코드와 <code>FID_*</code> 필터를 직접 제어해야 하는 분석 API는 <code>client.native.get_domestic_analysis(...)</code>로 raw output을 조회할 수 있습니다.</li>
 </ul>
 <h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>

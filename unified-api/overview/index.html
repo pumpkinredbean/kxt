@@ -862,6 +862,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#public-analytics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public — Analytics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#streaming" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2242,6 +2253,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#public-analytics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public — Analytics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#streaming" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2400,6 +2422,34 @@
 <td><code>get_investor_flow</code></td>
 <td>투자자별 매매 동향</td>
 <td><a href="../market-data/get-investor-flow/">get_investor_flow</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-analytics">Public — Analytics<a class="headerlink" href="#public-analytics" title="Permanent link">&para;</a></h2>
+<p>시장 단위 순위와 집계형 분석 데이터를 다룹니다. 프로바이더별 화면/필터 차이가 크므로 공통 DTO는 핵심 필드만 정규화하고, 세부 필터는 provider 문서의 지원 범위를 따릅니다.</p>
+<table>
+<thead>
+<tr>
+<th>메서드</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_rankings</code></td>
+<td>거래량·거래대금·등락률·시가총액·예상체결순위 등 market ranking</td>
+</tr>
+<tr>
+<td><code>get_program_trade</code></td>
+<td>프로그램매매 종목별/시장 종합 집계</td>
+</tr>
+<tr>
+<td><code>get_investor_trends</code></td>
+<td>종목별 투자자 매매동향 및 외국인/기관 추정</td>
+</tr>
+<tr>
+<td><code>get_condition_searches</code> / <code>get_condition_search_results</code></td>
+<td>프로바이더 저장 조건검색 목록과 결과</td>
 </tr>
 </tbody>
 </table>
