@@ -9,6 +9,9 @@ class Venue(StrEnum):
     """Trading venue or market center identity."""
 
     KRX = "KRX"
+    NYSE = "NYSE"
+    NASDAQ = "NASDAQ"
+    AMEX = "AMEX"
 
 
 class MarketSegment(StrEnum):

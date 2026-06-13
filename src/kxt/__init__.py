@@ -9,7 +9,7 @@ top-level package stay focused. Everything (including the request DTOs)
 remains importable from :mod:`kxt.models` for power-user introspection.
 """
 
-from .clients import KISClient, MarketDataClient
+from .clients import KISClient, MarketDataClient, TossInvestClient
 from .clients.kis.exceptions import (
     KISApprovalError,
     KISRealtimeError,
@@ -20,6 +20,13 @@ from .clients.kis.realtime import (
     RealtimeSessionConfig,
     RealtimeState,
     StreamKind,
+)
+from .clients.tossinvest.exceptions import (
+    TossInvestAPIError,
+    TossInvestAuthenticationError,
+    TossInvestConnectionError,
+    TossInvestTimeoutError,
+    TossInvestTransportError,
 )
 from .errors import (
     KXTAPIError,
@@ -108,6 +115,7 @@ from .models import (
     QuoteResponse,
     QuoteSessionContext,
     QuoteSnapshot,
+    QuotesResponse,
     RankingEntry,
     RankingKind,
     RankingsResponse,
@@ -218,6 +226,7 @@ __all__ = [
     "QuoteResponse",
     "QuoteSessionContext",
     "QuoteSnapshot",
+    "QuotesResponse",
     "RankingEntry",
     "RankingKind",
     "RankingsResponse",
@@ -235,5 +244,11 @@ __all__ = [
     "TradePrint",
     "TradeSide",
     "TradeStreamStatusEvent",
+    "TossInvestAPIError",
+    "TossInvestAuthenticationError",
+    "TossInvestClient",
+    "TossInvestConnectionError",
+    "TossInvestTimeoutError",
+    "TossInvestTransportError",
     "Venue",
 ]

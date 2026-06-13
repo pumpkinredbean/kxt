@@ -1,5 +1,5 @@
 site_name: kxt
-site_description: Async Python SDK for Korea Exchange (KRX) — KIS-backed market data & trading
+site_description: Async Python SDK for Korean securities market access
 site_url: https://pumpkinredbean.github.io/kxt/
 repo_url: https://github.com/pumpkinredbean/kxt
 repo_name: pumpkinredbean/kxt
@@ -103,6 +103,7 @@ nav:
           - stream_fill_updates: unified-api/streaming/stream-fill-updates.md
   - Providers:
       - KIS: providers/kis.md
+      - Toss Invest: providers/tossinvest.md
   - CLI: cli.md
   - Reference:
       - Schemas: reference/schemas.md

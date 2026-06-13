@@ -428,7 +428,7 @@ class KISClient(MarketDataClient):
             ),
         ),
         native=CapabilitySupport(True, notes=("Provider-specific internals remain under kxt.clients.kis.",)),
-        notes=("KIS is the only provider implemented in v0.1.0.",),
+        notes=("KIS support covers domestic-equity data, analytics, streaming, and trading.",),
     )
 
     def __init__(

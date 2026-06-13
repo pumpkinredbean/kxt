@@ -1,6 +1,6 @@
 # Authentication
 
-`kxt`가 실제 KRX 데이터를 호출하려면 KIS(한국투자증권) OpenAPI 앱키와 앱시크릿이 필요합니다. 계좌 기반 메서드(주문·잔고)까지 사용한다면 계좌번호와 상품코드도, 체결 알림 스트림까지 사용한다면 HTS ID까지 함께 준비해야 합니다.
+`kxt`가 실제 데이터를 호출하려면 선택한 provider의 API 자격증명이 필요합니다. KIS는 앱키와 앱시크릿을, Toss Invest는 `client_id`와 `client_secret`을 사용합니다. 계좌 기반 메서드까지 사용한다면 provider별 계좌 식별자도 함께 준비해야 합니다.
 
 ## Two usage paths
 
@@ -8,26 +8,27 @@
 
 | 경로 | 자격증명 주입 방식 |
 |---|---|
-| **SDK** (`KISClient(...)`) | 명시적 키워드 인자 |
+| **SDK** (`KISClient(...)`, `TossInvestClient(...)`) | 명시적 키워드 인자 |
 | **CLI** (`kxt ...`) | 환경변수 또는 일부 명령에서는 `--account-no` 등 플래그 |
 
-SDK 코어는 환경변수에 관여하지 않습니다. 환경변수 인터페이스는 CLI 전용 편의이며, `KIS_APP_KEY` 같은 변수명을 SDK 코드가 직접 읽지 않습니다.
+SDK 코어는 환경변수에 관여하지 않습니다. 환경변수 인터페이스는 CLI 전용 편의이며, `KIS_APP_KEY`나 `TOSS_INVEST_CLIENT_ID` 같은 변수명을 SDK 코드가 직접 읽지 않습니다.
 
 ## Prerequisites
 
 | 항목 | 설명 |
 |---|---|
-| App key | KIS OpenAPI 포털에서 발급 |
-| App secret | App key와 함께 발급되는 시크릿 |
-| Account number (CANO) | 계좌 기반 메서드(주문·잔고)에서 필요 |
-| Account product code | 보통 `01` (위탁) — 계좌별로 상이 |
-| HTS ID | 주문 체결 실시간 알림(`stream_order_events`)에 필요 |
+| KIS app key / app secret | KIS OpenAPI 포털에서 발급 |
+| KIS account number / product code | 계좌 기반 메서드(주문·잔고)에서 필요 |
+| KIS HTS ID | 주문 체결 실시간 알림(`stream_order_events`)에 필요 |
+| Toss Invest client_id / client_secret | Toss Invest Open API 메뉴에서 발급 |
+| Toss Invest accountSeq | 계좌·자산·주문 API의 `X-Tossinvest-Account` 헤더 값 |
 
 ## Issue app keys
 
 KIS OpenAPI 포털의 안내를 따릅니다.
 
 - KIS OpenAPI 포털: <https://apiportal.koreainvestment.com/>
+- Toss Invest 개발자 문서: <https://developers.tossinvest.com/docs/>
 - 발급 절차와 약관은 공식 안내를 참조하세요. 본 문서에서는 재현하지 않습니다.
 
 ## SDK authentication — explicit keyword args
@@ -57,6 +58,26 @@ asyncio.run(main())
 
 `<APP_KEY>` 같은 placeholder는 실제 값으로 대체하세요. 자격증명을 어떻게 보관·로딩할지는 사용자 결정 사항입니다.
 
+Toss Invest도 같은 원칙을 따릅니다.
+
+```python
+import asyncio
+
+from kxt import TossInvestClient
+
+
+async def main() -> None:
+    async with TossInvestClient(
+        client_id="<CLIENT_ID>",
+        client_secret="<CLIENT_SECRET>",
+        account_seq="<ACCOUNT_SEQ>",
+    ) as client:
+        ...
+
+
+asyncio.run(main())
+```
+
 !!! danger "시크릿 관리"
     앱키·앱시크릿·토큰 캐시 파일은 절대 커밋하지 마세요. 시크릿을 하드코드한 채 공개 저장소에 올리지 않도록 주의하세요.
 
@@ -71,6 +92,9 @@ CLI는 시크릿을 플래그로 받지 않습니다. 아래 환경변수를 사
 | `KIS_ACCOUNT_NO` | 계좌·주문 명령에서 필수 (또는 `--account-no` 플래그) | 계좌번호(CANO) |
 | `KIS_ACCOUNT_PRODUCT_CODE` | 계좌·주문 명령에서 필수 (또는 `--account-product-code` 플래그) | 상품코드 (예: `01`) |
 | `KXT_KIS_WS_PROXY` | 선택 | 웹소켓 프록시 URL (`auto` 또는 URL) |
+| `TOSS_INVEST_CLIENT_ID` | Toss Invest 사용 시 필수 | client_id |
+| `TOSS_INVEST_CLIENT_SECRET` | Toss Invest 사용 시 필수 | client_secret |
+| `TOSS_INVEST_ACCOUNT_SEQ` | Toss Invest 계좌·주문 명령에서 필수 (또는 `--account-no` 플래그) | `X-Tossinvest-Account` 헤더 값 |
 
 HTS ID는 SDK `stream_order_events` 호출에서만 필요한 키워드 인자이며 CLI 표면에서는 더 이상 소비되지 않습니다. SDK 호출부에서 `KISClient(..., hts_id=...)`에 직접 넘기세요.
 
@@ -84,6 +108,9 @@ KIS_APP_KEY=PSxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 KIS_APP_SECRET=yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
 KIS_ACCOUNT_NO=12345678
 KIS_ACCOUNT_PRODUCT_CODE=01
+TOSS_INVEST_CLIENT_ID=c_xxxxxxxxxxxxxxxxxxxxx
+TOSS_INVEST_CLIENT_SECRET=s_xxxxxxxxxxxxxxxxxxxxx
+TOSS_INVEST_ACCOUNT_SEQ=1
 ```
 
 ### CLI check
@@ -104,7 +131,7 @@ kxt doctor
 
 ## Token cache
 
-KIS 액세스 토큰은 로컬 사용자 캐시 디렉터리에 저장되어 만료 직전까지 재사용됩니다. 토큰을 새로 받고 싶다면 캐시 파일을 삭제하면 됩니다. 캐시 위치는 OS별 표준 경로를 따릅니다(`XDG_CACHE_HOME`, `~/Library/Caches`, `%LOCALAPPDATA%`).
+KIS와 Toss Invest 액세스 토큰은 로컬 사용자 캐시 디렉터리에 저장되어 만료 직전까지 재사용됩니다. 토큰을 새로 받고 싶다면 캐시 파일을 삭제하면 됩니다. 캐시 위치는 OS별 표준 경로를 따릅니다(`XDG_CACHE_HOME`, `~/Library/Caches`, `%LOCALAPPDATA%`).
 
 ## Paper trading / Sandbox
 

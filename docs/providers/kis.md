@@ -1,6 +1,6 @@
 # KIS Provider
 
-Korea Investment & Securities(한국투자증권) OpenAPI 어댑터입니다. 현재 `kxt`의 유일한 프로바이더이며, 국내주식 시세와 계좌·주문 기능을 담당합니다.
+Korea Investment & Securities(한국투자증권) OpenAPI 어댑터입니다. 국내주식 시세·분석·스트리밍·계좌·주문 기능을 담당합니다.
 
 ## Official documentation
 

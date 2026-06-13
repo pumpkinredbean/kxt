@@ -1,8 +1,8 @@
 """Power-user request, cursor, subscription, and instruction DTOs.
 
 These types are inputs you only need when going beyond the primitive-friendly
-public methods on :class:`kxt.KISClient` (which accept symbol strings and
-keyword arguments directly). They live in this dedicated namespace so that
+public methods on provider clients (which accept symbol strings and keyword
+arguments directly). They live in this dedicated namespace so that
 ``from kxt import *`` and tab-completion on the top-level ``kxt`` package stay
 focused on the response/output surface.
 

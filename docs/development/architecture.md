@@ -14,7 +14,7 @@
 ├──────────────────────────────┤
 │ Base Client contract         │  ← MarketDataClient 등 추상 경계
 ├──────────────────────────────┤
-│ Provider adapter (kis/)      │  ← HTTP/WS transport, parsing, 인증
+│ Provider adapters            │  ← HTTP/WS transport, parsing, 인증
 ├──────────────────────────────┤
 │ Provider HTTP/WS             │
 └──────────────────────────────┘
@@ -39,7 +39,7 @@
 
 ### Provider boundary
 
-- 프로바이더 특이사항은 **어댑터 에지**에서 처리합니다. KIS TR_ID, 필드명 규칙, 페이로드 구조는 `src/kxt/clients/kis/` 내부에만 존재해야 합니다.
+- 프로바이더 특이사항은 **어댑터 에지**에서 처리합니다. KIS TR_ID, Toss Invest `accountSeq`, 필드명 규칙, 페이로드 구조는 각 provider 디렉터리 내부에만 존재해야 합니다.
 - 공개 모델에는 프로바이더 필드가 누출되지 않습니다.
 
 ### Honest implementation status
@@ -70,8 +70,8 @@
 
 ## Current implementation status
 
-- 유일하게 구현된 프로바이더는 `kis`.
-- 작동 범위는 국내주식 시장 데이터 중심의 좁은 슬라이스.
+- 구현된 provider는 `kis`, `tossinvest`.
+- 작동 범위는 국내주식 중심이며, Toss Invest provider는 공식 API가 제공하는 미국주식 REST 표면 일부도 정규화합니다.
 - 그룹 네임스페이스(`client.market.*`)는 레거시 호환. 선호 형태는 평평한 `get_*`/`stream_*`.
 - 미지원 메서드는 구현 전까지 명시적 미지원 상태를 유지합니다.
 
