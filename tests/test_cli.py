@@ -30,11 +30,12 @@ from kxt.models.api import (
     ProviderOrderRef,
     ProviderRef,
     QuoteResponse,
+    QuotesResponse,
     RecentTradesResponse,
     TradePrint,
 )
 from kxt.models.enums import OrderLifecycleState, OrderSide, OrderType
-from kxt.models.market_data import QuoteLevel
+from kxt.models.market_data import QuoteLevel, QuoteSnapshot
 from kxt.models.api import Bar
 
 
@@ -139,6 +140,49 @@ class _StubKISClient:
         return self._overview
 
 
+class _StubTossInvestPositionsClient:
+    def __init__(self) -> None:
+        self.seen_kwargs: dict[str, object] | None = None
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        return None
+
+    async def get_positions(self, **kwargs):
+        self.seen_kwargs = kwargs
+        return PositionsResponse(positions=())
+
+
+class _StubTossInvestQuotesClient:
+    def __init__(self) -> None:
+        self.seen_symbols = None
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        return None
+
+    async def get_quotes(self, symbols):
+        self.seen_symbols = symbols
+        return QuotesResponse(
+            quotes=(
+                QuoteSnapshot(
+                    symbol="005930",
+                    occurred_at=datetime(2026, 3, 25, 9, 30, tzinfo=timezone.utc),
+                    last=Decimal("72000"),
+                ),
+                QuoteSnapshot(
+                    symbol="000660",
+                    occurred_at=datetime(2026, 3, 25, 9, 31, tzinfo=timezone.utc),
+                    last=Decimal("180000"),
+                ),
+            )
+        )
+
+
 def _make_overview(account_id: str) -> AccountOverviewResponse:
     account = AccountSummary(
         provider=ProviderRef(provider="kis", account_id=account_id),
@@ -176,6 +220,35 @@ def test_balance_json_mode_does_not_mask(monkeypatch, capsys):
     parsed = json.loads(out)
     # raw JSON path must preserve the original id unmasked
     assert parsed["equity"]["account"]["account_id"] == "12345678"
+
+
+def test_positions_tossinvest_routes_account_seq(monkeypatch, capsys):
+    monkeypatch.setenv("TOSS_INVEST_CLIENT_ID", "cid")
+    monkeypatch.setenv("TOSS_INVEST_CLIENT_SECRET", "secret")
+    stub = _StubTossInvestPositionsClient()
+    monkeypatch.setattr(cli_main, "_build_tossinvest_client", lambda: stub)
+
+    rc = cli_main.main(["positions", "--provider", "tossinvest", "--account-no", "7"])
+
+    assert rc == 0
+    assert stub.seen_kwargs == {"account_no": "7", "account_product_code": None}
+    assert "Positions: 0" in capsys.readouterr().out
+
+
+def test_quote_tossinvest_accepts_multiple_symbols(monkeypatch, capsys):
+    monkeypatch.setenv("TOSS_INVEST_CLIENT_ID", "cid")
+    monkeypatch.setenv("TOSS_INVEST_CLIENT_SECRET", "secret")
+    stub = _StubTossInvestQuotesClient()
+    monkeypatch.setattr(cli_main, "_build_tossinvest_client", lambda: stub)
+
+    rc = cli_main.main(["quote", "005930", "000660", "--provider", "tossinvest"])
+
+    assert rc == 0
+    assert [instrument.symbol for instrument in stub.seen_symbols] == ["005930", "000660"]
+    out = capsys.readouterr().out
+    assert "Quotes: 2" in out
+    assert "005930" in out
+    assert "000660" in out
 
 
 # ---------- formatter unit tests --------------------------------------------

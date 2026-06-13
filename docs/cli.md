@@ -35,14 +35,19 @@ kxt doctor                                     # 자격증명/환경 점검
 
 ```bash
 kxt quote 005930 --provider kis
+kxt quote 005930 --provider tossinvest
+kxt quote 005930 000660 AAPL --provider tossinvest
 kxt bars 005930 --provider kis --timeframe day --start 2025-04-01 --end 2025-04-14
+kxt bars 005930 --provider tossinvest --timeframe day
 kxt bars 005930 --provider kis --timeframe 5m
 kxt recent-trades 005930 --provider kis --limit 5
+kxt recent-trades 005930 --provider tossinvest --limit 5
 kxt orderbook 005930 --provider kis
+kxt orderbook 005930 --provider tossinvest
 kxt investor-flow 005930 --provider kis
 ```
 
-`recent-trades`는 당일 국내주식 체결만 지원합니다. `investor-flow`는 장 마감 이후 공개되는 정규장 집계입니다.
+KIS `recent-trades`는 당일 국내주식 체결만 지원합니다. Toss Invest `quote`는 최대 200개 심볼 batch 조회를 지원합니다. Toss Invest `bars`는 provider interval 기준 `1m`, `day`를 우선 지원하고, 다분봉은 1분봉을 로컬 집계합니다. `investor-flow`는 KIS 전용입니다.
 
 ## Analytics
 
@@ -62,16 +67,20 @@ kxt condition-search --provider kis --seq 001
 
 ## Account & orders
 
-계좌번호(CANO)와 상품코드가 필요합니다. `KIS_ACCOUNT_NO`, `KIS_ACCOUNT_PRODUCT_CODE` 환경변수로도 넣을 수 있고, 플래그가 우선합니다.
+KIS는 계좌번호(CANO)와 상품코드가 필요합니다. Toss Invest는 `accountSeq`가 필요합니다. `KIS_ACCOUNT_NO`, `KIS_ACCOUNT_PRODUCT_CODE`, `TOSS_INVEST_ACCOUNT_SEQ` 환경변수로도 넣을 수 있고, 플래그가 우선합니다.
 
 ```bash
 kxt balance         --account-no 12345678 --account-product-code 01
 kxt positions       --account-no 12345678 --account-product-code 01
+kxt positions       --provider tossinvest --account-no 1
 kxt buying-power 005930 --price 70000 \
                     --account-no 12345678 --account-product-code 01
+kxt buying-power 005930 --provider tossinvest --account-no 1
 kxt open-orders     --account-no 12345678 --account-product-code 01
+kxt open-orders     --provider tossinvest --account-no 1
 kxt order-history   --start 2025-01-01 --end 2025-01-31 \
                     --account-no 12345678 --account-product-code 01
+kxt order-history   --provider tossinvest --start 2025-01-01 --end 2025-01-31 --account-no 1
 ```
 
 plain-text 출력에서 계좌번호는 마지막 4자리만 노출됩니다(예: `****6789`). 전체 계좌번호가 필요하다면 `--json`을 사용하세요.
@@ -82,6 +91,9 @@ plain-text 출력에서 계좌번호는 마지막 4자리만 노출됩니다(예
 kxt place-order 005930 --side BUY --order-type LIMIT \
   --quantity 1 --limit-price 70000 \
   --account-no 12345678 --account-product-code 01
+
+kxt place-order 005930 --provider tossinvest --side BUY --order-type LIMIT \
+  --quantity 1 --limit-price 70000 --account-no 1
 
 kxt cancel-order --order-id 0000000123 --origin-org-no 01234 \
   --account-no 12345678 --account-product-code 01
@@ -127,3 +139,4 @@ JSON 모드 (`kxt --json quote 005930`):
 
 - [Unified API overview](unified-api/overview.md) — 동일 메서드의 라이브러리 호출 형태.
 - [KIS provider](providers/kis.md)
+- [Toss Invest provider](providers/tossinvest.md)

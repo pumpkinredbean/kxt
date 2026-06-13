@@ -82,7 +82,7 @@ kxt 문서는 영어 헤딩과 한국어 본문을 사용합니다.
 
 ### Public import policy
 
-- `from kxt import ...` — `KISClient`, 응답·이벤트 DTO, enum, 에러, value object(`InstrumentRef`, `AccountSummary`, `OrderCorrelationKey`, `ProviderOrderRef` 등). 사용자가 *읽는* 타입만 노출합니다.
+- `from kxt import ...` — `KISClient`, `TossInvestClient`, 응답·이벤트 DTO, enum, 에러, value object(`InstrumentRef`, `AccountSummary`, `OrderCorrelationKey`, `ProviderOrderRef` 등). 사용자가 *읽는* 타입만 노출합니다.
 - `from kxt.requests import ...` — `*Request`, `*Cursor`, `*Subscription`, `OrderInstruction`, `OrderAmendment`, `ProviderRef` 등 power-user 입력 DTO. 일반 호출은 primitive kwargs로 충분하므로 top-level에서 의도적으로 제외했습니다.
 - `from kxt.models import ...` — 전체 DTO를 한 번에 가져오는 introspection용 별칭.
 

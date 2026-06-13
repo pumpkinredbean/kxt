@@ -39,6 +39,7 @@ from kxt.models.api import (
     PositionsResponse,
     ProviderOrderRef,
     QuoteResponse,
+    QuotesResponse,
     RecentTradesResponse,
     ProgramTradeResponse,
     RankingsResponse,
@@ -208,6 +209,44 @@ def _render_quote(q: QuoteResponse) -> str:
         ("volume", q.volume),
     ]
     return "\n".join(_render_kv_block(pairs))
+
+
+def _render_quotes(resp: QuotesResponse) -> str:
+    header = f"Quotes: {len(resp.quotes)}"
+    if not resp.quotes:
+        return header
+    headers = ["symbol", "occurred_at", "last", "open", "high", "low", "volume"]
+    rows = [
+        [
+            q.symbol,
+            _fmt_scalar(q.occurred_at),
+            _fmt_scalar(q.last),
+            _fmt_scalar(q.open),
+            _fmt_scalar(q.high),
+            _fmt_scalar(q.low),
+            _fmt_scalar(q.volume),
+        ]
+        for q in resp.quotes
+    ]
+    if _table_fits(headers, rows):
+        return "\n".join([header, "", *_render_table(headers, rows)])
+    blocks: list[str] = [header, ""]
+    for q in resp.quotes:
+        blocks.extend(
+            _render_kv_block(
+                [
+                    ("symbol", q.symbol),
+                    ("occurred_at", q.occurred_at),
+                    ("last", q.last),
+                    ("open", q.open),
+                    ("high", q.high),
+                    ("low", q.low),
+                    ("volume", q.volume),
+                ]
+            )
+        )
+        blocks.append("")
+    return "\n".join(blocks).rstrip()
 
 
 def _render_bars(resp: BarsResponse) -> str:
@@ -723,6 +762,7 @@ def _indent(text: str, n: int) -> str:
 _RENDERERS: dict[type, Callable[[Any], str]] = {
     ClientCapabilities: _render_client_capabilities,
     QuoteResponse: _render_quote,
+    QuotesResponse: _render_quotes,
     BarsResponse: _render_bars,
     RecentTradesResponse: _render_recent_trades,
     OrderBookResponse: _render_orderbook,

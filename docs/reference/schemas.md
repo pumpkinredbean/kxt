@@ -95,6 +95,10 @@
 - **last** (`Decimal`)
 - **open / high / low / previous_close / change / change_rate / volume** (`Decimal | None`)
 
+`QuotesResponse`:
+
+- **quotes** (`tuple[QuoteSnapshot, ...]`) — 심볼이 포함된 batch quote 결과.
+
 ### OrderBookSnapshot
 
 - **symbol** (`str`)
@@ -133,7 +137,7 @@
 
 ::: kxt.models.api
     options:
-      members: [Bar, BarsRequest, BarsResponse, BarCursor, QuoteRequest, QuoteResponse, MarketCalendarDay, MarketCalendarResponse, RankingsRequest, RankingEntry, RankingsResponse]
+      members: [Bar, BarsRequest, BarsResponse, BarCursor, QuoteRequest, QuoteResponse, QuotesResponse, MarketCalendarDay, MarketCalendarResponse, RankingsRequest, RankingEntry, RankingsResponse]
       show_root_heading: false
       heading_level: 3
 

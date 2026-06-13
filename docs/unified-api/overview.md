@@ -1,17 +1,17 @@
 # Unified API Overview
 
-Unified API는 프로바이더 간 차이를 흡수한 브로커 중립 메서드 집합입니다. 현재 `kxt`는 단일 프로바이더(KIS)를 지원하지만, 메서드 이름·파라미터·반환 DTO는 추가 프로바이더를 고려해 설계되어 있습니다.
+Unified API는 프로바이더 간 차이를 흡수한 브로커 중립 메서드 집합입니다. 현재 `kxt`는 KIS와 Toss Invest provider를 지원하며, 메서드 이름·파라미터·반환 DTO는 provider별 필드명을 직접 노출하지 않도록 설계되어 있습니다.
 
 ## Categories
 
 | 구분 | 의미 |
 |---|---|
-| **Public** | 시세 계열. 계좌 컨텍스트가 필요 없습니다 (현재 KIS는 시세에도 앱키 필요) |
-| **Private** | 계좌·주문 계열. 계좌번호와 상품코드가 필요합니다 |
+| **Public** | 시세 계열. 계좌 컨텍스트가 필요 없습니다 |
+| **Private** | 계좌·주문 계열. provider별 계좌 식별자가 필요합니다 |
 | **Streaming** | WebSocket 기반 실시간 이벤트 이터레이터 |
 
-!!! note "KIS는 공개 시세도 인증 필요"
-    KIS OpenAPI는 시세 조회에도 앱키/앱시크릿이 필요합니다. `Public`이라는 표지는 "프로바이더 자격으로는 계좌 컨텍스트가 필요하지 않다"는 의미로 사용하세요.
+!!! note "Public은 계좌 컨텍스트가 없다는 뜻"
+    KIS와 Toss Invest 모두 시세 조회에도 provider 자격증명이 필요합니다. `Public`이라는 표지는 "계좌 식별자가 필요하지 않다"는 의미로 사용하세요.
 
 ## Assumptions
 
@@ -26,13 +26,16 @@ Unified API는 프로바이더 간 차이를 흡수한 브로커 중립 메서�
 각 클라이언트는 `capabilities` 속성을 통해 지원 여부를 자기 서술합니다.
 
 ```python
-from kxt import KISClient
+from kxt import KISClient, TossInvestClient
 
 async with KISClient(app_key="<APP_KEY>", app_secret="<APP_SECRET>") as client:
     print(client.capabilities)
+
+async with TossInvestClient(client_id="<CLIENT_ID>", client_secret="<CLIENT_SECRET>") as client:
+    print(client.capabilities)
 ```
 
-이 테이블은 프로바이더별 문서([KIS](../providers/kis.md))의 지원 매트릭스와 일치합니다.
+이 테이블은 프로바이더별 문서([KIS](../providers/kis.md), [Toss Invest](../providers/tossinvest.md))의 지원 매트릭스와 일치해야 합니다.
 
 ## Public — Market data
 
@@ -95,7 +98,7 @@ WebSocket 기반 실시간 이터레이터입니다.
 | `modify_order` | 주문 정정 | [trading/modify-order](trading/modify-order.md) |
 
 !!! info "문서 작성 기준"
-    `get_bars`가 골드 스탠다드 템플릿입니다. 모든 메서드 페이지는 동일 구조(At a glance → Signature → Parameters → Returns → Example → Sample response → Notes → KIS specifics → Common pitfalls → See also)를 따릅니다.
+    `get_bars`가 골드 스탠다드 템플릿입니다. 모든 메서드 페이지는 동일 구조(At a glance → Signature → Parameters → Returns → Example → Sample response → Notes → provider specifics → Common pitfalls → See also)를 따릅니다.
 
 ## Legacy compatibility
 

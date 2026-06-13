@@ -18,6 +18,7 @@ from kxt import (
     OrderSide,
     OrderType,
     RankingKind,
+    TossInvestClient,
 )
 from kxt.cli.format import render_output
 from kxt.errors import KXTAuthenticationError, KXTError, KXTValidationError
@@ -27,7 +28,10 @@ KIS_APP_SECRET_ENV = "KIS_APP_SECRET"
 KIS_ACCOUNT_NO_ENV = "KIS_ACCOUNT_NO"
 KIS_ACCOUNT_PRODUCT_CODE_ENV = "KIS_ACCOUNT_PRODUCT_CODE"
 KIS_HTS_ID_ENV = "KIS_HTS_ID"
-SUPPORTED_PROVIDERS = ("kis",)
+TOSS_INVEST_CLIENT_ID_ENV = "TOSS_INVEST_CLIENT_ID"
+TOSS_INVEST_CLIENT_SECRET_ENV = "TOSS_INVEST_CLIENT_SECRET"
+TOSS_INVEST_ACCOUNT_SEQ_ENV = "TOSS_INVEST_ACCOUNT_SEQ"
+SUPPORTED_PROVIDERS = ("kis", "tossinvest")
 
 
 class _HelpFormatter(argparse.ArgumentDefaultsHelpFormatter, argparse.RawDescriptionHelpFormatter):
@@ -52,8 +56,8 @@ def _auth_help_text() -> str:
 
 def _scope_help_text() -> str:
     return (
-        "Current implemented CLI scope is provider-neutral in grammar and currently limited in provider support, "
-        "with domestic-equity market data in practice today."
+        "Current implemented CLI scope is provider-neutral in grammar. Exact support differs by provider; "
+        "check `kxt capabilities --provider ...` first."
     )
 
 
@@ -69,7 +73,7 @@ def build_parser() -> argparse.ArgumentParser:
         ),
         epilog=(
             "Provider support: use --provider to select from the currently implemented adapters.\n"
-            "Current CLI scope is provider-neutral in grammar, with domestic-equity market data in practice today.\n"
+            "Current CLI scope is provider-neutral in grammar. Exact support differs by provider.\n"
             "Authentication stays environment-variable based; secrets are never accepted via flags.\n\n"
             "Global flags:\n"
             "  --json    Emit raw JSON instead of the default structured plain text.\n"
@@ -78,7 +82,9 @@ def build_parser() -> argparse.ArgumentParser:
             "  kxt capabilities\n"
             "  kxt doctor\n"
             "  kxt quote 005930 --provider kis\n"
+            "  kxt quote 005930 --provider tossinvest\n"
             "  kxt bars 005930 --provider kis --timeframe day --start 2024-01-01 --end 2024-03-31\n"
+            "  kxt bars 005930 --provider tossinvest --timeframe day\n"
             "  kxt bars 005930 --provider kis --timeframe 5m\n"
             "  kxt recent-trades 005930 --provider kis --limit 5\n"
             "  kxt orderbook 005930 --provider kis\n"
@@ -110,7 +116,8 @@ def build_parser() -> argparse.ArgumentParser:
             f"{_scope_help_text()}\n\n"
             "Examples:\n"
             "  kxt capabilities\n"
-            "  kxt capabilities --provider kis"
+            "  kxt capabilities --provider kis\n"
+            "  kxt capabilities --provider tossinvest"
         ),
         formatter_class=_HelpFormatter,
     )
@@ -129,7 +136,8 @@ def build_parser() -> argparse.ArgumentParser:
             f"{_auth_help_text()}\n\n"
             "Examples:\n"
             "  kxt doctor\n"
-            "  kxt doctor --provider kis"
+            "  kxt doctor --provider kis\n"
+            "  kxt doctor --provider tossinvest"
         ),
         formatter_class=_HelpFormatter,
     )
@@ -140,9 +148,9 @@ def build_parser() -> argparse.ArgumentParser:
         "quote",
         help="Fetch a normalized quote snapshot",
         description=(
-            "Fetch a single normalized quote snapshot for one symbol.\n\n"
+            "Fetch normalized quote snapshots for one or more symbols.\n\n"
             "Use this for last trade, OHLC, change, and volume fields. For best bid/ask or market depth, use "
-            "`orderbook` instead."
+            "`orderbook` instead. Batch quote requests are currently supported by the Toss Invest provider."
         ),
         epilog=(
             f"{_scope_help_text()}\n"
@@ -150,16 +158,17 @@ def build_parser() -> argparse.ArgumentParser:
             "Examples:\n"
             "  kxt quote 005930\n"
             "  kxt quote 005930 --provider kis\n"
+            "  kxt quote 005930 000660 AAPL --provider tossinvest\n"
             "  kxt quote 005930 --provider kis --market-segment KOSPI"
         ),
         formatter_class=_HelpFormatter,
     )
-    quote_parser.add_argument("symbol", help="Instrument symbol, for example 005930")
+    quote_parser.add_argument("symbols", nargs="+", help="Instrument symbol(s), for example 005930")
     quote_parser.add_argument("--provider", choices=SUPPORTED_PROVIDERS, default="kis", help=_provider_help())
     quote_parser.add_argument(
         "--market-segment",
         choices=tuple(segment.value for segment in MarketSegment),
-        help="Optional domestic-equity market segment hint",
+        help="Optional KRX market segment hint",
     )
     quote_parser.set_defaults(handler=_handle_quote)
 
@@ -194,7 +203,7 @@ def build_parser() -> argparse.ArgumentParser:
     bars_parser.add_argument(
         "--market-segment",
         choices=tuple(segment.value for segment in MarketSegment),
-        help="Optional domestic-equity market segment hint",
+        help="Optional KRX market segment hint",
     )
     adjusted_group = bars_parser.add_mutually_exclusive_group()
     adjusted_group.add_argument("--adjusted", action="store_true", dest="adjusted", default=True, help="Use adjusted prices")
@@ -224,7 +233,7 @@ def build_parser() -> argparse.ArgumentParser:
     recent_trades_parser.add_argument(
         "--market-segment",
         choices=tuple(segment.value for segment in MarketSegment),
-        help="Optional domestic-equity market segment hint",
+        help="Optional KRX market segment hint",
     )
     recent_trades_parser.add_argument("--start", help="Start date/datetime in ISO-8601 format")
     recent_trades_parser.add_argument("--end", help="End date/datetime in ISO-8601 format")
@@ -252,7 +261,7 @@ def build_parser() -> argparse.ArgumentParser:
     orderbook_parser.add_argument(
         "--market-segment",
         choices=tuple(segment.value for segment in MarketSegment),
-        help="Optional domestic-equity market segment hint",
+        help="Optional KRX market segment hint",
     )
     orderbook_parser.set_defaults(handler=_handle_orderbook)
 
@@ -280,7 +289,7 @@ def build_parser() -> argparse.ArgumentParser:
     investor_flow_parser.add_argument(
         "--market-segment",
         choices=tuple(segment.value for segment in MarketSegment),
-        help="Optional domestic-equity market segment hint",
+        help="Optional KRX market segment hint",
     )
     investor_flow_parser.set_defaults(handler=_handle_investor_flow)
 
@@ -512,27 +521,46 @@ def _handle_capabilities(args: argparse.Namespace) -> int:
 def _handle_doctor(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
 
-    app_key = bool(os.getenv(KIS_APP_KEY_ENV, "").strip())
-    app_secret = bool(os.getenv(KIS_APP_SECRET_ENV, "").strip())
-    ready = app_key and app_secret
-    result = {
-        "provider": "kis",
-        "requires_credentials": True,
-        "credential_env": {
+    if args.provider == "kis":
+        app_key = bool(os.getenv(KIS_APP_KEY_ENV, "").strip())
+        app_secret = bool(os.getenv(KIS_APP_SECRET_ENV, "").strip())
+        ready = app_key and app_secret
+        credential_env = {
             KIS_APP_KEY_ENV: "set" if app_key else "missing",
             KIS_APP_SECRET_ENV: "set" if app_secret else "missing",
-        },
+        }
+        notes = (
+            f"Currently implemented providers: {_supported_providers_text()}.",
+            "Set credentials with environment variables before running authenticated commands.",
+            "KIS websocket streaming connects directly by default; set KXT_KIS_WS_PROXY=auto or a proxy URL to opt into websocket proxying.",
+        )
+    else:
+        client_id = bool(os.getenv(TOSS_INVEST_CLIENT_ID_ENV, "").strip())
+        client_secret = bool(os.getenv(TOSS_INVEST_CLIENT_SECRET_ENV, "").strip())
+        ready = client_id and client_secret
+        credential_env = {
+            TOSS_INVEST_CLIENT_ID_ENV: "set" if client_id else "missing",
+            TOSS_INVEST_CLIENT_SECRET_ENV: "set" if client_secret else "missing",
+            TOSS_INVEST_ACCOUNT_SEQ_ENV: (
+                "set" if os.getenv(TOSS_INVEST_ACCOUNT_SEQ_ENV, "").strip() else "missing"
+            ),
+        }
+        notes = (
+            f"Currently implemented providers: {_supported_providers_text()}.",
+            "Set credentials with environment variables before running authenticated commands.",
+            "Toss Invest Open API is REST-only in this kxt slice; streaming commands are unsupported.",
+        )
+    result = {
+        "provider": args.provider,
+        "requires_credentials": True,
+        "credential_env": credential_env,
         "ready": ready,
         "checks": (
             "SDK import OK",
             "CLI help does not require credentials",
             "No secrets are accepted as CLI arguments",
         ),
-        "notes": (
-            f"Currently implemented providers: {_supported_providers_text()}.",
-            "Set credentials with environment variables before running authenticated commands.",
-            "KIS websocket streaming connects directly by default; set KXT_KIS_WS_PROXY=auto or a proxy URL to opt into websocket proxying.",
-        ),
+        "notes": notes,
     }
     _emit(args, result)
     return 0 if ready else 1
@@ -541,8 +569,14 @@ def _handle_doctor(args: argparse.Namespace) -> int:
 async def _handle_quote(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
 
-    async with _build_kis_client() as client:
-        quote = await client.get_quote(_instrument_from_args(args))
+    async with _build_client(args.provider) as client:
+        if len(args.symbols) == 1:
+            quote = await client.get_quote(_instrument_from_symbol_arg(args, args.symbols[0]))
+        else:
+            if args.provider != "tossinvest":
+                raise KXTValidationError("Batch quote requests are currently supported only for provider: tossinvest")
+            instruments = tuple(_instrument_from_symbol_arg(args, symbol) for symbol in args.symbols)
+            quote = await client.get_quotes(instruments)
 
     _emit(args, quote)
     return 0
@@ -554,7 +588,7 @@ async def _handle_bars(args: argparse.Namespace) -> int:
     start = _parse_temporal_arg(args.start, field_name="start")
     end = _parse_temporal_arg(args.end, field_name="end")
 
-    async with _build_kis_client() as client:
+    async with _build_client(args.provider) as client:
         bars = await client.get_bars(
             instrument,
             timeframe=args.timeframe,
@@ -572,7 +606,7 @@ async def _handle_recent_trades(args: argparse.Namespace) -> int:
     if args.limit < 1:
         raise KXTValidationError("--limit must be >= 1")
 
-    async with _build_kis_client() as client:
+    async with _build_client(args.provider) as client:
         trades = await client.fetch_recent_trades(
             _instrument_from_args(args),
             start=_parse_temporal_arg(args.start, field_name="start"),
@@ -588,7 +622,7 @@ async def _handle_orderbook(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
 
     instrument = _instrument_from_args(args)
-    async with _build_kis_client() as client:
+    async with _build_client(args.provider) as client:
         orderbook = await client.get_orderbook(instrument)
 
     _emit(args, orderbook)
@@ -596,7 +630,7 @@ async def _handle_orderbook(args: argparse.Namespace) -> int:
 
 
 async def _handle_investor_flow(args: argparse.Namespace) -> int:
-    _require_supported_provider(args.provider)
+    _require_kis_provider(args.provider)
 
     async with _build_kis_client() as client:
         investor_flow = await client.get_investor_flow(_instrument_from_args(args))
@@ -606,7 +640,7 @@ async def _handle_investor_flow(args: argparse.Namespace) -> int:
 
 
 async def _handle_rankings(args: argparse.Namespace) -> int:
-    _require_supported_provider(args.provider)
+    _require_kis_provider(args.provider)
     async with _build_kis_client() as client:
         rankings = await client.get_rankings(
             RankingKind(args.kind),
@@ -619,7 +653,7 @@ async def _handle_rankings(args: argparse.Namespace) -> int:
 
 
 async def _handle_program_trade(args: argparse.Namespace) -> int:
-    _require_supported_provider(args.provider)
+    _require_kis_provider(args.provider)
     async with _build_kis_client() as client:
         response = await client.get_program_trade(
             args.symbol,
@@ -633,7 +667,7 @@ async def _handle_program_trade(args: argparse.Namespace) -> int:
 
 
 async def _handle_condition_search(args: argparse.Namespace) -> int:
-    _require_supported_provider(args.provider)
+    _require_kis_provider(args.provider)
     hts_id = (args.hts_id or os.getenv(KIS_HTS_ID_ENV, "")).strip() or None
     async with _build_kis_client() as client:
         if args.seq:
@@ -645,7 +679,7 @@ async def _handle_condition_search(args: argparse.Namespace) -> int:
 
 
 async def _handle_investor_trends(args: argparse.Namespace) -> int:
-    _require_supported_provider(args.provider)
+    _require_kis_provider(args.provider)
     async with _build_kis_client() as client:
         response = await client.get_investor_trends(
             args.symbol,
@@ -658,8 +692,12 @@ async def _handle_investor_trends(args: argparse.Namespace) -> int:
 
 
 def _instrument_from_args(args: argparse.Namespace) -> InstrumentRef:
+    return _instrument_from_symbol_arg(args, args.symbol)
+
+
+def _instrument_from_symbol_arg(args: argparse.Namespace, symbol: str) -> InstrumentRef:
     market_segment = MarketSegment(args.market_segment) if args.market_segment else None
-    return InstrumentRef(symbol=args.symbol, market_segment=market_segment)
+    return InstrumentRef(symbol=symbol, market_segment=market_segment)
 
 
 def _require_supported_provider(provider: str) -> None:
@@ -667,10 +705,27 @@ def _require_supported_provider(provider: str) -> None:
         raise KXTValidationError(f"Unsupported provider: {provider}")
 
 
+def _require_kis_provider(provider: str) -> None:
+    _require_supported_provider(provider)
+    if provider != "kis":
+        raise KXTValidationError(f"Command is currently supported only for provider: kis")
+
+
 def _capabilities_for_provider(provider: str) -> Any:
     _require_supported_provider(provider)
     if provider == "kis":
         return KISClient._CAPABILITIES
+    if provider == "tossinvest":
+        return TossInvestClient._CAPABILITIES
+    raise KXTValidationError(f"Unsupported provider: {provider}")
+
+
+def _build_client(provider: str) -> KISClient | TossInvestClient:
+    _require_supported_provider(provider)
+    if provider == "kis":
+        return _build_kis_client()
+    if provider == "tossinvest":
+        return _build_tossinvest_client()
     raise KXTValidationError(f"Unsupported provider: {provider}")
 
 
@@ -697,6 +752,27 @@ def _build_kis_client() -> KISClient:
     )
 
 
+def _build_tossinvest_client() -> TossInvestClient:
+    client_id = os.getenv(TOSS_INVEST_CLIENT_ID_ENV, "").strip()
+    client_secret = os.getenv(TOSS_INVEST_CLIENT_SECRET_ENV, "").strip()
+    if not client_id or not client_secret:
+        missing = []
+        if not client_id:
+            missing.append(TOSS_INVEST_CLIENT_ID_ENV)
+        if not client_secret:
+            missing.append(TOSS_INVEST_CLIENT_SECRET_ENV)
+        missing_text = ", ".join(missing)
+        raise KXTAuthenticationError(
+            f"Missing Toss Invest credentials: {missing_text}. Set them as environment variables. "
+            "The kxt CLI intentionally does not accept secrets via command arguments."
+        )
+    return TossInvestClient(
+        client_id=client_id,
+        client_secret=client_secret,
+        account_seq=os.getenv(TOSS_INVEST_ACCOUNT_SEQ_ENV, "").strip() or None,
+    )
+
+
 def _parse_temporal_arg(value: str | None, *, field_name: str) -> date | datetime | None:
     if value is None:
         return None
@@ -720,7 +796,10 @@ def _add_account_args(parser: argparse.ArgumentParser) -> None:
     )
     parser.add_argument(
         "--account-no",
-        help=f"Account number (CANO). Fallback: {KIS_ACCOUNT_NO_ENV} env var.",
+        help=(
+            f"Account identifier. KIS: account number (CANO), fallback {KIS_ACCOUNT_NO_ENV}. "
+            f"Toss Invest: accountSeq, fallback {TOSS_INVEST_ACCOUNT_SEQ_ENV}."
+        ),
     )
     parser.add_argument(
         "--account-product-code",
@@ -730,6 +809,16 @@ def _add_account_args(parser: argparse.ArgumentParser) -> None:
 
 def _account_primitives(args: argparse.Namespace) -> tuple[str, str | None]:
     """Resolve (account_no, account_product_code) from CLI args + environment."""
+    if getattr(args, "provider", "kis") == "tossinvest":
+        account_seq = (
+            getattr(args, "account_no", None) or os.getenv(TOSS_INVEST_ACCOUNT_SEQ_ENV, "")
+        ).strip()
+        if not account_seq:
+            raise KXTValidationError(
+                f"Toss Invest accountSeq is required (pass --account-no or set {TOSS_INVEST_ACCOUNT_SEQ_ENV})"
+            )
+        return account_seq, None
+
     account_no = (getattr(args, "account_no", None) or os.getenv(KIS_ACCOUNT_NO_ENV, "")).strip()
     product_code = (
         getattr(args, "account_product_code", None)
@@ -752,7 +841,7 @@ def _decimal_arg(value: str | None, *, name: str) -> Decimal | None:
 
 
 async def _handle_balance(args: argparse.Namespace) -> int:
-    _require_supported_provider(args.provider)
+    _require_kis_provider(args.provider)
     account_no, product_code = _account_primitives(args)
     async with _build_kis_client() as client:
         overview = await client.get_account_overview(
@@ -766,7 +855,7 @@ async def _handle_balance(args: argparse.Namespace) -> int:
 async def _handle_positions(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
     account_no, product_code = _account_primitives(args)
-    async with _build_kis_client() as client:
+    async with _build_client(args.provider) as client:
         response = await client.get_positions(
             account_no=account_no,
             account_product_code=product_code,
@@ -778,7 +867,7 @@ async def _handle_positions(args: argparse.Namespace) -> int:
 async def _handle_buying_power(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
     account_no, product_code = _account_primitives(args)
-    async with _build_kis_client() as client:
+    async with _build_client(args.provider) as client:
         response = await client.get_buying_power(
             instrument=args.symbol,
             price=_decimal_arg(args.price, name="--price"),
@@ -794,7 +883,7 @@ async def _handle_buying_power(args: argparse.Namespace) -> int:
 async def _handle_open_orders(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
     account_no, product_code = _account_primitives(args)
-    async with _build_kis_client() as client:
+    async with _build_client(args.provider) as client:
         response = await client.get_open_orders(
             instrument=args.symbol,
             account_no=account_no,
@@ -810,7 +899,7 @@ async def _handle_order_history(args: argparse.Namespace) -> int:
     start = date.fromisoformat(args.start)
     end = date.fromisoformat(args.end)
     side = OrderSide(args.side) if args.side else None
-    async with _build_kis_client() as client:
+    async with _build_client(args.provider) as client:
         response = await client.get_order_history(
             start=start,
             end=end,
@@ -830,7 +919,7 @@ async def _handle_place_order(args: argparse.Namespace) -> int:
     quantity = _decimal_arg(args.quantity, name="--quantity")
     if quantity is None:
         raise KXTValidationError("--quantity is required")
-    async with _build_kis_client() as client:
+    async with _build_client(args.provider) as client:
         response = await client.submit_order(
             symbol=args.symbol,
             side=OrderSide(args.side),
@@ -847,7 +936,7 @@ async def _handle_place_order(args: argparse.Namespace) -> int:
 async def _handle_cancel_order(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
     account_no, product_code = _account_primitives(args)
-    async with _build_kis_client() as client:
+    async with _build_client(args.provider) as client:
         response = await client.cancel_order(
             args.order_id,
             quantity=_decimal_arg(args.quantity, name="--quantity"),
@@ -863,7 +952,7 @@ async def _handle_cancel_order(args: argparse.Namespace) -> int:
 async def _handle_modify_order(args: argparse.Namespace) -> int:
     _require_supported_provider(args.provider)
     account_no, product_code = _account_primitives(args)
-    async with _build_kis_client() as client:
+    async with _build_client(args.provider) as client:
         response = await client.modify_order(
             args.order_id,
             quantity=_decimal_arg(args.quantity, name="--quantity"),

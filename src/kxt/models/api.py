@@ -202,6 +202,11 @@ class QuoteResponse:
     volume: Decimal | None = None
 
 
+@dataclass(frozen=True, slots=True)
+class QuotesResponse:
+    quotes: tuple[QuoteSnapshot, ...] = ()
+
+
 
 @dataclass(frozen=True, slots=True)
 class BarCursor:

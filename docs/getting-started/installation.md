@@ -4,17 +4,15 @@
 
 - Python 3.11 이상 (3.11, 3.12 테스트됨)
 - macOS, Linux, Windows
-- KIS OpenAPI 앱키·앱시크릿 (실거래 호출 시)
+- 사용할 provider의 API 자격증명 (실거래 호출 시)
 
 ## Install from PyPI
 
-`kxt`는 현재 알파 릴리스입니다. 설치 시 `--pre` 플래그를 반드시 포함해야 합니다.
-
 ```bash
-pip install --pre kxt
+pip install kxt
 ```
 
-1.0 정식 릴리스 이후에는 `--pre` 없이 설치 가능합니다.
+최신 공개 릴리스가 설치됩니다.
 
 ## Virtual environment (recommended)
 
@@ -23,7 +21,7 @@ pip install --pre kxt
 ```bash
 python -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install --pre kxt
+pip install kxt
 ```
 
 ## Verify installation
@@ -69,5 +67,5 @@ mkdocs serve  # http://127.0.0.1:8000
 
 ## Next steps
 
-- [Authentication](authentication.md) — KIS 앱키 발급과 환경변수 설정.
+- [Authentication](authentication.md) — provider 자격증명 발급과 환경변수 설정.
 - [Quickstart](quickstart.md) — 5분 안에 첫 시세 호출.

@@ -102,24 +102,35 @@ class KISTransport:
                 self._token = cached_token
                 return cached_token.access_token
 
-            response = await self._post_json(
-                "/oauth2/tokenP",
-                json={
-                    "grant_type": "client_credentials",
-                    "appkey": self._app_key,
-                    "appsecret": self._app_secret,
-                },
-            )
-            data = self._decode_json(response)
-            access_token = str(data.get("access_token") or "").strip()
-            expires_text = str(data.get("access_token_token_expired") or "").strip()
-            if not access_token or not expires_text:
-                raise KISAuthenticationError("KIS token response did not include token metadata")
+            return await self._request_access_token_locked()
 
-            expires_at = datetime.strptime(expires_text, "%Y-%m-%d %H:%M:%S").replace(tzinfo=UTC)
-            self._token = KISToken(access_token=access_token, expires_at=expires_at)
-            self._store_cached_token(self._token)
-            return access_token
+    async def refresh_access_token(self) -> str:
+        """Drop cached credentials and request a fresh REST access token."""
+
+        async with self._token_lock:
+            self._token = None
+            self._clear_cached_token()
+            return await self._request_access_token_locked()
+
+    async def _request_access_token_locked(self) -> str:
+        response = await self._post_json(
+            "/oauth2/tokenP",
+            json={
+                "grant_type": "client_credentials",
+                "appkey": self._app_key,
+                "appsecret": self._app_secret,
+            },
+        )
+        data = self._decode_json(response)
+        access_token = str(data.get("access_token") or "").strip()
+        expires_text = str(data.get("access_token_token_expired") or "").strip()
+        if not access_token or not expires_text:
+            raise KISAuthenticationError("KIS token response did not include token metadata")
+
+        expires_at = datetime.strptime(expires_text, "%Y-%m-%d %H:%M:%S").replace(tzinfo=UTC)
+        self._token = KISToken(access_token=access_token, expires_at=expires_at)
+        self._store_cached_token(self._token)
+        return access_token
 
     async def get_approval_key(self) -> str:
         async with self._approval_lock:
@@ -159,26 +170,35 @@ class KISTransport:
     async def get_json_response(
         self, path: str, *, tr_id: str, params: dict[str, Any], tr_cont: str = ""
     ) -> KISJSONResponse:
-        token = await self.get_access_token()
-        headers = {
-            "authorization": f"Bearer {token}",
-            "appkey": self._app_key,
-            "appsecret": self._app_secret,
-            "tr_id": tr_id,
-            "custtype": "P",
-        }
-        if tr_cont:
-            headers["tr_cont"] = tr_cont
-        response = await self._get(
-            path,
-            params=params,
-            headers=headers,
-        )
-        return KISJSONResponse(
-            payload=self._decode_json(response),
-            tr_cont=response.headers.get("tr_cont"),
-            headers=dict(response.headers),
-        )
+        for attempt in range(2):
+            token = await self.get_access_token()
+            headers = {
+                "authorization": f"Bearer {token}",
+                "appkey": self._app_key,
+                "appsecret": self._app_secret,
+                "tr_id": tr_id,
+                "custtype": "P",
+            }
+            if tr_cont:
+                headers["tr_cont"] = tr_cont
+            response = await self._get(
+                path,
+                params=params,
+                headers=headers,
+            )
+            try:
+                payload = self._decode_json(response)
+            except KISAPIError as exc:
+                if attempt == 0 and _is_expired_access_token_error(exc):
+                    await self.refresh_access_token()
+                    continue
+                raise
+            return KISJSONResponse(
+                payload=payload,
+                tr_cont=response.headers.get("tr_cont"),
+                headers=dict(response.headers),
+            )
+        raise KISAuthenticationError("KIS access token refresh retry was exhausted")
 
     async def post_json(
         self,
@@ -188,24 +208,32 @@ class KISTransport:
         body: dict[str, Any],
         hashkey: str | None = None,
     ) -> dict[str, Any]:
-        token = await self.get_access_token()
-        headers: dict[str, str] = {
-            "content-type": "application/json; charset=utf-8",
-            "authorization": f"Bearer {token}",
-            "appkey": self._app_key,
-            "appsecret": self._app_secret,
-            "tr_id": tr_id,
-            "custtype": "P",
-        }
-        if hashkey:
-            headers["hashkey"] = hashkey
-        response = await self._request(
-            self._client.post,
-            path,
-            json=body,
-            headers=headers,
-        )
-        return self._decode_json(response)
+        for attempt in range(2):
+            token = await self.get_access_token()
+            headers: dict[str, str] = {
+                "content-type": "application/json; charset=utf-8",
+                "authorization": f"Bearer {token}",
+                "appkey": self._app_key,
+                "appsecret": self._app_secret,
+                "tr_id": tr_id,
+                "custtype": "P",
+            }
+            if hashkey:
+                headers["hashkey"] = hashkey
+            response = await self._request(
+                self._client.post,
+                path,
+                json=body,
+                headers=headers,
+            )
+            try:
+                return self._decode_json(response)
+            except KISAPIError as exc:
+                if attempt == 0 and _is_expired_access_token_error(exc):
+                    await self.refresh_access_token()
+                    continue
+                raise
+        raise KISAuthenticationError("KIS access token refresh retry was exhausted")
 
     async def connect_websocket(self):
         try:
@@ -331,6 +359,17 @@ def _resolve_kis_websocket_proxy() -> str | bool | None:
 def _kis_token_cache_path(app_key: str) -> Path:
     cache_key = sha256(f"{REAL_REST_BASE_URL}:{app_key}".encode("utf-8")).hexdigest()[:32]
     return _user_cache_dir() / "kxt" / "kis" / f"token-{cache_key}.json"
+
+
+def _is_expired_access_token_error(exc: KISAPIError) -> bool:
+    message = str(exc).lower()
+    code = str(getattr(exc, "code", "") or "").lower()
+    return "token" in f"{message} {code}" and (
+        "expired" in message
+        or "expire" in message
+        or "만료" in message
+        or "만료" in code
+    )
 
 
 def _user_cache_dir() -> Path:
