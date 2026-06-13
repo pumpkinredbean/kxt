@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Async Python SDK for Korea Exchange (KRX) — KIS-backed market data & trading">
+        <meta name="description" content="Async Python SDK for Korean securities market access">
       
       
       
@@ -1670,6 +1670,8 @@
       
         
       
+        
+      
     
     
     
@@ -1730,6 +1732,34 @@
     
   
     KIS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../providers/tossinvest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Toss Invest
   
 
     
@@ -2208,6 +2238,17 @@
     <span class="md-ellipsis">
       
         QuoteResponse
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kxt.models.api.QuotesResponse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QuotesResponse
       
     </span>
   </a>
@@ -3160,6 +3201,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kxt.models.api.QuotesResponse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QuotesResponse
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kxt.models.api.MarketCalendarDay" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3733,6 +3785,10 @@
 <li><strong>occurred_at</strong> (<code>datetime</code>)</li>
 <li><strong>last</strong> (<code>Decimal</code>)</li>
 <li><strong>open / high / low / previous_close / change / change_rate / volume</strong> (<code>Decimal | None</code>)</li>
+</ul>
+<p><code>QuotesResponse</code>:</p>
+<ul>
+<li><strong>quotes</strong> (<code>tuple[QuoteSnapshot, ...]</code>) — 심볼이 포함된 batch quote 결과.</li>
 </ul>
 <h3 id="orderbooksnapshot">OrderBookSnapshot<a class="headerlink" href="#orderbooksnapshot" title="Permanent link">&para;</a></h3>
 <ul>
@@ -4330,6 +4386,54 @@
   </span>
 
 <a href="#kxt.models.api.QuoteResponse" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="kxt.models.api.QuotesResponse" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <code>QuotesResponse</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#kxt.models.api.QuotesResponse" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
     <div class="doc doc-contents ">

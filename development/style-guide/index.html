@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Async Python SDK for Korea Exchange (KRX) — KIS-backed market data & trading">
+        <meta name="description" content="Async Python SDK for Korean securities market access">
       
       
       
@@ -1670,6 +1670,8 @@
       
         
       
+        
+      
     
     
     
@@ -1730,6 +1732,34 @@
     
   
     KIS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../providers/tossinvest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Toss Invest
   
 
     
@@ -2518,7 +2548,7 @@
 </ul>
 <h3 id="public-import-policy">Public import policy<a class="headerlink" href="#public-import-policy" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>from kxt import ...</code> — <code>KISClient</code>, 응답·이벤트 DTO, enum, 에러, value object(<code>InstrumentRef</code>, <code>AccountSummary</code>, <code>OrderCorrelationKey</code>, <code>ProviderOrderRef</code> 등). 사용자가 <em>읽는</em> 타입만 노출합니다.</li>
+<li><code>from kxt import ...</code> — <code>KISClient</code>, <code>TossInvestClient</code>, 응답·이벤트 DTO, enum, 에러, value object(<code>InstrumentRef</code>, <code>AccountSummary</code>, <code>OrderCorrelationKey</code>, <code>ProviderOrderRef</code> 등). 사용자가 <em>읽는</em> 타입만 노출합니다.</li>
 <li><code>from kxt.requests import ...</code> — <code>*Request</code>, <code>*Cursor</code>, <code>*Subscription</code>, <code>OrderInstruction</code>, <code>OrderAmendment</code>, <code>ProviderRef</code> 등 power-user 입력 DTO. 일반 호출은 primitive kwargs로 충분하므로 top-level에서 의도적으로 제외했습니다.</li>
 <li><code>from kxt.models import ...</code> — 전체 DTO를 한 번에 가져오는 introspection용 별칭.</li>
 </ul>

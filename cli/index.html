@@ -6,14 +6,14 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Async Python SDK for Korea Exchange (KRX) — KIS-backed market data & trading">
+        <meta name="description" content="Async Python SDK for Korean securities market access">
       
       
       
         <link rel="canonical" href="https://pumpkinredbean.github.io/kxt/cli/">
       
       
-        <link rel="prev" href="../providers/kis/">
+        <link rel="prev" href="../providers/tossinvest/">
       
       
         <link rel="next" href="../reference/schemas/">
@@ -1670,6 +1670,8 @@
       
         
       
+        
+      
     
     
     
@@ -1730,6 +1732,34 @@
     
   
     KIS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../providers/tossinvest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Toss Invest
   
 
     
@@ -2359,13 +2389,18 @@
 </code></pre></div>
 <h2 id="market-data">Market data<a class="headerlink" href="#market-data" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kxt<span class="w"> </span>quote<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>kxt<span class="w"> </span>bars<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--timeframe<span class="w"> </span>day<span class="w"> </span>--start<span class="w"> </span><span class="m">2025</span>-04-01<span class="w"> </span>--end<span class="w"> </span><span class="m">2025</span>-04-14
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>kxt<span class="w"> </span>bars<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--timeframe<span class="w"> </span>5m
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>kxt<span class="w"> </span>recent-trades<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--limit<span class="w"> </span><span class="m">5</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>kxt<span class="w"> </span>orderbook<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>kxt<span class="w"> </span>investor-flow<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>kxt<span class="w"> </span>quote<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>tossinvest
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>kxt<span class="w"> </span>quote<span class="w"> </span><span class="m">005930</span><span class="w"> </span><span class="m">000660</span><span class="w"> </span>AAPL<span class="w"> </span>--provider<span class="w"> </span>tossinvest
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>kxt<span class="w"> </span>bars<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--timeframe<span class="w"> </span>day<span class="w"> </span>--start<span class="w"> </span><span class="m">2025</span>-04-01<span class="w"> </span>--end<span class="w"> </span><span class="m">2025</span>-04-14
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>kxt<span class="w"> </span>bars<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>tossinvest<span class="w"> </span>--timeframe<span class="w"> </span>day
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>kxt<span class="w"> </span>bars<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--timeframe<span class="w"> </span>5m
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>kxt<span class="w"> </span>recent-trades<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--limit<span class="w"> </span><span class="m">5</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>kxt<span class="w"> </span>recent-trades<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>tossinvest<span class="w"> </span>--limit<span class="w"> </span><span class="m">5</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>kxt<span class="w"> </span>orderbook<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>kxt<span class="w"> </span>orderbook<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>tossinvest
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>kxt<span class="w"> </span>investor-flow<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>kis
 </code></pre></div>
-<p><code>recent-trades</code>는 당일 국내주식 체결만 지원합니다. <code>investor-flow</code>는 장 마감 이후 공개되는 정규장 집계입니다.</p>
+<p>KIS <code>recent-trades</code>는 당일 국내주식 체결만 지원합니다. Toss Invest <code>quote</code>는 최대 200개 심볼 batch 조회를 지원합니다. Toss Invest <code>bars</code>는 provider interval 기준 <code>1m</code>, <code>day</code>를 우선 지원하고, 다분봉은 1분봉을 로컬 집계합니다. <code>investor-flow</code>는 KIS 전용입니다.</p>
 <h2 id="analytics">Analytics<a class="headerlink" href="#analytics" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>kxt<span class="w"> </span>rankings<span class="w"> </span>VOLUME<span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>kxt<span class="w"> </span>rankings<span class="w"> </span>MARKET_CAP<span class="w"> </span>--provider<span class="w"> </span>kis<span class="w"> </span>--scope<span class="w"> </span>KRX
@@ -2379,14 +2414,18 @@
 </code></pre></div>
 <p><code>rankings</code>, <code>program-trade</code>, <code>investor-trends</code>, <code>condition-search</code>는 현재 구현된 분석 CLI입니다. <code>--scope</code>가 있는 명령은 <code>KRX</code>, <code>NXT</code>, <code>TOTAL</code> 중 하나를 받습니다. 조건검색 결과 조회에는 프로바이더 사용자 ID가 필요할 수 있습니다.</p>
 <h2 id="account-orders">Account &amp; orders<a class="headerlink" href="#account-orders" title="Permanent link">&para;</a></h2>
-<p>계좌번호(CANO)와 상품코드가 필요합니다. <code>KIS_ACCOUNT_NO</code>, <code>KIS_ACCOUNT_PRODUCT_CODE</code> 환경변수로도 넣을 수 있고, 플래그가 우선합니다.</p>
+<p>KIS는 계좌번호(CANO)와 상품코드가 필요합니다. Toss Invest는 <code>accountSeq</code>가 필요합니다. <code>KIS_ACCOUNT_NO</code>, <code>KIS_ACCOUNT_PRODUCT_CODE</code>, <code>TOSS_INVEST_ACCOUNT_SEQ</code> 환경변수로도 넣을 수 있고, 플래그가 우선합니다.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>kxt<span class="w"> </span>balance<span class="w">         </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>kxt<span class="w"> </span>positions<span class="w">       </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>kxt<span class="w"> </span>buying-power<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--price<span class="w"> </span><span class="m">70000</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">                    </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>kxt<span class="w"> </span>open-orders<span class="w">     </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>kxt<span class="w"> </span>order-history<span class="w">   </span>--start<span class="w"> </span><span class="m">2025</span>-01-01<span class="w"> </span>--end<span class="w"> </span><span class="m">2025</span>-01-31<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">                    </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>kxt<span class="w"> </span>positions<span class="w">       </span>--provider<span class="w"> </span>tossinvest<span class="w"> </span>--account-no<span class="w"> </span><span class="m">1</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>kxt<span class="w"> </span>buying-power<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--price<span class="w"> </span><span class="m">70000</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">                    </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>kxt<span class="w"> </span>buying-power<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>tossinvest<span class="w"> </span>--account-no<span class="w"> </span><span class="m">1</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>kxt<span class="w"> </span>open-orders<span class="w">     </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>kxt<span class="w"> </span>open-orders<span class="w">     </span>--provider<span class="w"> </span>tossinvest<span class="w"> </span>--account-no<span class="w"> </span><span class="m">1</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>kxt<span class="w"> </span>order-history<span class="w">   </span>--start<span class="w"> </span><span class="m">2025</span>-01-01<span class="w"> </span>--end<span class="w"> </span><span class="m">2025</span>-01-31<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">                    </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>kxt<span class="w"> </span>order-history<span class="w">   </span>--provider<span class="w"> </span>tossinvest<span class="w"> </span>--start<span class="w"> </span><span class="m">2025</span>-01-01<span class="w"> </span>--end<span class="w"> </span><span class="m">2025</span>-01-31<span class="w"> </span>--account-no<span class="w"> </span><span class="m">1</span>
 </code></pre></div>
 <p>plain-text 출력에서 계좌번호는 마지막 4자리만 노출됩니다(예: <code>****6789</code>). 전체 계좌번호가 필요하다면 <code>--json</code>을 사용하세요.</p>
 <h2 id="orders">Orders<a class="headerlink" href="#orders" title="Permanent link">&para;</a></h2>
@@ -2394,12 +2433,15 @@
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>--quantity<span class="w"> </span><span class="m">1</span><span class="w"> </span>--limit-price<span class="w"> </span><span class="m">70000</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
 <a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>kxt<span class="w"> </span>cancel-order<span class="w"> </span>--order-id<span class="w"> </span><span class="m">0000000123</span><span class="w"> </span>--origin-org-no<span class="w"> </span><span class="m">01234</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>kxt<span class="w"> </span>place-order<span class="w"> </span><span class="m">005930</span><span class="w"> </span>--provider<span class="w"> </span>tossinvest<span class="w"> </span>--side<span class="w"> </span>BUY<span class="w"> </span>--order-type<span class="w"> </span>LIMIT<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span>--quantity<span class="w"> </span><span class="m">1</span><span class="w"> </span>--limit-price<span class="w"> </span><span class="m">70000</span><span class="w"> </span>--account-no<span class="w"> </span><span class="m">1</span>
 <a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>kxt<span class="w"> </span>modify-order<span class="w"> </span>--order-id<span class="w"> </span><span class="m">0000000123</span><span class="w"> </span>--origin-org-no<span class="w"> </span><span class="m">01234</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">  </span>--quantity<span class="w"> </span><span class="m">1</span><span class="w"> </span>--limit-price<span class="w"> </span><span class="m">70500</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">  </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>kxt<span class="w"> </span>cancel-order<span class="w"> </span>--order-id<span class="w"> </span><span class="m">0000000123</span><span class="w"> </span>--origin-org-no<span class="w"> </span><span class="m">01234</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">  </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>kxt<span class="w"> </span>modify-order<span class="w"> </span>--order-id<span class="w"> </span><span class="m">0000000123</span><span class="w"> </span>--origin-org-no<span class="w"> </span><span class="m">01234</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">  </span>--quantity<span class="w"> </span><span class="m">1</span><span class="w"> </span>--limit-price<span class="w"> </span><span class="m">70500</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">  </span>--account-no<span class="w"> </span><span class="m">12345678</span><span class="w"> </span>--account-product-code<span class="w"> </span><span class="m">01</span>
 </code></pre></div>
 <h2 id="output-format">Output format<a class="headerlink" href="#output-format" title="Permanent link">&para;</a></h2>
 <p>기본(plain-text) <code>kxt quote 005930</code> 예:</p>
@@ -2430,6 +2472,7 @@
 <ul>
 <li><a href="../unified-api/overview/">Unified API overview</a> — 동일 메서드의 라이브러리 호출 형태.</li>
 <li><a href="../providers/kis/">KIS provider</a></li>
+<li><a href="../providers/tossinvest/">Toss Invest provider</a></li>
 </ul>
 
 

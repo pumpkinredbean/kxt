@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Async Python SDK for Korea Exchange (KRX) — KIS-backed market data & trading">
+        <meta name="description" content="Async Python SDK for Korean securities market access">
       
       
       
@@ -1838,6 +1838,8 @@
       
         
       
+        
+      
     
     
     
@@ -1898,6 +1900,34 @@
     
   
     KIS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../providers/tossinvest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Toss Invest
   
 
     
@@ -2355,7 +2385,7 @@
 
 
 <h1 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">&para;</a></h1>
-<p><code>kxt</code>가 실제 KRX 데이터를 호출하려면 KIS(한국투자증권) OpenAPI 앱키와 앱시크릿이 필요합니다. 계좌 기반 메서드(주문·잔고)까지 사용한다면 계좌번호와 상품코드도, 체결 알림 스트림까지 사용한다면 HTS ID까지 함께 준비해야 합니다.</p>
+<p><code>kxt</code>가 실제 데이터를 호출하려면 선택한 provider의 API 자격증명이 필요합니다. KIS는 앱키와 앱시크릿을, Toss Invest는 <code>client_id</code>와 <code>client_secret</code>을 사용합니다. 계좌 기반 메서드까지 사용한다면 provider별 계좌 식별자도 함께 준비해야 합니다.</p>
 <h2 id="two-usage-paths">Two usage paths<a class="headerlink" href="#two-usage-paths" title="Permanent link">&para;</a></h2>
 <p><code>kxt</code>의 자격증명은 사용 경로에 따라 다르게 주입됩니다.</p>
 <table>
@@ -2367,7 +2397,7 @@
 </thead>
 <tbody>
 <tr>
-<td><strong>SDK</strong> (<code>KISClient(...)</code>)</td>
+<td><strong>SDK</strong> (<code>KISClient(...)</code>, <code>TossInvestClient(...)</code>)</td>
 <td>명시적 키워드 인자</td>
 </tr>
 <tr>
@@ -2376,7 +2406,7 @@
 </tr>
 </tbody>
 </table>
-<p>SDK 코어는 환경변수에 관여하지 않습니다. 환경변수 인터페이스는 CLI 전용 편의이며, <code>KIS_APP_KEY</code> 같은 변수명을 SDK 코드가 직접 읽지 않습니다.</p>
+<p>SDK 코어는 환경변수에 관여하지 않습니다. 환경변수 인터페이스는 CLI 전용 편의이며, <code>KIS_APP_KEY</code>나 <code>TOSS_INVEST_CLIENT_ID</code> 같은 변수명을 SDK 코드가 직접 읽지 않습니다.</p>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -2387,24 +2417,24 @@
 </thead>
 <tbody>
 <tr>
-<td>App key</td>
+<td>KIS app key / app secret</td>
 <td>KIS OpenAPI 포털에서 발급</td>
 </tr>
 <tr>
-<td>App secret</td>
-<td>App key와 함께 발급되는 시크릿</td>
-</tr>
-<tr>
-<td>Account number (CANO)</td>
+<td>KIS account number / product code</td>
 <td>계좌 기반 메서드(주문·잔고)에서 필요</td>
 </tr>
 <tr>
-<td>Account product code</td>
-<td>보통 <code>01</code> (위탁) — 계좌별로 상이</td>
+<td>KIS HTS ID</td>
+<td>주문 체결 실시간 알림(<code>stream_order_events</code>)에 필요</td>
 </tr>
 <tr>
-<td>HTS ID</td>
-<td>주문 체결 실시간 알림(<code>stream_order_events</code>)에 필요</td>
+<td>Toss Invest client_id / client_secret</td>
+<td>Toss Invest Open API 메뉴에서 발급</td>
+</tr>
+<tr>
+<td>Toss Invest accountSeq</td>
+<td>계좌·자산·주문 API의 <code>X-Tossinvest-Account</code> 헤더 값</td>
 </tr>
 </tbody>
 </table>
@@ -2412,6 +2442,7 @@
 <p>KIS OpenAPI 포털의 안내를 따릅니다.</p>
 <ul>
 <li>KIS OpenAPI 포털: <a href="https://apiportal.koreainvestment.com/">https://apiportal.koreainvestment.com/</a></li>
+<li>Toss Invest 개발자 문서: <a href="https://developers.tossinvest.com/docs/">https://developers.tossinvest.com/docs/</a></li>
 <li>발급 절차와 약관은 공식 안내를 참조하세요. 본 문서에서는 재현하지 않습니다.</li>
 </ul>
 <h2 id="sdk-authentication-explicit-keyword-args">SDK authentication — explicit keyword args<a class="headerlink" href="#sdk-authentication-explicit-keyword-args" title="Permanent link">&para;</a></h2>
@@ -2436,6 +2467,23 @@
 <a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
 </code></pre></div>
 <p><code>&lt;APP_KEY&gt;</code> 같은 placeholder는 실제 값으로 대체하세요. 자격증명을 어떻게 보관·로딩할지는 사용자 결정 사항입니다.</p>
+<p>Toss Invest도 같은 원칙을 따릅니다.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">kxt</span><span class="w"> </span><span class="kn">import</span> <span class="n">TossInvestClient</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">TossInvestClient</span><span class="p">(</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;&lt;CLIENT_ID&gt;&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="n">client_secret</span><span class="o">=</span><span class="s2">&quot;&lt;CLIENT_SECRET&gt;&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        <span class="n">account_seq</span><span class="o">=</span><span class="s2">&quot;&lt;ACCOUNT_SEQ&gt;&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>        <span class="o">...</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
 <div class="admonition danger">
 <p class="admonition-title">시크릿 관리</p>
 <p>앱키·앱시크릿·토큰 캐시 파일은 절대 커밋하지 마세요. 시크릿을 하드코드한 채 공개 저장소에 올리지 않도록 주의하세요.</p>
@@ -2476,30 +2524,48 @@
 <td>선택</td>
 <td>웹소켓 프록시 URL (<code>auto</code> 또는 URL)</td>
 </tr>
+<tr>
+<td><code>TOSS_INVEST_CLIENT_ID</code></td>
+<td>Toss Invest 사용 시 필수</td>
+<td>client_id</td>
+</tr>
+<tr>
+<td><code>TOSS_INVEST_CLIENT_SECRET</code></td>
+<td>Toss Invest 사용 시 필수</td>
+<td>client_secret</td>
+</tr>
+<tr>
+<td><code>TOSS_INVEST_ACCOUNT_SEQ</code></td>
+<td>Toss Invest 계좌·주문 명령에서 필수 (또는 <code>--account-no</code> 플래그)</td>
+<td><code>X-Tossinvest-Account</code> 헤더 값</td>
+</tr>
 </tbody>
 </table>
 <p>HTS ID는 SDK <code>stream_order_events</code> 호출에서만 필요한 키워드 인자이며 CLI 표면에서는 더 이상 소비되지 않습니다. SDK 호출부에서 <code>KISClient(..., hts_id=...)</code>에 직접 넘기세요.</p>
 <h3 id="env-example"><code>.env</code> example<a class="headerlink" href="#env-example" title="Permanent link">&para;</a></h3>
 <p>CLI 사용 시 프로젝트 루트에 <code>.env</code>를 두고 셸에서 export 하는 패턴이 일반적입니다.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># .env — 절대 커밋 금지</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nv">KIS_APP_KEY</span><span class="o">=</span>PSxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nv">KIS_APP_SECRET</span><span class="o">=</span>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nv">KIS_ACCOUNT_NO</span><span class="o">=</span><span class="m">12345678</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nv">KIS_ACCOUNT_PRODUCT_CODE</span><span class="o">=</span><span class="m">01</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># .env — 절대 커밋 금지</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nv">KIS_APP_KEY</span><span class="o">=</span>PSxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nv">KIS_APP_SECRET</span><span class="o">=</span>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nv">KIS_ACCOUNT_NO</span><span class="o">=</span><span class="m">12345678</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nv">KIS_ACCOUNT_PRODUCT_CODE</span><span class="o">=</span><span class="m">01</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="nv">TOSS_INVEST_CLIENT_ID</span><span class="o">=</span>c_xxxxxxxxxxxxxxxxxxxxx
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="nv">TOSS_INVEST_CLIENT_SECRET</span><span class="o">=</span>s_xxxxxxxxxxxxxxxxxxxxx
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="nv">TOSS_INVEST_ACCOUNT_SEQ</span><span class="o">=</span><span class="m">1</span>
 </code></pre></div>
 <h3 id="cli-check">CLI check<a class="headerlink" href="#cli-check" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kxt<span class="w"> </span>doctor
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># Provider: kis   Ready: yes</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1">#</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Credentials:</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1">#   KIS_APP_KEY: set</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1">#   KIS_APP_SECRET: set</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># ...</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>kxt<span class="w"> </span>doctor
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1"># Provider: kis   Ready: yes</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1">#</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Credentials:</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1">#   KIS_APP_KEY: set</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1">#   KIS_APP_SECRET: set</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># ...</span>
 </code></pre></div>
 <p>원시 JSON 형식이 필요하면 <code>kxt --json doctor</code>를 사용하세요.</p>
 <p>자세한 CLI 사용법은 <a href="../../cli/">CLI 레퍼런스</a>를 참조하세요.</p>
 <h2 id="token-cache">Token cache<a class="headerlink" href="#token-cache" title="Permanent link">&para;</a></h2>
-<p>KIS 액세스 토큰은 로컬 사용자 캐시 디렉터리에 저장되어 만료 직전까지 재사용됩니다. 토큰을 새로 받고 싶다면 캐시 파일을 삭제하면 됩니다. 캐시 위치는 OS별 표준 경로를 따릅니다(<code>XDG_CACHE_HOME</code>, <code>~/Library/Caches</code>, <code>%LOCALAPPDATA%</code>).</p>
+<p>KIS와 Toss Invest 액세스 토큰은 로컬 사용자 캐시 디렉터리에 저장되어 만료 직전까지 재사용됩니다. 토큰을 새로 받고 싶다면 캐시 파일을 삭제하면 됩니다. 캐시 위치는 OS별 표준 경로를 따릅니다(<code>XDG_CACHE_HOME</code>, <code>~/Library/Caches</code>, <code>%LOCALAPPDATA%</code>).</p>
 <h2 id="paper-trading-sandbox">Paper trading / Sandbox<a class="headerlink" href="#paper-trading-sandbox" title="Permanent link">&para;</a></h2>
 <p>현재 KIS 샌드박스는 연결되어 있지 않습니다. 실거래 키로만 동작합니다. <code>KISClient(..., sandbox=True)</code>를 전달하면 명시적 예외(<code>KXTUnsupportedError</code>)가 발생합니다.</p>
 <h2 id="next-steps">Next steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>

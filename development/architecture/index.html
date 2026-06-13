@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Async Python SDK for Korea Exchange (KRX) — KIS-backed market data & trading">
+        <meta name="description" content="Async Python SDK for Korean securities market access">
       
       
       
@@ -1670,6 +1670,8 @@
       
         
       
+        
+      
     
     
     
@@ -1730,6 +1732,34 @@
     
   
     KIS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../providers/tossinvest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Toss Invest
   
 
     
@@ -2422,7 +2452,7 @@
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>├──────────────────────────────┤
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│ Base Client contract         │  ← MarketDataClient 등 추상 경계
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>├──────────────────────────────┤
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│ Provider adapter (kis/)      │  ← HTTP/WS transport, parsing, 인증
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│ Provider adapters            │  ← HTTP/WS transport, parsing, 인증
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>├──────────────────────────────┤
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>│ Provider HTTP/WS             │
 <a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>└──────────────────────────────┘
@@ -2445,7 +2475,7 @@
 </ul>
 <h3 id="provider-boundary">Provider boundary<a class="headerlink" href="#provider-boundary" title="Permanent link">&para;</a></h3>
 <ul>
-<li>프로바이더 특이사항은 <strong>어댑터 에지</strong>에서 처리합니다. KIS TR_ID, 필드명 규칙, 페이로드 구조는 <code>src/kxt/clients/kis/</code> 내부에만 존재해야 합니다.</li>
+<li>프로바이더 특이사항은 <strong>어댑터 에지</strong>에서 처리합니다. KIS TR_ID, Toss Invest <code>accountSeq</code>, 필드명 규칙, 페이로드 구조는 각 provider 디렉터리 내부에만 존재해야 합니다.</li>
 <li>공개 모델에는 프로바이더 필드가 누출되지 않습니다.</li>
 </ul>
 <h3 id="honest-implementation-status">Honest implementation status<a class="headerlink" href="#honest-implementation-status" title="Permanent link">&para;</a></h3>
@@ -2475,8 +2505,8 @@
 </ul>
 <h2 id="current-implementation-status">Current implementation status<a class="headerlink" href="#current-implementation-status" title="Permanent link">&para;</a></h2>
 <ul>
-<li>유일하게 구현된 프로바이더는 <code>kis</code>.</li>
-<li>작동 범위는 국내주식 시장 데이터 중심의 좁은 슬라이스.</li>
+<li>구현된 provider는 <code>kis</code>, <code>tossinvest</code>.</li>
+<li>작동 범위는 국내주식 중심이며, Toss Invest provider는 공식 API가 제공하는 미국주식 REST 표면 일부도 정규화합니다.</li>
 <li>그룹 네임스페이스(<code>client.market.*</code>)는 레거시 호환. 선호 형태는 평평한 <code>get_*</code>/<code>stream_*</code>.</li>
 <li>미지원 메서드는 구현 전까지 명시적 미지원 상태를 유지합니다.</li>
 </ul>
